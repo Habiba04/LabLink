@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "591910394627",
+    "project_id": "lablink-53a91",
+    "storage_bucket": "lablink-53a91.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:591910394627:android:73631dd1f54f73ad866736",
+        "android_client_info": {
+          "package_name": "com.lab.lablink"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGAWShnlPR5OGjnYDJoHiXE3kZeeg1fYo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
