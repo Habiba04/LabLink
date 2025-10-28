@@ -41,7 +41,7 @@ class ConfirmButton extends StatelessWidget {
       context,
       MaterialPageRoute(
         builder: (context) => ConfirmationScreen(
-          bookingId: ref.id,
+          bookingId: ref['displayBookingId'] as String,
           date: DateFormat('yyyy-MM-dd').format(selectedDate),
           time: selectedTime!,
           locationData: locationData,
