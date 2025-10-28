@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lablink/Patient/Pages/Confirmation.dart';
@@ -28,7 +29,7 @@ class ConfirmButton extends StatelessWidget {
   Future<void> _confirmBooking(BuildContext context) async {
     if (selectedTime == null) return;
 
-    final ref = await bookingService.confirmBooking(
+    final bookingInfo = await bookingService.confirmBooking(
       date: selectedDate,
       time: selectedTime!,
       totalAmount: totalAmount,
@@ -41,7 +42,7 @@ class ConfirmButton extends StatelessWidget {
       context,
       MaterialPageRoute(
         builder: (context) => ConfirmationScreen(
-          bookingId: ref['displayBookingId'] as String,
+          bookingId: bookingInfo['displayBookingId'] as String,
           date: DateFormat('yyyy-MM-dd').format(selectedDate),
           time: selectedTime!,
           locationData: locationData,
@@ -89,4 +90,8 @@ class ConfirmButton extends StatelessWidget {
       ),
     );
   }
+}
+
+extension on DocumentReference<Object?> {
+  void operator [](String other) {}
 }

@@ -59,7 +59,7 @@ class BookingService {
   }
 
 
-  Future<DocumentReference> confirmBooking({
+  Future<Map<String, dynamic>> confirmBooking({
     required DateTime date,
     required String time,
     required double totalAmount,
@@ -98,7 +98,7 @@ class BookingService {
     final docId = ref.id;
 
     final datePrefix = DateFormat('yyyyMM').format(date);
-    final displayBookingId = '$datePrefix${docId.substring(0, 4).toUpperCase()}';
+    final displayBookingId = '${docId.substring(0, 8).toUpperCase()}';
 
     await ref.update({'displayBookingId': displayBookingId});
 

@@ -152,40 +152,6 @@ class ConfirmationScreen extends StatelessWidget {
                 const SizedBox(height: 40),
                 SizedBox(
                   width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: () {
-                      // TODO: Add reminder logic
-                    },
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 14,
-                        horizontal: 20,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      side: const BorderSide(
-                        color: Color(0xFF00BBA7),
-                        width: 1.5,
-                      ),
-                    ),
-                    icon: const Icon(
-                      Icons.notifications_none,
-                      color: Color(0xFF00BBA7),
-                    ),
-                    label: const Text(
-                      "Add Reminder",
-                      style: TextStyle(
-                        color: Color(0xFF00BBA7),
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 15),
-                SizedBox(
-                  width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () =>
                         Navigator.popUntil(context, (r) => r.isFirst),
