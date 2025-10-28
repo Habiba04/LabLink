@@ -81,6 +81,8 @@ class BookingService {
       'paymentMethod': paymentMethod,
       'serviceType': selectedService,
       'tests': selectedTests,
+      'labData': labData,
+      'locationData': locationData,
       'status': 'pending', 
       'createdAt': FieldValue.serverTimestamp(),
     };
@@ -93,6 +95,12 @@ class BookingService {
         .collection('appointments');
 
     final ref = await appointmentsRef.add(appointment);
+    final docId = ref.id;
+
+    final datePrefix = DateFormat('yyyyMM').format(date);
+    final displayBookingId = '$datePrefix${docId.substring(0, 4).toUpperCase()}';
+
+    await ref.update({'displayBookingId': displayBookingId});
 
     final disabledSlotRef = FirebaseFirestore.instance
         .collection('labs')
@@ -108,6 +116,9 @@ class BookingService {
       'bookedAt': FieldValue.serverTimestamp(),
     });
 
-    return ref;
+    return {
+      'refId': docId,
+      'displayBookingId': displayBookingId,
+    };
   }
 }
