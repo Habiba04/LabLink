@@ -118,7 +118,7 @@ class ConfirmationScreen extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            "#${bookingId.substring(0, 8).toUpperCase()}",
+                            "#${bookingId}",
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 18,
