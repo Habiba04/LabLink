@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lablink/Patient/Pages/MainScreen.dart';
 import 'package:lablink/Patient/Pages/ServiceType.dart';
+import 'package:lablink/Patient/Pages/splashScreen.dart';
 
 
 const Map<String, dynamic> labData = {
@@ -28,7 +30,8 @@ const String selectedService = 'Visit Lab';
 
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+  User?user=FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -47,12 +50,13 @@ class MyApp extends StatelessWidget {
       //   mockSelectedService: selectedService,
       // ),
 
-      home: ServiceTypeScreen(
-        labData: labData,
-        locationData: locationData,
-        selectedTests: selectedTests,
-        // selectedService: selectedService, // Add if ServiceTypeScreen needs this
-      ),
+    home: Splash(),
+      // home: ServiceTypeScreen(
+      //   labData: labData,
+      //   locationData: locationData,
+      //   selectedTests: selectedTests,
+      //   // selectedService: selectedService, // Add if ServiceTypeScreen needs this
+      // ),
     );
   }
 }
