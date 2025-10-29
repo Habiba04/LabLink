@@ -7,12 +7,25 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:591910394627:android:73631dd1f54f73ad866736",
+        "mobilesdk_app_id": "1:591910394627:android:e75f775080c01bb0866736",
         "android_client_info": {
           "package_name": "com.lab.lablink"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "591910394627-75rciuk28k4n2g9av74h1n9uot9tvqvc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lab.lablink",
+            "certificate_hash": "5c4ab78cb3918455cebd753d1c4edb77545bf3e8"
+          }
+        },
+        {
+          "client_id": "591910394627-1o62cn0ur5pganlmqsp9q0o4lcmmieqq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCGAWShnlPR5OGjnYDJoHiXE3kZeeg1fYo"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "591910394627-1o62cn0ur5pganlmqsp9q0o4lcmmieqq.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "591910394627-73ig05v353hmt9fe5kd5ok4h3fnstfur.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.lablink"
+              }
+            }
+          ]
         }
       }
     }
