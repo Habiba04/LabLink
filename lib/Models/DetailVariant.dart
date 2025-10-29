@@ -1,0 +1,1 @@
+enum DetailVariant { date, time, location, id }

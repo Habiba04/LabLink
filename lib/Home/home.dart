@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lablink/Patient/Pages/MainScreen.dart';
+import 'package:lablink/Patient/Pages/ServiceType.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -12,6 +13,8 @@ class MyApp extends StatelessWidget {
     };
 
     final Map<String, dynamic> mockLocationData = {
+    final labData = {'name': 'Central Lab', 'id': 'lab1'};
+    final locationData = {
       'id': 'location1',
       "name": "Nasr City Branch",
       'address': 'Nasr City, Cairo',
@@ -28,6 +31,12 @@ class MyApp extends StatelessWidget {
     const String mockSelectedService = 'Visit Lab';
     return MaterialApp(
       title: 'Lablink',
+    final selectedTests = [
+      {'name': 'Blood Test', 'price': 500},
+      {'name': 'Glucose Test', 'price': 250},
+    ];
+    return MaterialApp(
+      title: 'LabLink',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF00BBA7)),
@@ -37,6 +46,10 @@ class MyApp extends StatelessWidget {
         mockLocationData: mockLocationData,
         mockSelectedTests: mockSelectedTests,
         mockSelectedService: mockSelectedService,
+      home: ServiceTypeScreen(
+        labData: labData,
+        locationData: locationData,
+        selectedTests: selectedTests,
       ),
     );
   }
