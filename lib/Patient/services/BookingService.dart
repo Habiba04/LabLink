@@ -16,7 +16,6 @@ class BookingService {
     required this.selectedService,
   });
 
-
   double calculateTotal() {
     double total = selectedTests.fold<double>(
       0.0,
@@ -58,33 +57,37 @@ class BookingService {
         .cast<String>()
         .toSet();
   }
-  
+
   Future<List<Appointment>> fetchPatientAppointments(String userId) async {
     if (userId.isEmpty || userId == 'mock_user_id_12345') {
-       return _getMockAppointments(
-         labData['id'] as String? ?? 'lab1', 
-         locationData['id'] as String? ?? 'location1',
-       );
+      return _getMockAppointments(
+        labData['id'] as String? ?? 'lab1',
+        locationData['id'] as String? ?? 'location1',
+      );
     }
 
     try {
       final snapshot = await FirebaseFirestore.instance
           .collectionGroup('appointments')
           .where('userId', isEqualTo: userId)
-          .orderBy('date', descending: true) 
+          .orderBy('date', descending: true)
           .get();
 
-      return snapshot.docs.map((doc) => Appointment.fromFirestore(doc)).toList();
+      return snapshot.docs
+          .map((doc) => Appointment.fromFirestore(doc))
+          .toList();
     } catch (e) {
       rethrow;
     }
   }
 
-  List<Appointment> _getMockAppointments(String mockLabId, String mockLocationId) {
-    
+  List<Appointment> _getMockAppointments(
+    String mockLabId,
+    String mockLocationId,
+  ) {
     return [
       Appointment(
-        docId: 'APPT_001', 
+        docId: 'APPT_001',
         bookingId: '#LB2025001',
         date: DateTime(2025, 10, 15),
         labName: 'Central Diagnostics',
@@ -186,7 +189,7 @@ class BookingService {
     final docId = ref.id;
 
     final datePrefix = DateFormat('yyyyMM').format(date);
-    final displayBookingId = 'LB$datePrefix${docId.substring(0, 4).toUpperCase()}';
+    final displayBookingId = '${docId.substring(0, 8).toUpperCase()}';
 
     await ref.update({'displayBookingId': displayBookingId});
 
@@ -204,9 +207,6 @@ class BookingService {
       'bookedAt': FieldValue.serverTimestamp(),
     });
 
-    return {
-      'refId': docId,
-      'displayBookingId': displayBookingId,
-    };
+    return {'refId': docId, 'displayBookingId': displayBookingId};
   }
 }
