@@ -221,7 +221,7 @@ class _PatientSignupState extends State<PatientSignup> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: DropdownButtonFormField<String>(
-                          value: _selectedGender,
+                          initialValue: _selectedGender,
                           decoration: InputDecoration(border: InputBorder.none),
                           hint: Text(
                             'Select Gender',
