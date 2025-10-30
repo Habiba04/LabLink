@@ -82,7 +82,9 @@ class ConfirmationScreen extends StatelessWidget {
                       const SizedBox(height: 6),
                       ConfirmationDetailRow(
                         title: "Date",
-                        value: DateFormat('MMMM d, yyyy').format(DateTime.parse(date)),
+                        value: DateFormat(
+                          'MMMM d, yyyy',
+                        ).format(DateTime.parse(date)),
                         icon: Icons.calendar_today_rounded,
                         variant: DetailVariant.date,
                       ),
@@ -118,7 +120,7 @@ class ConfirmationScreen extends StatelessWidget {
                             ),
                           ),
                           Text(
-                            "#${bookingId}",
+                            "#$bookingId",
                             style: const TextStyle(
                               color: Colors.black,
                               fontSize: 18,
