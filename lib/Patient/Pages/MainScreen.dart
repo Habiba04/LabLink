@@ -1,67 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:lablink/Patient/Pages/BookingHistory.dart';
+import 'package:lablink/Patient/Pages/HomeScreen.dart';
 import 'package:lablink/Patient/Pages/lab_details.dart';
+import 'package:lablink/Patient/Pages/profile_screen.dart';
 
 // --- Mock Screens for Navigation ---
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            "Home Dashboard",
-            style: TextStyle(fontSize: 24, color: Colors.blueGrey),
-          ),
-          IconButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      LabDetails(labId: "KQKp1xBfKO3OCVU3SO9w"),
-                ),
-              );
-            },
-            icon: Icon(Icons.arrow_circle_right_outlined),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Text(
-        "Patient Profile",
-        style: TextStyle(fontSize: 24, color: Colors.blueGrey),
-      ),
-    );
-  }
-}
+// class HomeScreen extends StatelessWidget {
+//   const HomeScreen({super.key});
+//   @override
+//   Widget build(BuildContext context) {
+//     return Center(
+//       child: Column(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: [
+//           Text(
+//             "Home Dashboard",
+//             style: TextStyle(fontSize: 24, color: Colors.blueGrey),
+//           ),
+//           IconButton(
+//             onPressed: () {
+//               Navigator.push(
+//                 context,
+//                 MaterialPageRoute(
+//                   builder: (context) => LabDetails(labId: "lab1"),
+//                 ),
+//               );
+//             },
+//             icon: Icon(Icons.arrow_circle_right_outlined),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 // --- Main Navigation Wrapper ---
 
 class MainScreen extends StatefulWidget {
   // Mock data needed to initialize the history screen
-  final Map<String, dynamic> mockLabData;
-  final Map<String, dynamic> mockLocationData;
-  final List<Map<String, dynamic>> mockSelectedTests;
-  final String mockSelectedService;
+  final Map<String, dynamic> labData;
+  final Map<String, dynamic> locationData;
+  final List<Map<String, dynamic>> selectedTests;
+  final String selectedService;
 
   const MainScreen({
     super.key,
-    required this.mockLabData,
-    required this.mockLocationData,
-    required this.mockSelectedTests,
-    required this.mockSelectedService,
+    required this.labData,
+    required this.locationData,
+    required this.selectedTests,
+    required this.selectedService,
   });
 
   @override
@@ -69,7 +57,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  int _selectedIndex = 1; // Default to History tab
+  int _selectedIndex = 0; // Default to History tab
 
   late List<Widget> _screens;
 
@@ -78,12 +66,7 @@ class _MainScreenState extends State<MainScreen> {
     super.initState();
     _screens = [
       const HomeScreen(),
-      BookingHistoryScreen(
-        mockLabData: widget.mockLabData,
-        mockLocationData: widget.mockLocationData,
-        mockSelectedTests: widget.mockSelectedTests,
-        mockSelectedService: widget.mockSelectedService,
-      ),
+      BookingHistoryScreen(),
       const ProfileScreen(),
     ];
   }
