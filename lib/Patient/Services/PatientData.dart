@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class PatientData {
   final FirebaseFirestore firestore=FirebaseFirestore.instance;
   Future<void>savepatinetdata({
-     required String uid,
+    required String uid,
     required String email,
     required String phone,
     required String age,
@@ -22,7 +22,7 @@ class PatientData {
         print('✅ User data saved successfully!');
     }catch(e){
         print('❌ Error saving user data: $e');
-       
+      
     }
   }
 }

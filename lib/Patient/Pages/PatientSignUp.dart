@@ -49,7 +49,12 @@ class _PatientSignupState extends State<PatientSignup> {
         context,
         MaterialPageRoute(
           builder: (context) {
-            return HomeScreen();
+            return MainScreen(
+              labData: {},
+              locationData: {},
+              selectedTests: [],
+              selectedService: '',
+            );
           },
         ),
       );
@@ -82,7 +87,14 @@ class _PatientSignupState extends State<PatientSignup> {
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
+        MaterialPageRoute(
+          builder: (context) => MainScreen(
+            labData: {},
+            locationData: {},
+            selectedTests: [],
+            selectedService: '',
+          ),
+        ),
       );
     } catch (e) {
       ScaffoldMessenger.of(

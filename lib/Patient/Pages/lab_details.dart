@@ -420,3 +420,39 @@ class _LabDetailsState extends State<LabDetails> {
     );
   }
 }
+
+// SizedBox(
+//                   width: double.infinity,
+//                   child: ElevatedButton(
+//                     onPressed: () =>
+//                         Navigator.popUntil(context, (r) => r.isFirst),
+//                     style: ElevatedButton.styleFrom(
+//                       padding: EdgeInsets.zero,
+//                       backgroundColor: Colors.transparent,
+//                       shadowColor: Colors.transparent,
+//                       shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(30),
+//                       ),
+//                     ),
+//                     child: Ink(
+//                       decoration: const BoxDecoration(
+//                         gradient: LinearGradient(
+//                           colors: [Color(0xFF00B4DB), Color(0xFF00BBA7)],
+//                         ),
+//                         borderRadius: BorderRadius.all(Radius.circular(30)),
+//                       ),
+//                       child: Container(
+//                         alignment: Alignment.center,
+//                         padding: const EdgeInsets.symmetric(vertical: 16),
+//                         child: const Text(
+//                           "Done",
+//                           style: TextStyle(
+//                             color: Colors.white,
+//                             fontSize: 16,
+//                             fontWeight: FontWeight.w600,
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                   ),
+//                 ),

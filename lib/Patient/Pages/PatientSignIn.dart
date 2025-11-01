@@ -35,7 +35,7 @@ class _PatientSigninState extends State<PatientSignin> {
       });
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
+        MaterialPageRoute(builder: (context) => MainScreen(labData: {}, locationData: {}, selectedTests: [], selectedService: '',)),
       );
     } on FirebaseAuthException catch (e) {
       String message = 'Username or password is invalid';
@@ -82,7 +82,7 @@ Future<void> signInWithGoogle() async {
     if (!mounted) return;
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => HomeScreen()),
+      MaterialPageRoute(builder: (context) => MainScreen(labData: {}, locationData: {}, selectedTests: [], selectedService: '',)),
     );
   } catch (e) {
     ScaffoldMessenger.of(context).showSnackBar(

@@ -1,21 +1,39 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 import 'package:lablink/Models/Appointment.dart';
+// Note: Assuming 'Appointment' model is defined and has fromFirestore()
 
 class BookingService {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   final Map<String, dynamic> labData;
   final Map<String, dynamic> locationData;
   final List<Map<String, dynamic>> selectedTests;
   final String selectedService;
-  final double homeCollectionCharge = 50;
+  final double homeCollectionCharge = 50.0;
 
   BookingService({
+    // Only required when creating a new booking, not when viewing history
     required this.labData,
     required this.locationData,
     required this.selectedTests,
     required this.selectedService,
   });
+  // --- Utility Function ---
+  String getCurrentUserId() {
+    final user = _auth.currentUser;
+    if (user == null) {
+      // Throw a specific error if no user is signed in
+      throw FirebaseAuthException(
+        code: 'user-not-signed-in',
+        message: 'A user must be signed in to perform this action.',
+      );
+    }
+    return user.uid;
+  }
 
+  // --- Calculation Function ---
   double calculateTotal() {
     double total = selectedTests.fold<double>(
       0.0,
@@ -25,6 +43,29 @@ class BookingService {
       total += homeCollectionCharge;
     }
     return total;
+  }
+
+  // --- Data Fetching Functions ---
+
+  // Fetches appointments ONLY from the patient's dedicated collection (Fast read)
+  Future<List<Appointment>> fetchPatientAppointments(String uid) async {
+    final userId = getCurrentUserId(); // Fetches UID internally
+
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('patient')
+          .doc(userId)
+          .collection('appointments')
+          .orderBy('createdAt', descending: true) // Sort by most recent booking
+          .get();
+
+      return snapshot.docs
+          .map((doc) => Appointment.fromFirestore(doc))
+          .toList();
+    } catch (e) {
+      print('❌ Error fetching patient appointments for UID $userId: $e');
+      rethrow;
+    }
   }
 
   Future<Map<String, dynamic>> fetchLocationDetails() async {
@@ -40,6 +81,7 @@ class BookingService {
 
   Future<Set<String>> fetchDisabledSlots(DateTime date) async {
     final formattedDate = DateFormat('yyyy-MM-dd').format(date);
+
     final locationId = locationData['id'];
 
     final snapshot = await FirebaseFirestore.instance
@@ -58,99 +100,7 @@ class BookingService {
         .toSet();
   }
 
-  Future<List<Appointment>> fetchPatientAppointments(String userId) async {
-    if (userId.isEmpty || userId == 'mock_user_id_12345') {
-      return _getMockAppointments(
-        labData['id'] as String? ?? 'lab1',
-        locationData['id'] as String? ?? 'location1',
-      );
-    }
-
-    try {
-      final snapshot = await FirebaseFirestore.instance
-          .collectionGroup('appointments')
-          .where('userId', isEqualTo: userId)
-          .orderBy('date', descending: true)
-          .get();
-
-      return snapshot.docs
-          .map((doc) => Appointment.fromFirestore(doc))
-          .toList();
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  List<Appointment> _getMockAppointments(
-    String mockLabId,
-    String mockLocationId,
-  ) {
-    return [
-      Appointment(
-        docId: 'APPT_001',
-        bookingId: '#LB2025001',
-        date: DateTime(2025, 10, 15),
-        labName: 'Central Diagnostics',
-        totalAmount: 450.00,
-        status: 'Completed',
-        labId: mockLabId,
-        locationId: mockLocationId,
-        time: '8:00 AM',
-      ),
-      Appointment(
-        docId: 'APPT_002',
-        bookingId: '#LB2025002',
-        date: DateTime(2025, 10, 28),
-        labName: 'Central Diagnostics (Upcoming)',
-        totalAmount: 650.00,
-        status: 'Scheduled',
-        labId: mockLabId,
-        locationId: mockLocationId,
-        time: '08:30 AM',
-      ),
-      Appointment(
-        docId: 'APPT_003',
-        bookingId: '#LB2025003',
-        date: DateTime(2025, 9, 28),
-        labName: 'MediLab Pro',
-        totalAmount: 200.00,
-        status: 'Pending',
-        labId: mockLabId,
-        locationId: mockLocationId,
-        time: '1:00 PM',
-      ),
-    ];
-  }
-
-  Future<void> cancelAppointment({
-    required String labId,
-    required String locationId,
-    required String appointmentDocId,
-    required DateTime date,
-    required String time,
-  }) async {
-    final formattedDate = DateFormat('yyyy-MM-dd').format(date);
-
-    final appointmentRef = FirebaseFirestore.instance
-        .collection('labs')
-        .doc(labId)
-        .collection('locations')
-        .doc(locationId)
-        .collection('appointments')
-        .doc(appointmentDocId);
-
-    final disabledSlotDocId = "${formattedDate}_$time";
-    final disabledSlotRef = FirebaseFirestore.instance
-        .collection('labs')
-        .doc(labId)
-        .collection('locations')
-        .doc(locationId)
-        .collection('disabled_slots')
-        .doc(disabledSlotDocId);
-
-    await appointmentRef.update({'status': 'Cancelled'});
-    await disabledSlotRef.delete();
-  }
+  // --- Booking Confirmation (Dual Write + Atomicity Recommended) ---
 
   Future<Map<String, dynamic>> confirmBooking({
     required DateTime date,
@@ -158,13 +108,15 @@ class BookingService {
     required double totalAmount,
     required String paymentMethod,
   }) async {
-    const userId = "mock_user_id_12345";
+    final userId = getCurrentUserId();
+    final firestore = FirebaseFirestore.instance;
+    final batch = firestore.batch(); // Use a Batch for atomicity
 
     final formattedDate = DateFormat('yyyy-MM-dd').format(date);
     final labId = labData['id'];
     final locationId = locationData['id'];
 
-    final appointment = {
+    final appointmentData = {
       'userId': userId,
       'date': formattedDate,
       'time': time,
@@ -178,35 +130,116 @@ class BookingService {
       'createdAt': FieldValue.serverTimestamp(),
     };
 
-    final appointmentsRef = FirebaseFirestore.instance
+    // 1. Primary Ref (Lab/Location)
+    final appointmentsCollectionRef = firestore
         .collection('labs')
         .doc(labId)
         .collection('locations')
         .doc(locationId)
         .collection('appointments');
 
-    final ref = await appointmentsRef.add(appointment);
+    // Create a new document reference with an auto-generated ID
+    final ref = appointmentsCollectionRef.doc();
     final docId = ref.id;
 
-    final datePrefix = DateFormat('yyyyMM').format(date);
+    // Generate Display ID
     final displayBookingId = docId.substring(0, 8).toUpperCase();
+    final finalAppointmentData = {
+      ...appointmentData,
+      'displayBookingId': displayBookingId,
+    };
 
-    await ref.update({'displayBookingId': displayBookingId});
+    // 2. Secondary Ref (Patient's table)
+    final patientAppointmentRef = firestore
+        .collection('patient')
+        .doc(userId)
+        .collection('appointments')
+        .doc(docId); // Use the same document ID
 
-    final disabledSlotRef = FirebaseFirestore.instance
+    // 3. Disabled Slot Ref
+    final disabledSlotRef = firestore
         .collection('labs')
         .doc(labId)
         .collection('locations')
         .doc(locationId)
-        .collection('disabled_slots');
+        .collection('disabled_slots')
+        .doc("${formattedDate}_$time");
 
-    await disabledSlotRef.doc("${formattedDate}_$time").set({
+    // Queue all writes in the batch
+    batch.set(ref, finalAppointmentData); // A. Primary write
+    batch.set(
+      patientAppointmentRef,
+      finalAppointmentData,
+    ); // B. Secondary (Patient) write
+    batch.set(disabledSlotRef, {
+      // C. Disable slot
       'date': formattedDate,
       'time': time,
       'bookedByAppointmentId': ref.id,
       'bookedAt': FieldValue.serverTimestamp(),
     });
 
-    return {'refId': docId, 'displayBookingId': displayBookingId};
+    try {
+      await batch.commit();
+      print('✅ Booking confirmed successfully via Batch Write.');
+      return {'refId': docId, 'displayBookingId': displayBookingId};
+    } catch (e) {
+      print('❌ Error confirming booking: $e');
+      rethrow;
+    }
+  }
+
+  // --- Appointment Cancellation (Batch Write) ---
+
+  Future<void> cancelAppointment({
+    required String labId,
+    required String locationId,
+    required String appointmentDocId,
+    required DateTime date,
+    required String time,
+  }) async {
+    final userId = getCurrentUserId();
+    final formattedDate = DateFormat('yyyy-MM-dd').format(date);
+    final firestore = FirebaseFirestore.instance;
+    final batch = firestore.batch();
+
+    // 1. Primary Appointment Ref (Lab/Location)
+    final appointmentRef = firestore
+        .collection('labs')
+        .doc(labId)
+        .collection('locations')
+        .doc(locationId)
+        .collection('appointments')
+        .doc(appointmentDocId);
+
+    // 2. Secondary Appointment Ref (Patient's table)
+    final patientAppointmentRef = firestore
+        .collection('patient')
+        .doc(userId)
+        .collection('appointments')
+        .doc(appointmentDocId);
+
+    // 3. Disabled Slot Ref
+    final disabledSlotRef = firestore
+        .collection('labs')
+        .doc(labId)
+        .collection('locations')
+        .doc(locationId)
+        .collection('disabled_slots')
+        .doc("${formattedDate}_$time");
+
+    // Queue the updates and delete
+    batch.update(appointmentRef, {'status': 'Cancelled'});
+    batch.update(patientAppointmentRef, {'status': 'Cancelled'});
+    batch.delete(disabledSlotRef);
+
+    // Commit the batch
+    try {
+      await batch.commit();
+      print('✅ Appointment cancelled successfully via Batch Write.');
+    } catch (e) {
+      print('❌ Error during batch cancellation: $e');
+      rethrow;
+    }
   }
 }
