@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lablink/Patient/Pages/BookingHistory.dart';
+import 'package:lablink/Patient/Pages/lab_details.dart';
 
 // --- Mock Screens for Navigation ---
 
@@ -7,7 +8,29 @@ class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text("Home Dashboard", style: TextStyle(fontSize: 24, color: Colors.blueGrey)));
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "Home Dashboard",
+            style: TextStyle(fontSize: 24, color: Colors.blueGrey),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      LabDetails(labId: "KQKp1xBfKO3OCVU3SO9w"),
+                ),
+              );
+            },
+            icon: Icon(Icons.arrow_circle_right_outlined),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -15,7 +38,12 @@ class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    return const Center(child: Text("Patient Profile", style: TextStyle(fontSize: 24, color: Colors.blueGrey)));
+    return const Center(
+      child: Text(
+        "Patient Profile",
+        style: TextStyle(fontSize: 24, color: Colors.blueGrey),
+      ),
+    );
   }
 }
 
@@ -46,7 +74,6 @@ class _MainScreenState extends State<MainScreen> {
   late List<Widget> _screens;
 
   @override
-
   void initState() {
     super.initState();
     _screens = [
@@ -70,10 +97,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _screens,
-      ),
+      body: IndexedStack(index: _selectedIndex, children: _screens),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -93,11 +117,11 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: const Color(0xFF00B4DB), 
+        selectedItemColor: const Color(0xFF00B4DB),
         unselectedItemColor: Colors.grey.shade600,
         backgroundColor: Colors.white,
         onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed, 
+        type: BottomNavigationBarType.fixed,
         selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600),
       ),
     );
