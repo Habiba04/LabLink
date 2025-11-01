@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:lablink/Models/Appointment.dart';
 
 class BookingService {
   final Map<String, dynamic> labData;
@@ -25,7 +26,6 @@ class BookingService {
     }
     return total;
   }
-
 
   Future<Map<String, dynamic>> fetchLocationDetails() async {
     final doc = await FirebaseFirestore.instance
@@ -58,6 +58,99 @@ class BookingService {
         .toSet();
   }
 
+  Future<List<Appointment>> fetchPatientAppointments(String userId) async {
+    if (userId.isEmpty || userId == 'mock_user_id_12345') {
+      return _getMockAppointments(
+        labData['id'] as String? ?? 'lab1',
+        locationData['id'] as String? ?? 'location1',
+      );
+    }
+
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collectionGroup('appointments')
+          .where('userId', isEqualTo: userId)
+          .orderBy('date', descending: true)
+          .get();
+
+      return snapshot.docs
+          .map((doc) => Appointment.fromFirestore(doc))
+          .toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  List<Appointment> _getMockAppointments(
+    String mockLabId,
+    String mockLocationId,
+  ) {
+    return [
+      Appointment(
+        docId: 'APPT_001',
+        bookingId: '#LB2025001',
+        date: DateTime(2025, 10, 15),
+        labName: 'Central Diagnostics',
+        totalAmount: 450.00,
+        status: 'Completed',
+        labId: mockLabId,
+        locationId: mockLocationId,
+        time: '8:00 AM',
+      ),
+      Appointment(
+        docId: 'APPT_002',
+        bookingId: '#LB2025002',
+        date: DateTime(2025, 10, 28),
+        labName: 'Central Diagnostics (Upcoming)',
+        totalAmount: 650.00,
+        status: 'Scheduled',
+        labId: mockLabId,
+        locationId: mockLocationId,
+        time: '08:30 AM',
+      ),
+      Appointment(
+        docId: 'APPT_003',
+        bookingId: '#LB2025003',
+        date: DateTime(2025, 9, 28),
+        labName: 'MediLab Pro',
+        totalAmount: 200.00,
+        status: 'Pending',
+        labId: mockLabId,
+        locationId: mockLocationId,
+        time: '1:00 PM',
+      ),
+    ];
+  }
+
+  Future<void> cancelAppointment({
+    required String labId,
+    required String locationId,
+    required String appointmentDocId,
+    required DateTime date,
+    required String time,
+  }) async {
+    final formattedDate = DateFormat('yyyy-MM-dd').format(date);
+
+    final appointmentRef = FirebaseFirestore.instance
+        .collection('labs')
+        .doc(labId)
+        .collection('locations')
+        .doc(locationId)
+        .collection('appointments')
+        .doc(appointmentDocId);
+
+    final disabledSlotDocId = "${formattedDate}_$time";
+    final disabledSlotRef = FirebaseFirestore.instance
+        .collection('labs')
+        .doc(labId)
+        .collection('locations')
+        .doc(locationId)
+        .collection('disabled_slots')
+        .doc(disabledSlotDocId);
+
+    await appointmentRef.update({'status': 'Cancelled'});
+    await disabledSlotRef.delete();
+  }
 
   Future<Map<String, dynamic>> confirmBooking({
     required DateTime date,
@@ -65,8 +158,6 @@ class BookingService {
     required double totalAmount,
     required String paymentMethod,
   }) async {
-    // 1. Mock User ID - REPLACE WITH ACTUAL AUTH LOGIC
-    // final userId = FirebaseAuth.instance.currentUser!.uid;
     const userId = "mock_user_id_12345";
 
     final formattedDate = DateFormat('yyyy-MM-dd').format(date);
@@ -83,7 +174,7 @@ class BookingService {
       'tests': selectedTests,
       'labData': labData,
       'locationData': locationData,
-      'status': 'pending', 
+      'status': 'pending',
       'createdAt': FieldValue.serverTimestamp(),
     };
 
@@ -116,9 +207,6 @@ class BookingService {
       'bookedAt': FieldValue.serverTimestamp(),
     });
 
-    return {
-      'refId': docId,
-      'displayBookingId': displayBookingId,
-    };
+    return {'refId': docId, 'displayBookingId': displayBookingId};
   }
 }
