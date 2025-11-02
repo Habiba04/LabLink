@@ -10,8 +10,7 @@ Color getBgColorForVariant(DetailVariant v) {
     case DetailVariant.location:
       return const Color(0xFFEFF5FF); // light purple/blue
     case DetailVariant.id:
-    default:
-      return const Color(0xFFFFF7EA); // light orange
+    return const Color(0xFFFFF7EA); // light orange
   }
 }
 
@@ -24,7 +23,6 @@ Color getIconColorForVariant(DetailVariant v) {
     case DetailVariant.location:
       return const Color(0xFF6C7BFF);
     case DetailVariant.id:
-    default:
-      return const Color(0xFFFFA726);
+    return const Color(0xFFFFA726);
   }
 }

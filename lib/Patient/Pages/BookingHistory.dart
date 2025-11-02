@@ -3,6 +3,7 @@ import 'package:lablink/Models/Appointment.dart';
 import '../services/BookingService.dart';
 import '../widgets/AppointmentCard.dart';
 
+
 class BookingHistoryScreen extends StatefulWidget {
   final Map<String, dynamic> mockLabData;
   final Map<String, dynamic> mockLocationData;
@@ -36,7 +37,7 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
       selectedTests: widget.mockSelectedTests,
       selectedService: widget.mockSelectedService,
     );
-    _appointmentsFuture = _bookingService.fetchPatientAppointments(_currentUserId);
+    _appointmentsFuture =  _bookingService. fetchPatientAppointments(_currentUserId);
   }
 
   void _refreshAppointments() {
@@ -113,3 +114,4 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
     );
   }
 }
+  

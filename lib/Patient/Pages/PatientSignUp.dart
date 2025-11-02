@@ -4,7 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:lablink/Patient/Pages/MainScreen.dart';
 import 'package:lablink/Patient/Pages/PatientSignIn.dart';
-import 'package:lablink/Patient/Services/PatientData.dart';
+import 'package:lablink/Patient/models/PatientData.dart';
 
 class PatientSignup extends StatefulWidget {
   const PatientSignup({super.key});
@@ -316,50 +316,50 @@ class _PatientSignupState extends State<PatientSignup> {
                   ),
                 ),
                 SizedBox(height: 25),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(child: Divider(color: Colors.grey[300])),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Text(
-                        'Or continue with',
-                        style: TextStyle(color: Colors.grey[600]),
-                      ),
-                    ),
-                    Expanded(child: Divider(color: Colors.grey[300])),
-                  ],
-                ),
-                SizedBox(height: 25),
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton.icon(
-                    onPressed: signInWithGoogle,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Colors.black,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25),
-                        side: BorderSide(color: Colors.grey[300]!),
-                      ),
-                      elevation: 1,
-                    ),
-                    icon: Image.asset(
-                      'assets/images/gg.png',
-                      width: 70,
-                      height: 70,
-                    ),
-                    label: Text(
-                      'Google',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 30),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     Expanded(child: Divider(color: Colors.grey[300])),
+                //     Padding(
+                //       padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                //       child: Text(
+                //         'Or continue with',
+                //         style: TextStyle(color: Colors.grey[600]),
+                //       ),
+                //     ),
+                //     Expanded(child: Divider(color: Colors.grey[300])),
+                //   ],
+                // ),
+                // SizedBox(height: 25),
+                // SizedBox(
+                //   width: double.infinity,
+                //   height: 50,
+                //   child: ElevatedButton.icon(
+                //     onPressed: signInWithGoogle,
+                //     style: ElevatedButton.styleFrom(
+                //       backgroundColor: Colors.white,
+                //       foregroundColor: Colors.black,
+                //       shape: RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(25),
+                //         side: BorderSide(color: Colors.grey[300]!),
+                //       ),
+                //       elevation: 1,
+                //     ),
+                //     icon: Image.asset(
+                //       'assets/images/gg.png',
+                //       width: 40,
+                //       height: 40,
+                //     ),
+                //     label: Text(
+                //       'Google',
+                //       style: TextStyle(
+                //         fontSize: 16,
+                //         fontWeight: FontWeight.bold,
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                // SizedBox(height: 30),
                 Center(
                   child: RichText(
                     text: TextSpan(

@@ -1,11 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lablink/Patient/Pages/ForgotPassword.dart';
 import 'package:lablink/Patient/Pages/MainScreen.dart';
 import 'package:lablink/Patient/Pages/PatientSignUp.dart';
 import 'package:lablink/Patient/Pages/splashScreen.dart';
+
+import '../Services/Auth_services.dart';
 
 class PatientSignin extends StatefulWidget {
   const PatientSignin({super.key});
@@ -19,7 +20,7 @@ class _PatientSigninState extends State<PatientSignin> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool loading = false;
-
+  final AuthService _authService = AuthService();
   Future<void> signIn() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() {
@@ -45,53 +46,13 @@ class _PatientSigninState extends State<PatientSignin> {
         message = 'Wrong password.';
       }
 
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
     } finally {
       setState(() => loading = false);
     }
   }
-
-Future<void> signInWithGoogle() async {
-  try {
-    // Create the GoogleSignIn instance
-    final GoogleSignIn googleSignIn = GoogleSignIn(
-      scopes: ['email'],
-    );
-
-    // Attempt sign-in
-    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-    if (googleUser == null) {
-      // The user canceled the sign-in
-      return;
-    }
-
-    // Get the authentication from the signed-in user
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-
-    // Create a credential for Firebase
-    final OAuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    // Sign in to Firebase with the Google credential
-    await FirebaseAuth.instance.signInWithCredential(credential);
-
-    if (!mounted) return;
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => HomeScreen()),
-    );
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Google Sign-In failed: $e')),
-    );
-  }
-}
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -120,16 +81,10 @@ Future<void> signInWithGoogle() async {
               ),
               const Text(
                 'Log in to continue',
-                style: TextStyle(
-                  color: Color(0xff9B9B9B),
-                  fontSize: 16,
-                ),
+                style: TextStyle(color: Color(0xff9B9B9B), fontSize: 16),
               ),
               const SizedBox(height: 25),
-              const Text(
-                'Email',
-                style: TextStyle(fontSize: 16),
-              ),
+              const Text('Email', style: TextStyle(fontSize: 16)),
               Form(
                 key: _formKey,
                 child: Column(
@@ -142,8 +97,9 @@ Future<void> signInWithGoogle() async {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return "Please enter your email";
-                        } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
-                            .hasMatch(value)) {
+                        } else if (!RegExp(
+                          r'^[^@]+@[^@]+\.[^@]+',
+                        ).hasMatch(value)) {
                           return 'Please enter a valid email address';
                         }
                         return null;
@@ -152,10 +108,7 @@ Future<void> signInWithGoogle() async {
                     const SizedBox(height: 15),
                     const Row(
                       children: [
-                        Text(
-                          'Password',
-                          style: TextStyle(fontSize: 16),
-                        ),
+                        Text('Password', style: TextStyle(fontSize: 16)),
                       ],
                     ),
                     buildTextField(
@@ -192,10 +145,7 @@ Future<void> signInWithGoogle() async {
                       },
                       child: const Text(
                         'Forgot password?',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.blue,
-                        ),
+                        style: TextStyle(fontSize: 16, color: Colors.blue),
                       ),
                     ),
                   ),
@@ -225,26 +175,21 @@ Future<void> signInWithGoogle() async {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
-                  Expanded(
-                    child: Divider(thickness: 1, color: Colors.black),
-                  ),
+                  Expanded(child: Divider(thickness: 1, color: Colors.black)),
                   Text(
                     '  Or continue with  ',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Color(0xff9B9B9B),
-                    ),
+                    style: TextStyle(fontSize: 15, color: Color(0xff9B9B9B)),
                   ),
-                  Expanded(
-                    child: Divider(thickness: 1, color: Colors.black),
-                  ),
+                  Expanded(child: Divider(thickness: 1, color: Colors.black)),
                 ],
               ),
               const SizedBox(height: 20),
               SizedBox(
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: signInWithGoogle,
+                  onPressed: () async {
+                    await _authService.signInWithGoogle(context);
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
@@ -254,13 +199,14 @@ Future<void> signInWithGoogle() async {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
-                      
                       Text(
                         ' Google',
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.black,
-                        ),
+                        style: TextStyle(fontSize: 17, color: Colors.black),
+                      ),
+                      Image(
+                        image: AssetImage('assets/images/gg.png'),
+                        width: 50,
+                        height: 50,
                       ),
                     ],
                   ),
