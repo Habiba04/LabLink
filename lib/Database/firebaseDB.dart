@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lablink/Models/Lab.dart';
 import 'package:lablink/Models/LabLocation.dart';
 import 'package:lablink/Models/LabTests.dart';
+import 'package:lablink/Models/Review.dart';
 
 class FirebaseDatabase {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -49,6 +50,39 @@ class FirebaseDatabase {
     } catch (e) {
       print(' Error fetching lab details: $e');
       return null;
+    }
+  }
+
+  Future<List<Review>> getLabReviews(String labId) async {
+    try {
+      final reviewsSnapshot = await _firestore
+          .collection('labs')
+          .doc(labId)
+          .collection('reviews')
+          .orderBy('createdAt', descending: true)
+          .get();
+
+      return reviewsSnapshot.docs
+          .map((doc) => Review.fromMap(doc.id, doc.data()))
+          .toList();
+    } catch (e) {
+      print('Error fetching reviews: $e');
+      return [];
+    }
+  }
+
+  Future<void> addReview({
+    required String labId,
+    required Review review,
+  }) async {
+    try {
+      await _firestore
+          .collection('labs')
+          .doc(labId)
+          .collection('reviews')
+          .add(review.toMap());
+    } catch (e) {
+      print('Error adding review: $e');
     }
   }
 }
