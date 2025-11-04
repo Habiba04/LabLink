@@ -35,7 +35,6 @@ class _AddNewLocationState extends State<AddNewLocation> {
   @override
   Widget build(BuildContext context) {
     final String? labid = 'sJAWUw2DnhZDibT5EeUqf2D5qXr2';
-    String locationId = "";
     bool isSaving = false;
 
     return Scaffold(
