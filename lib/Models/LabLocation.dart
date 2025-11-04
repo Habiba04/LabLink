@@ -3,7 +3,8 @@ class Lablocation {
   String name;
   String address;
   String phone;
-  String Workingdays;
+  String startday;
+  String endday;
   String openinghours;
   String closinghours;
   Lablocation({
@@ -11,7 +12,8 @@ class Lablocation {
     required this.name,
     required this.address,
     required this.phone,
-    required this.Workingdays,
+    required this.startday,
+    required this.endday,
     required this.openinghours,
     required this.closinghours,
   });
@@ -21,7 +23,8 @@ class Lablocation {
       'name': name,
       'address': address,
       'phone': phone,
-      'Workingdays': Workingdays,
+       'startday': startday,
+      'endday': endday,
       'openinghours': openinghours,
       'closinghours': closinghours,
     };
@@ -32,7 +35,8 @@ class Lablocation {
       name: map['name'],
       address: map['address'],
       phone: map['phone'],
-      Workingdays: map['Workingdays'],
+      startday: map['startday'],
+      endday: map['endday'],
       openinghours: map['openinghours'],
       closinghours: map['closinghours'],
     );

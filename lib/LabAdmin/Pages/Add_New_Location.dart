@@ -14,9 +14,10 @@ class AddNewLocation extends StatefulWidget {
 class _AddNewLocationState extends State<AddNewLocation> {
   final TextEditingController locationNameController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
+  final TextEditingController startdayController = TextEditingController();
+  final TextEditingController enddayController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-  final TextEditingController workingDaysController = TextEditingController();
-  final TextEditingController openAtController = TextEditingController();
+   final TextEditingController openAtController = TextEditingController();
   final TextEditingController closeAtController = TextEditingController();
   final formkey = GlobalKey<FormState>();
 
@@ -25,8 +26,7 @@ class _AddNewLocationState extends State<AddNewLocation> {
     locationNameController.dispose();
     addressController.dispose();
     phoneController.dispose();
-    workingDaysController.dispose();
-    openAtController.dispose();
+     openAtController.dispose();
     closeAtController.dispose();
     super.dispose();
   }
@@ -201,23 +201,76 @@ class _AddNewLocationState extends State<AddNewLocation> {
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
-                child: TextFormField(
-                  validator: (value) => value == null || value.isEmpty
-                      ? 'Please enter working days'
-                      : null,
-                  controller: workingDaysController,
-                  decoration: InputDecoration(
-                    hintText: 'e.g., Sat-Thu, Mon-Fri',
-                    filled: true,
-                    fillColor: const Color(0xFFD1D5DC),
-                    contentPadding: EdgeInsets.all(16),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      borderSide: BorderSide.none,
-                    ),
-                  ),
-                ),
-              ),
+                child: 
+               Padding(
+  padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
+  child: Row(
+    children: [
+      Expanded(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: Color(0xFFD1D5DC),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: DropdownButtonFormField<String>(
+            value: startdayController.text.isEmpty
+                ? null
+                : startdayController.text,
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: 'Start Day',
+            ),
+            items: const [
+              DropdownMenuItem(value: 'Monday', child: Text('Monday')),
+              DropdownMenuItem(value: 'Tuesday', child: Text('Tuesday')),
+              DropdownMenuItem(value: 'Wednesday', child: Text('Wednesday')),
+              DropdownMenuItem(value: 'Thursday', child: Text('Thursday')),
+              DropdownMenuItem(value: 'Friday', child: Text('Friday')),
+              DropdownMenuItem(value: 'Saturday', child: Text('Saturday')),
+              DropdownMenuItem(value: 'Sunday', child: Text('Sunday')),
+            ],
+            onChanged: (value) {
+              startdayController.text = value!;
+            },
+          ),
+        ),
+      ),
+      const SizedBox(width: 12),
+      Expanded(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: Color(0xFFD1D5DC),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: DropdownButtonFormField<String>(
+            value: enddayController.text.isEmpty
+                ? null
+                : enddayController.text,
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              hintText: 'End Day',
+            ),
+            items: const [
+              DropdownMenuItem(value: 'Monday', child: Text('Monday')),
+              DropdownMenuItem(value: 'Tuesday', child: Text('Tuesday')),
+              DropdownMenuItem(value: 'Wednesday', child: Text('Wednesday')),
+              DropdownMenuItem(value: 'Thursday', child: Text('Thursday')),
+              DropdownMenuItem(value: 'Friday', child: Text('Friday')),
+              DropdownMenuItem(value: 'Saturday', child: Text('Saturday')),
+              DropdownMenuItem(value: 'Sunday', child: Text('Sunday')),
+            ],
+            onChanged: (value) {
+              enddayController.text = value!;
+            },
+          ),
+        ),
+      ),
+    ],
+  ),
+),
+   ),
               Row(
                 children: [
                   Padding(
@@ -316,7 +369,8 @@ class _AddNewLocationState extends State<AddNewLocation> {
                               name: locationNameController.text,
                               address: addressController.text,
                               phone: phoneController.text,
-                              Workingdays: workingDaysController.text,
+                              startday: startdayController.text,
+                              endday: enddayController.text,
                               openinghours: openAtController.text,
                               closinghours: closeAtController.text,
                             ),
@@ -328,7 +382,7 @@ class _AddNewLocationState extends State<AddNewLocation> {
                                 content: Text('Location Added Successfully!'),
                               ),
                             );
-                            Navigator.pop(context);
+                            Navigator.pop(context ,true);
                           }
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(

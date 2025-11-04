@@ -117,7 +117,7 @@ class _LabLocations_screenState extends State<LabLocations_screen> {
                                 Icon(Icons.timer_outlined, color: Colors.grey),
                                 SizedBox(width: 5),
                                 Text(
-                                  ' ${locations?[index].Workingdays}: ',
+                                  ' ${locations?[index].startday.substring(0,3)} - ${locations?[index].endday.substring(0,3)}',
                                   style: TextStyle(
                                     fontSize: 14,
                                     color: Colors.grey,
@@ -136,7 +136,7 @@ class _LabLocations_screenState extends State<LabLocations_screen> {
                             SizedBox(height: 5),
                             Divider(),
                             Row(
-                              //   mainAxisAlignment: MainAxisAlignment.end,
+                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Column(
                                   children: [
