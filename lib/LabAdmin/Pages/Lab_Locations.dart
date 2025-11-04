@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lablink/LabAdmin/Pages/Add_New_Location.dart';
+import 'package:lablink/LabAdmin/Pages/Add_New_Test.dart';
 import 'package:lablink/LabAdmin/Widgets/top_widget.dart';
 import 'package:lablink/LabAdmin/services/location_services.dart';
 
@@ -12,6 +13,7 @@ class LabLocations_screen extends StatefulWidget {
 
 class _LabLocations_screenState extends State<LabLocations_screen> {
   final labid = 'sJAWUw2DnhZDibT5EeUqf2D5qXr2';
+  String locationId = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -163,7 +165,12 @@ class _LabLocations_screenState extends State<LabLocations_screen> {
                                   child: Row(
                                     children: [
                                       InkWell(
-                                        onTap: () {},
+                                        onTap: () {
+                                          locationId= locations?[index].locationId ?? "";
+                                          Navigator.push(context, MaterialPageRoute(builder: (context){
+                                            return AddNewTest(locationId: locationId,);
+                                          }));
+                                        },
                                         child: Container(
                                           width: 113,
                                           height: 31,

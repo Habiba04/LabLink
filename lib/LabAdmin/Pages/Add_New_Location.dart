@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lablink/LabAdmin/Widgets/top_widget.dart';
 import 'package:lablink/LabAdmin/services/location_services.dart'
     show LocationServices;
+import 'package:lablink/LabAdmin/Widgets/label.dart';
 import 'package:lablink/Models/LabLocation.dart';
 
 class AddNewLocation extends StatefulWidget {
@@ -34,8 +35,8 @@ class _AddNewLocationState extends State<AddNewLocation> {
   @override
   Widget build(BuildContext context) {
     final String? labid = 'sJAWUw2DnhZDibT5EeUqf2D5qXr2';
-
-    bool _isSaving = false;
+    String locationId = "";
+    bool isSaving = false;
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -51,26 +52,7 @@ class _AddNewLocationState extends State<AddNewLocation> {
                 subtitle: 'Set up a new laboratory branch',
               ),
               const SizedBox(height: 4),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: Icon(
-                      Icons.location_city_outlined,
-                      color: Color(0xFF364153),
-                    ),
-                  ),
-                  SizedBox(width: 12),
-                  Text(
-                    'Location Name',
-                    style: TextStyle(
-                      color: Color(0xFF364153),
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+              buildLabel('Location Name',  Icon(Icons.location_city_outlined)),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
                 child: TextFormField(
@@ -94,26 +76,7 @@ class _AddNewLocationState extends State<AddNewLocation> {
                   ),
                 ),
               ),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: Icon(
-                      Icons.location_on_outlined,
-                      color: Color(0xFF364153),
-                    ),
-                  ),
-                  SizedBox(width: 12),
-                  Text(
-                    'Address',
-                    style: TextStyle(
-                      color: Color(0xFF364153),
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+              buildLabel('Address',  Icon(Icons.location_on_rounded)),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
                 child: TextFormField(
@@ -141,23 +104,7 @@ class _AddNewLocationState extends State<AddNewLocation> {
                   ),
                 ),
               ),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: Icon(Icons.call_outlined, color: Color(0xFF364153)),
-                  ),
-                  SizedBox(width: 12),
-                  Text(
-                    'Phone Number',
-                    style: TextStyle(
-                      color: Color(0xFF364153),
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+             buildLabel('Phone Numper', Icon(Icons.call_outlined)),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
                 child: TextFormField(
@@ -182,23 +129,7 @@ class _AddNewLocationState extends State<AddNewLocation> {
                   ),
                 ),
               ),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: Icon(Icons.schedule, color: Color(0xFF364153)),
-                  ),
-                  SizedBox(width: 12),
-                  Text(
-                    'Working Days',
-                    style: TextStyle(
-                      color: Color(0xFF364153),
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+              buildLabel('Working Days', Icon(Icons.access_time)),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
                 child: 
@@ -271,23 +202,7 @@ class _AddNewLocationState extends State<AddNewLocation> {
   ),
 ),
    ),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 16.0),
-                    child: Icon(Icons.access_time, color: Color(0xFF364153)),
-                  ),
-                  SizedBox(width: 12),
-                  Text(
-                    'Opening Hours',
-                    style: TextStyle(
-                      color: Color(0xFF364153),
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+              buildLabel('Opening Hours', Icon(Icons.schedule)),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
                 child: Row(
@@ -359,8 +274,8 @@ class _AddNewLocationState extends State<AddNewLocation> {
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () async {
-                      if (_isSaving) return;
-                      _isSaving = true;
+                      if (isSaving) return;
+                      isSaving = true;
 
                       if (formkey.currentState!.validate()) {
                         if (labid != null) {
@@ -392,7 +307,7 @@ class _AddNewLocationState extends State<AddNewLocation> {
                           );
                         }
                       }
-                      _isSaving = false;
+                      isSaving = false;
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF00BBA7),

@@ -7,12 +7,21 @@ Widget top_screen({ required BuildContext context,required  String title,   Stri
       gradient: LinearGradient(
         colors: [Color(0xFF00BBA7), Color(0xFF155DFC)],
       ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.2),
+          spreadRadius:2,
+          blurRadius: 6,
+          offset: Offset(0, 3),
+        ),
+      ],
       borderRadius: BorderRadius.only(
         bottomLeft: Radius.circular(18),
         bottomRight: Radius.circular(18),
       ),
     ),
     child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Padding(
           padding: const EdgeInsets.only(top: 36.0, left: 26.0),
@@ -38,18 +47,19 @@ Widget top_screen({ required BuildContext context,required  String title,   Stri
             ],
           ),
         ),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: const EdgeInsets.only(left: 78.0, top: 8),
+        Row(
+           children: [
+             Padding(
+            padding: const EdgeInsets.only(left: 24, top: 10, right: 16, bottom: 8),
             child: Text(
               subtitle??'',
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 12,
+                fontSize: 16,
               ),
             ),
           ),
+           ],
         ),
       ],
     ),
