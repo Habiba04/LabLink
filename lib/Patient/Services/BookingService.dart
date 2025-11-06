@@ -70,7 +70,7 @@ class BookingService {
 
   Future<Map<String, dynamic>> fetchLocationDetails() async {
     final doc = await FirebaseFirestore.instance
-        .collection('labs')
+        .collection('lab')
         .doc(labData['id'])
         .collection('locations')
         .doc(locationData['id'])
@@ -85,7 +85,7 @@ class BookingService {
     final locationId = locationData['id'];
 
     final snapshot = await FirebaseFirestore.instance
-        .collection('labs')
+        .collection('lab')
         .doc(labData['id'])
         .collection('locations')
         .doc(locationId)
@@ -132,7 +132,7 @@ class BookingService {
 
     // 1. Primary Ref (Lab/Location)
     final appointmentsCollectionRef = firestore
-        .collection('labs')
+        .collection('lab')
         .doc(labId)
         .collection('locations')
         .doc(locationId)
@@ -158,7 +158,7 @@ class BookingService {
 
     // 3. Disabled Slot Ref
     final disabledSlotRef = firestore
-        .collection('labs')
+        .collection('lab')
         .doc(labId)
         .collection('locations')
         .doc(locationId)
@@ -205,7 +205,7 @@ class BookingService {
 
     // 1. Primary Appointment Ref (Lab/Location)
     final appointmentRef = firestore
-        .collection('labs')
+        .collection('lab')
         .doc(labId)
         .collection('locations')
         .doc(locationId)
@@ -221,7 +221,7 @@ class BookingService {
 
     // 3. Disabled Slot Ref
     final disabledSlotRef = firestore
-        .collection('labs')
+        .collection('lab')
         .doc(labId)
         .collection('locations')
         .doc(locationId)

@@ -1,87 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lablink/Models/LabLocation.dart';
 import 'package:lablink/Patient/Pages/lab_details.dart';
+import 'package:lablink/Models/Lab.dart';
 
-// --- Lab Model ---
-class Lab {
-  final String name;
-  final double rating;
-  final int reviewCount;
-  final double distanceKm;
-  final String closingTime;
-  final String imageUrl;
-
-  Lab({
-    required this.name,
-    required this.rating,
-    required this.reviewCount,
-    required this.distanceKm,
-    required this.closingTime,
-    required this.imageUrl,
-  });
-}
-
-// --- Sample Data ---
-final List<Lab> mockLabs = [
-  Lab(
-    name: "Central Diagnostics",
-    rating: 4.8,
-    reviewCount: 156,
-    distanceKm: 0.8,
-    closingTime: "8 PM",
-    imageUrl: "images/labs.jpeg",
-  ),
-  Lab(
-    name: "HealthFirst Labs",
-    rating: 3.5,
-    reviewCount: 203,
-    distanceKm: 1.2,
-    closingTime: "10 PM",
-    imageUrl: "images/labs.jpeg",
-  ),
-  Lab(
-    name: "MediLab Pro",
-    rating: 4.7,
-    reviewCount: 98,
-    distanceKm: 2.1,
-    closingTime: "7 PM",
-    imageUrl: "images/labs.jpeg",
-  ),
-  Lab(
-    name: "BioLab Center",
-    rating: 2.5,
-    reviewCount: 150,
-    distanceKm: 3.4,
-    closingTime: "9 PM",
-    imageUrl: "images/labs.jpeg",
-  ),
-  Lab(
-    name: "Care Diagnostics",
-    rating: 4.6,
-    reviewCount: 130,
-    distanceKm: 2.8,
-    closingTime: "8:30 PM",
-    imageUrl: "images/labs.jpeg",
-  ),
-  Lab(
-    name: "Smart Lab",
-    rating: 4.9,
-    reviewCount: 210,
-    distanceKm: 1.5,
-    closingTime: "10 PM",
-    imageUrl: "images/labs.jpeg",
-  ),
-  Lab(
-    name: "UltraLab Plus",
-    rating: 4.8,
-    reviewCount: 175,
-    distanceKm: 2.0,
-    closingTime: "9:30 PM",
-    imageUrl: "images/labs.jpeg",
-  ),
-];
-
-// --- Home Screen ---
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -92,21 +15,18 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool showAllLabs = false;
   String searchQuery = "";
-  double? minRatingFilter; // <-- New rating filter
-  final patientName = FirebaseAuth.instance.currentUser!.uid;
+  double? minRatingFilter;
   final TextEditingController searchController = TextEditingController();
 
-  List<Lab> get displayedLabs {
-    List<Lab> filtered = mockLabs
-        .where(
-          (lab) =>
-              (lab.name.toLowerCase().contains(searchQuery.toLowerCase()) ||
-                  lab.rating.toString().contains(searchQuery)) &&
-              (minRatingFilter == null || lab.rating >= minRatingFilter!),
-        )
-        .toList();
+  // Firestore reference
+  final labsRef = FirebaseFirestore.instance.collection('lab');
 
-    return showAllLabs ? filtered : filtered.take(6).toList();
+  Future<List<Lab>> fetchLabs() async {
+    final snapshot = await labsRef.get();
+    return snapshot.docs.map((doc) {
+      final data = doc.data();
+      return Lab.fromMap(data);
+    }).toList();
   }
 
   void _openFilterDialog() {
@@ -184,33 +104,69 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           _buildHeader(context),
           Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 30),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 20),
-                    _buildListHeader(),
-                    const SizedBox(height: 10),
-                    ...displayedLabs.map((lab) => LabCard(lab: lab)).toList(),
-                    if (displayedLabs.isEmpty)
-                      const Padding(
-                        padding: EdgeInsets.all(20),
-                        child: Center(
-                          child: Text(
-                            "No labs found.",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                              fontWeight: FontWeight.w500,
+            child: FutureBuilder<List<Lab>>(
+              future: fetchLabs(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: Color(0xFF00BBA7)),
+                  );
+                }
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text("Error: ${snapshot.error}"),
+                  );
+                }
+
+                List<Lab> labs = snapshot.data ?? [];
+
+                // Apply search and filter
+                List<Lab> filtered = labs
+                    .where(
+                      (lab) =>
+                          (lab.name
+                                  .toLowerCase()
+                                  .contains(searchQuery.toLowerCase()) ||
+                              lab.rating
+                                  .toString()
+                                  .contains(searchQuery)) &&
+                          (minRatingFilter == null ||
+                              lab.rating >= minRatingFilter!),
+                    )
+                    .toList();
+
+                final displayedLabs =
+                    showAllLabs ? filtered : filtered.take(6).toList();
+
+                return SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 30),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 20),
+                        _buildListHeader(),
+                        const SizedBox(height: 10),
+                        ...displayedLabs.map((lab) => LabCard(lab: lab)).toList(),
+                        if (displayedLabs.isEmpty)
+                          const Padding(
+                            padding: EdgeInsets.all(20),
+                            child: Center(
+                              child: Text(
+                                "No labs found.",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ],
@@ -218,10 +174,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // --- Header with search ---
   Widget _buildHeader(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top;
-    final patientName = FirebaseAuth.instance.currentUser!.uid;
+    final patientName = FirebaseAuth.instance.currentUser?.displayName ??
+        FirebaseAuth.instance.currentUser?.email ??
+        "Patient";
 
     String initials() {
       final parts = patientName.trim().split(' ');
@@ -325,7 +282,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // --- "Available Labs" Header ---
   Widget _buildListHeader() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -359,7 +315,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// --- Lab Card ---
 class LabCard extends StatelessWidget {
   final Lab lab;
   const LabCard({super.key, required this.lab});
@@ -367,7 +322,7 @@ class LabCard extends StatelessWidget {
   void _navigateToLabDetails(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => LabDetails(labId: "lab1")),
+      MaterialPageRoute(builder: (_) => LabDetails(labId: lab.id)),
     );
   }
 

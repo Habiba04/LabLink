@@ -28,12 +28,19 @@ class _LabDetailsState extends State<LabDetails> {
     fetchLabDetails();
   }
 
+
+
   Future<void> fetchLabDetails() async {
+    try {
     final data = await FirebaseDatabase().getLabDetails(widget.labId);
     print("Fetched data: $data");
     setState(() {
       labData = data;
     });
+    }
+    catch(e){
+      print("Error fetching lab details: $e");
+    }
   }
 
   Future<void> pickImage(ImageSource source) async {
@@ -140,7 +147,7 @@ class _LabDetailsState extends State<LabDetails> {
                               ),
                               SizedBox(width: height * 0.014),
                               Text(
-                                "4.8",
+                                labData!.rating.toString(),
                                 style: TextStyle(
                                   fontSize: width * 0.04,
                                   color: Colors.black,

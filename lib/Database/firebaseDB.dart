@@ -9,14 +9,14 @@ class FirebaseDatabase {
   Future<Lab?> getLabDetails(String labId) async {
     try {
       // Get main lab document
-      final labDoc = await _firestore.collection('labs').doc(labId).get();
+      final labDoc = await _firestore.collection('lab').doc(labId).get();
       if (!labDoc.exists) return null;
 
       final labData = labDoc.data()!;
 
       // Get all locations (branches)
       final locationsSnapshot = await _firestore
-          .collection('labs')
+          .collection('lab')
           .doc(labId)
           .collection('locations')
           .get();
@@ -28,7 +28,7 @@ class FirebaseDatabase {
 
         // Get all tests in this location
         final testsSnapshot = await _firestore
-            .collection('labs')
+            .collection('lab')
             .doc(labId)
             .collection('locations')
             .doc(locationDoc.id)

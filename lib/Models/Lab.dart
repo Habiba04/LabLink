@@ -6,14 +6,24 @@ class Lab {
   final String email;
   final String phone;
   final List<LabLocation> locations;
+  final double rating;
+  final int reviewCount;
+  final double distanceKm;
+  final String closingTime;
 
   Lab({
+    required this.rating,
+    required this.reviewCount,
+    required this.distanceKm,
+    required this.closingTime,
     required this.id,
     required this.name,
     required this.email,
     required this.phone,
     this.locations = const [],
   });
+
+  final String imageUrl = 'assets/images/labs.jpeg';
 
   factory Lab.fromMap(
     Map<String, dynamic> map, {
@@ -24,7 +34,11 @@ class Lab {
       name: map['name'] ?? '',
       email: map['email'] ?? '',
       phone: map['phone'] ?? '',
-      locations: locations,
+      locations: map['locations'] ?? [],
+      rating: map['labRating']?.toDouble() ?? 0.0,
+      reviewCount: map['reviewCount']?.toInt() ?? 0,
+      distanceKm: map['distanceKm']?.toDouble() ?? 0.0,
+      closingTime: map['closingTime'] ?? '',
     );
   }
 
@@ -35,6 +49,11 @@ class Lab {
       'email': email,
       'phone': phone,
       'locations': locations.map((location) => location.toMap()).toList(),
+      'rating': rating,
+      'reviewCount': reviewCount,
+      'distanceKm': distanceKm,
+      'closingTime': closingTime,
+      'imageUrl': imageUrl
     };
   }
 }
