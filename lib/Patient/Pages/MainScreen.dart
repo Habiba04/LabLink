@@ -6,35 +6,50 @@ import 'package:lablink/Patient/Pages/profile_screen.dart';
 
 // --- Mock Screens for Navigation ---
 
-// class HomeScreen extends StatelessWidget {
-//   const HomeScreen({super.key});
-//   @override
-//   Widget build(BuildContext context) {
-//     return Center(
-//       child: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           Text(
-//             "Home Dashboard",
-//             style: TextStyle(fontSize: 24, color: Colors.blueGrey),
-//           ),
-//           IconButton(
-//             onPressed: () {
-//               Navigator.push(
-//                 context,
-//                 MaterialPageRoute(
-//                   builder: (context) => LabDetails(labId: "lab1"),
-//                 ),
-//               );
-//             },
-//             icon: Icon(Icons.arrow_circle_right_outlined),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "Home Dashboard",
+            style: TextStyle(fontSize: 24, color: Colors.blueGrey),
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      LabDetails(labId: "KQKp1xBfKO3OCVU3SO9w"),
+                ),
+              );
+            },
+            icon: Icon(Icons.arrow_circle_right_outlined),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
+/*
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Text(
+        "Patient Profile",
+        style: TextStyle(fontSize: 24, color: Colors.blueGrey),
+      ),
+    );
+  }
+}
+*/
 // --- Main Navigation Wrapper ---
 
 class MainScreen extends StatefulWidget {

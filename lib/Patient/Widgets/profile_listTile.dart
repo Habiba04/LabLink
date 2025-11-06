@@ -8,6 +8,7 @@ class ProfileListtile extends StatelessWidget {
   double height;
   double width;
   BorderRadius? borderRadiusWidget;
+
   ProfileListtile({
     super.key,
     required this.bgColor,
@@ -44,7 +45,14 @@ class ProfileListtile extends StatelessWidget {
               child: Icon(icon, color: iconColor),
             ),
             SizedBox(width: 8),
-            Text(title, style: TextStyle(color: Colors.black, fontSize: 16)),
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(color: Colors.black, fontSize: 16),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
           ],
         ),
       ),
