@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lablink/Patient/Pages/BookingHistory.dart';
 import 'package:lablink/Patient/Pages/lab_details.dart';
+import 'package:lablink/Patient/Pages/profile_screen.dart';
 
 // --- Mock Screens for Navigation ---
 
@@ -34,6 +35,7 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
+/*
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
   @override
@@ -46,7 +48,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 }
-
+*/
 // --- Main Navigation Wrapper ---
 
 class MainScreen extends StatefulWidget {

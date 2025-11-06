@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lablink/Patient/Pages/lab_details.dart';
-import 'package:lablink/Patient/Pages/review_screen.dart';
+import 'package:lablink/Patient/Pages/splashScreen.dart';
 
 const Map<String, dynamic> labData = {
   'name': 'Central Lab (Mock)',
@@ -45,7 +44,7 @@ class MyApp extends StatelessWidget {
       //   mockSelectedTests: selectedTests,
       //   mockSelectedService: selectedService,
       // ),
-      home: LabDetails(labId: "KQKp1xBfKO3OCVU3SO9w"),
+      home: Splash(),
       // home: ServiceTypeScreen(
       //   labData: labData,
       //   locationData: locationData,

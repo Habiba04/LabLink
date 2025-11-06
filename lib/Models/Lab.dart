@@ -5,6 +5,7 @@ class Lab {
   final String name;
   final String email;
   final String phone;
+  final double labRating;
   final List<LabLocation> locations;
 
   Lab({
@@ -12,6 +13,7 @@ class Lab {
     required this.name,
     required this.email,
     required this.phone,
+    required this.labRating,
     this.locations = const [],
   });
 
@@ -25,6 +27,7 @@ class Lab {
       email: map['email'] ?? '',
       phone: map['phone'] ?? '',
       locations: locations,
+      labRating: (map['labRating'] ?? 0).toDouble(),
     );
   }
 
@@ -35,6 +38,7 @@ class Lab {
       'email': email,
       'phone': phone,
       'locations': locations.map((location) => location.toMap()).toList(),
+      'labRating': labRating,
     };
   }
 }

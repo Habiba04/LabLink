@@ -23,7 +23,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
     final reviewsData = await FirebaseDatabase().getLabReviews(widget.labId);
     setState(() {
       reviews = reviewsData;
-      print('review data: ${reviewsData}');
+      print('review data: $reviewsData');
       _isLoading = false;
     });
   }
@@ -182,8 +182,11 @@ class _ReviewScreenState extends State<ReviewScreen> {
                             ),
                           ),
                           child: ElevatedButton(
-                            onPressed: () {
+                            onPressed: () async {
                               addReview();
+                              await FirebaseDatabase().updateLabRating(
+                                widget.labId,
+                              );
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.transparent,

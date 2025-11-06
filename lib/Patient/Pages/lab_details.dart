@@ -139,10 +139,11 @@ class _LabDetailsState extends State<LabDetails> {
                               ),
                               SizedBox(width: height * 0.014),
                               Text(
-                                "4.8",
+                                "${labData!.labRating}",
                                 style: TextStyle(
                                   fontSize: width * 0.04,
                                   color: Colors.black,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ],

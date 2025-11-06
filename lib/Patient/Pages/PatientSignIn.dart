@@ -5,6 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lablink/Patient/Pages/ForgotPassword.dart';
 import 'package:lablink/Patient/Pages/MainScreen.dart';
 import 'package:lablink/Patient/Pages/PatientSignUp.dart';
+import 'package:lablink/Patient/Pages/profile_screen.dart';
 import 'package:lablink/Patient/Pages/splashScreen.dart';
 
 class PatientSignin extends StatefulWidget {
@@ -35,7 +36,7 @@ class _PatientSigninState extends State<PatientSignin> {
       });
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HomeScreen()),
+        MaterialPageRoute(builder: (context) => ProfileScreen()),
       );
     } on FirebaseAuthException catch (e) {
       String message = 'Username or password is invalid';
@@ -45,53 +46,50 @@ class _PatientSigninState extends State<PatientSignin> {
         message = 'Wrong password.';
       }
 
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
     } finally {
       setState(() => loading = false);
     }
   }
 
-Future<void> signInWithGoogle() async {
-  try {
-    // Create the GoogleSignIn instance
-    final GoogleSignIn googleSignIn = GoogleSignIn(
-      scopes: ['email'],
-    );
+  Future<void> signInWithGoogle() async {
+    try {
+      // Create the GoogleSignIn instance
+      final GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['email']);
 
-    // Attempt sign-in
-    final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-    if (googleUser == null) {
-      // The user canceled the sign-in
-      return;
+      // Attempt sign-in
+      final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+      if (googleUser == null) {
+        // The user canceled the sign-in
+        return;
+      }
+
+      // Get the authentication from the signed-in user
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      // Create a credential for Firebase
+      final OAuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in to Firebase with the Google credential
+      await FirebaseAuth.instance.signInWithCredential(credential);
+
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HomeScreen()),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Google Sign-In failed: $e')));
     }
-
-    // Get the authentication from the signed-in user
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-
-    // Create a credential for Firebase
-    final OAuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    // Sign in to Firebase with the Google credential
-    await FirebaseAuth.instance.signInWithCredential(credential);
-
-    if (!mounted) return;
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => HomeScreen()),
-    );
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Google Sign-In failed: $e')),
-    );
   }
-}
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -120,16 +118,10 @@ Future<void> signInWithGoogle() async {
               ),
               const Text(
                 'Log in to continue',
-                style: TextStyle(
-                  color: Color(0xff9B9B9B),
-                  fontSize: 16,
-                ),
+                style: TextStyle(color: Color(0xff9B9B9B), fontSize: 16),
               ),
               const SizedBox(height: 25),
-              const Text(
-                'Email',
-                style: TextStyle(fontSize: 16),
-              ),
+              const Text('Email', style: TextStyle(fontSize: 16)),
               Form(
                 key: _formKey,
                 child: Column(
@@ -142,8 +134,9 @@ Future<void> signInWithGoogle() async {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return "Please enter your email";
-                        } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
-                            .hasMatch(value)) {
+                        } else if (!RegExp(
+                          r'^[^@]+@[^@]+\.[^@]+',
+                        ).hasMatch(value)) {
                           return 'Please enter a valid email address';
                         }
                         return null;
@@ -152,10 +145,7 @@ Future<void> signInWithGoogle() async {
                     const SizedBox(height: 15),
                     const Row(
                       children: [
-                        Text(
-                          'Password',
-                          style: TextStyle(fontSize: 16),
-                        ),
+                        Text('Password', style: TextStyle(fontSize: 16)),
                       ],
                     ),
                     buildTextField(
@@ -192,10 +182,7 @@ Future<void> signInWithGoogle() async {
                       },
                       child: const Text(
                         'Forgot password?',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.blue,
-                        ),
+                        style: TextStyle(fontSize: 16, color: Colors.blue),
                       ),
                     ),
                   ),
@@ -225,19 +212,12 @@ Future<void> signInWithGoogle() async {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
-                  Expanded(
-                    child: Divider(thickness: 1, color: Colors.black),
-                  ),
+                  Expanded(child: Divider(thickness: 1, color: Colors.black)),
                   Text(
                     '  Or continue with  ',
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Color(0xff9B9B9B),
-                    ),
+                    style: TextStyle(fontSize: 15, color: Color(0xff9B9B9B)),
                   ),
-                  Expanded(
-                    child: Divider(thickness: 1, color: Colors.black),
-                  ),
+                  Expanded(child: Divider(thickness: 1, color: Colors.black)),
                 ],
               ),
               const SizedBox(height: 20),
@@ -254,13 +234,9 @@ Future<void> signInWithGoogle() async {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
-                      
                       Text(
                         ' Google',
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.black,
-                        ),
+                        style: TextStyle(fontSize: 17, color: Colors.black),
                       ),
                     ],
                   ),
