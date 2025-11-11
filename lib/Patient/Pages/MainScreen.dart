@@ -4,8 +4,6 @@ import 'package:lablink/Patient/Pages/HomeScreen.dart';
 import 'package:lablink/Patient/Pages/lab_details.dart';
 import 'package:lablink/Patient/Pages/profile_screen.dart';
 
-
-*/
 // --- Main Navigation Wrapper ---
 
 class MainScreen extends StatefulWidget {
