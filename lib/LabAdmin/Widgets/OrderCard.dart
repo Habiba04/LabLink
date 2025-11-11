@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:lablink/LabAdmin/Pages/PrescriptionViewer.dart';
 
 class OrderCard extends StatelessWidget {
   final Map<String, dynamic> order;
   final VoidCallback onViewDetails;
-  final VoidCallback onAccept;
-  final VoidCallback onReject;
+  final VoidCallback? onAccept; // kept for interface
+  final VoidCallback? onReject; // kept for interface
 
   const OrderCard({
     required this.order,
@@ -17,10 +18,11 @@ class OrderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String name = order['name'] ?? '';
-    final String age = "${order['age']} yrs";
+    final String age = order['age'] != null ? "${order['age']} yrs" : '';
     final String date = order['date'] ?? '-';
     final String time = order['time'] ?? '-';
     final String service = order['collection'] ?? '-';
+    final List tests = order['tests'] ?? [];
 
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
@@ -40,6 +42,7 @@ class OrderCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Patient info
             Row(
               children: [
                 _avatar(name),
@@ -50,13 +53,14 @@ class OrderCard extends StatelessWidget {
                     children: [
                       Text(name, style: const TextStyle(fontSize: 18)),
                       const SizedBox(height: 2),
-                      Text(
-                        age,
-                        style: const TextStyle(
-                          fontSize: 15,
-                          color: Colors.black54,
+                      if (age.isNotEmpty)
+                        Text(
+                          age,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            color: Colors.black54,
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ),
@@ -68,29 +72,109 @@ class OrderCard extends StatelessWidget {
             const SizedBox(height: 16),
             _infoRow(Icons.article_outlined, service),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 16),
+            // Tests list
+            if (tests.isNotEmpty)
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(21, 0, 179, 219),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.article_outlined,
+                          color: Color(0xFF00BBA7),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          tests.any((t) => t['prescription'] != null)
+                              ? "Prescriptions"
+                              : "Tests",
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    ...List.generate(tests.length, (index) {
+                      final test = tests[index];
+                      final testName = test['name'] ?? '';
+                      final prescriptionUrl = test['prescription'];
+
+                      return Padding(
+                        padding: const EdgeInsets.only(left: 32, bottom: 6),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                testName,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                            ),
+                            if (prescriptionUrl != null)
+                              IconButton(
+                                icon: const Icon(
+                                  Icons.visibility_outlined,
+                                  color: Color(0xFF00BBA7),
+                                ),
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => PrescriptionViewer(
+                                        url: prescriptionUrl,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                          ],
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+              ),
+
+            const SizedBox(height: 16),
             Row(
               children: [
+                // Accept Button
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: onAccept,
+                    onPressed: onAccept, // null disables button
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.teal,
+                      backgroundColor: onAccept != null
+                          ? Colors.teal
+                          : Colors.teal.shade300,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
-                    child: const Text(
+                    child: Text(
                       "Accept",
                       style: TextStyle(
-                        color: Colors.white,
+                        color: onAccept != null ? Colors.white : Colors.white70,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
                 const SizedBox(width: 10),
+
+                // Reject Button
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: onReject,
+                    onPressed: onReject, // null disables button
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: Colors.red),
                       padding: const EdgeInsets.symmetric(vertical: 12),
@@ -134,7 +218,7 @@ class OrderCard extends StatelessWidget {
         shape: BoxShape.circle,
       ),
       alignment: Alignment.center,
-      child: Icon(Icons.person_2_outlined, color: Colors.white, size: 30),
+      child: const Icon(Icons.person_2_outlined, color: Colors.white, size: 30),
     );
   }
 

@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lablink/LabAdmin/Pages/OrderDetailsScreen.dart';
 import 'package:lablink/LabAdmin/Widgets/FilterBar.dart';
@@ -9,57 +11,109 @@ class OrdersScreen extends StatefulWidget {
 }
 
 class _OrdersScreenState extends State<OrdersScreen> {
-  String filter = "Prescriptions";
+  String filter = "Manual Booking"; // Manual Booking / Prescriptions
   String searchQuery = "";
 
-  final orders = [
-    {
-      'id': '101',
-      'name': 'Sarah Johnson',
-      'age': 28,
-      'date': 'Oct 16, 2025',
-      'time': '10:00 AM',
-      'collection': 'Home Collection',
-      'status': 'New',
-      'type': 'Prescriptions',
-      'manual': false,
-      'tests': ['CBC'],
-    },
-    {
-      'id': '102',
-      'name': 'David Brown',
-      'age': 55,
-      'date': 'Oct 17, 2025',
-      'time': '09:00 AM',
-      'collection': 'Visit Lab',
-      'status': 'New',
-      'type': 'Manual Booking',
-      'manual': true,
-      'tests': ['Thyroid', 'Glucose'],
-    },
-  ];
+  Stream<List<Map<String, dynamic>>> _getPendingOrders() {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return const Stream.empty();
+
+    final appointmentsRef = FirebaseFirestore.instance
+        .collection('lab')
+        .doc(uid)
+        .collection('appointments');
+
+    return appointmentsRef.snapshots().asyncMap((snapshot) async {
+      List<Map<String, dynamic>> results = [];
+
+      for (var doc in snapshot.docs) {
+        final data = doc.data();
+
+        // Only Pending appointments
+        if ((data['status'] ?? '').toLowerCase() != 'pending') continue;
+
+        // Patient info
+        Map<String, dynamic>? patientData;
+        final patientId = data['patientId'];
+        if (patientId != null && patientId.toString().isNotEmpty) {
+          final patientSnap = await FirebaseFirestore.instance
+              .collection('patient')
+              .doc(patientId)
+              .get();
+          if (patientSnap.exists) patientData = patientSnap.data();
+        }
+
+        // Map appointment/order for UI
+        final order = {
+          'id': doc.id,
+          'name': patientData?['name'] ?? 'Unknown Patient',
+          'age': patientData?['age'] ?? '',
+          'date': data['date'] ?? '',
+          'time': data['time'] ?? '',
+          'collection': data['serviceType'] == 'Home Collection'
+              ? 'Home Collection'
+              : 'Visit Lab',
+          'status': data['status'] ?? 'Pending',
+          'type': data['serviceType'] == 'Manual Booking'
+              ? 'Manual Booking'
+              : 'Prescriptions',
+          'manual': data['serviceType'] == 'Manual Booking',
+          'tests': (data['tests'] != null && data['tests'].isNotEmpty)
+              ? List<Map<String, dynamic>>.from(
+                  data['tests'].map(
+                    (t) => {
+                      'name': t['name'],
+                      'prescription': t['prescriptionUrl'] ?? null,
+                    },
+                  ),
+                )
+              : [],
+        };
+
+        results.add(order);
+      }
+
+      return results;
+    });
+  }
+
+  // Accept function
+  Future<void> acceptOrder(Map<String, dynamic> order) async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+
+    await FirebaseFirestore.instance
+        .collection('lab')
+        .doc(uid)
+        .collection('appointments')
+        .doc(order['id'])
+        .update({'status': 'Upcoming'});
+  }
+
+  // Reject function
+  Future<void> rejectOrder(Map<String, dynamic> order) async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+
+    await FirebaseFirestore.instance
+        .collection('lab')
+        .doc(uid)
+        .collection('appointments')
+        .doc(order['id'])
+        .update({'status': 'Cancelled'});
+  }
 
   @override
   Widget build(BuildContext context) {
-    // ✅ Apply filter + search
-    var filtered = orders.where((x) {
-      bool matchesFilter = x['type'] == filter;
-      bool matchesSearch = x['name'].toString().toLowerCase().contains(
-        searchQuery.toLowerCase(),
-      );
-      return matchesFilter && matchesSearch;
-    }).toList();
-
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
-
       body: NestedScrollView(
         headerSliverBuilder: (_, __) {
           return [
             SliverToBoxAdapter(
               child: Column(
                 children: [
-                  // ✅ WHITE HEADER (like appointments, but white)
+                  // Header
                   Container(
                     width: double.infinity,
                     decoration: const BoxDecoration(
@@ -77,31 +131,23 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     ),
                     child: Column(
                       children: [
-                        // ✅ Back button + title row
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: const Text(
-                                "Orders",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 24,
-                                ),
+                          children: const [
+                            Text(
+                              "Orders",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 24,
                               ),
                             ),
                           ],
                         ),
-
                         const SizedBox(height: 16),
-
-                        // ✅ Search bar inside header
+                        // Search bar
                         TextField(
-                          onChanged: (value) {
-                            setState(() => searchQuery = value);
-                          },
+                          onChanged: (value) => setState(() {
+                            searchQuery = value;
+                          }),
                           decoration: InputDecoration(
                             hintText: "Search by patient name...",
                             prefixIcon: const Icon(Icons.search),
@@ -116,10 +162,8 @@ class _OrdersScreenState extends State<OrdersScreen> {
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 16),
-
-                  // ✅ Filter bar below header
+                  // Filter bar
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: FilterBar(
@@ -134,34 +178,62 @@ class _OrdersScreenState extends State<OrdersScreen> {
           ];
         },
 
-        // ✅ ORDER LIST
-        body: ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: filtered.length,
-          itemBuilder: (_, i) => OrderCard(
-            order: filtered[i],
+        body: StreamBuilder<List<Map<String, dynamic>>>(
+          stream: _getPendingOrders(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-            onAccept: () {
-              setState(() {
-                filtered[i]['status'] = 'Confirmed';
-              });
-            },
-
-            onReject: () {
-              setState(() {
-                filtered[i]['status'] = 'Cancelled';
-              });
-            },
-
-            onViewDetails: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => OrderDetailsScreen(order: filtered[i]),
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(
+                child: Text(
+                  "No ${filter.toLowerCase()} orders found.",
+                  style: const TextStyle(color: Colors.black54, fontSize: 16),
                 ),
               );
-            },
-          ),
+            }
+
+            var filtered = snapshot.data!
+                .where((x) => x['type'] == filter)
+                .where(
+                  (x) => x['name'].toString().toLowerCase().contains(
+                    searchQuery.toLowerCase(),
+                  ),
+                )
+                .toList();
+
+            if (filtered.isEmpty) {
+              return Center(
+                child: Text(
+                  "No ${filter.toLowerCase()} orders found.",
+                  style: const TextStyle(color: Colors.black54, fontSize: 16),
+                ),
+              );
+            }
+
+            return ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: filtered.length,
+              itemBuilder: (_, i) => OrderCard(
+                order: filtered[i],
+                onAccept: filtered[i]['manual']
+                    ? null
+                    : () => acceptOrder(filtered[i]),
+                onReject: filtered[i]['manual']
+                    ? null
+                    : () => rejectOrder(filtered[i]),
+                onViewDetails: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => OrderDetailsScreen(order: filtered[i]),
+                    ),
+                  );
+                },
+              ),
+            );
+          },
         ),
       ),
     );
