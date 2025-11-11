@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lablink/LabAdmin/Pages/LabAdminMainScreen.dart';
 import 'package:lablink/Patient/Pages/ForgotPassword.dart';
-import 'package:lablink/LabAdmin/Pages/LabAdminDashboard.dart';
-import 'package:lablink/Patient/Pages/MainScreen.dart';
 
 class LabLoginScreen extends StatefulWidget {
   const LabLoginScreen({super.key});
@@ -63,7 +61,6 @@ class _LabLoginScreenState extends State<LabLoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         elevation: 0,

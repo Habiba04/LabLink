@@ -1,6 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lablink/LabAdmin/Widgets/FilterBar.dart';
 import 'package:lablink/LabAdmin/Widgets/appointmentCard.dart';
+import 'package:lablink/LabAdmin/Widgets/FilterBar.dart';
 
 class AppointmentsScreen extends StatefulWidget {
   @override
@@ -10,48 +12,92 @@ class AppointmentsScreen extends StatefulWidget {
 class _AppointmentsScreenState extends State<AppointmentsScreen> {
   String filter = "Upcoming";
 
-  final appointments = [
-    {
-      'name': 'Sarah Johnson',
-      'phone': '+1 (555) 123-4567',
-      'test': 'Complete Blood Count',
-      'date': 'Tomorrow',
-      'time': '09:00 AM',
-      'branch': 'Main Branch',
-      'collectionType': 'Home Collection',
-      'status': 'Upcoming',
-    },
-    {
-      'name': 'Michael Chen',
-      'phone': '+1 (555) 234-5678',
-      'test': 'Lipid Profile',
-      'date': 'Tomorrow',
-      'time': '10:30 AM',
-      'branch': 'North Branch',
-      'collectionType': 'Walk-in',
-      'status': 'Upcoming',
-    },
-    {
-      'name': 'Lisa Anderson',
-      'phone': '+1 (555) 678-1111',
-      'test': 'Liver Function Test',
-      'date': 'Oct 20, 2025',
-      'time': '03:30 PM',
-      'branch': 'Main Branch',
-      'collectionType': 'Walk-in',
-      'status': 'Completed',
-    },
-  ];
+  Stream<List<Map<String, dynamic>>> _getAppointments() {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return const Stream.empty();
+
+    final labRef = FirebaseFirestore.instance
+        .collection('lab')
+        .doc(uid)
+        .collection('appointments');
+
+    return labRef.snapshots().asyncMap((snapshot) async {
+      List<Map<String, dynamic>> results = [];
+
+      for (var doc in snapshot.docs) {
+        final data = doc.data();
+
+        // ✅ Get patient info
+        final patientId = data['patientId'];
+        Map<String, dynamic>? patientData;
+
+        if (patientId != null && patientId.toString().isNotEmpty) {
+          final patientSnap = await FirebaseFirestore.instance
+              .collection('patient')
+              .doc(patientId)
+              .get();
+          if (patientSnap.exists) {
+            patientData = patientSnap.data();
+          }
+        }
+
+        // ✅ Get branch address
+        final branchId = data['branchId'];
+        String branchAddress = 'Unknown Branch';
+        String branchName = 'Unknown Branch Name';
+        if (branchId != null && branchId.toString().isNotEmpty) {
+          final branchSnap = await FirebaseFirestore.instance
+              .collection('lab')
+              .doc(uid)
+              .collection('locations')
+              .doc(branchId)
+              .get();
+          if (branchSnap.exists) {
+            branchAddress = branchSnap.data()?['address'] ?? 'No address';
+            branchName = branchSnap.data()?['name'] ?? 'No address';
+          }
+        }
+
+        // ✅ Map appointment data for UI
+        final appointment = {
+          'name': patientData?['name'] ?? 'Unknown Patient',
+          'phone': patientData?['phone'] ?? 'No phone',
+          'tests': (data['tests'] != null && data['tests'].isNotEmpty)
+              ? List<Map<String, dynamic>>.from(
+                  data['tests'].map(
+                    (t) => {
+                      'name': t['name'] ?? 'Unnamed Test',
+                      'prescription':
+                          t['prescription'] ?? null, 
+                    },
+                  ),
+                )
+              : [
+                  {'name': 'No tests', 'prescription': null},
+                ],
+
+          'date': data['date'] ?? '',
+          'time': data['time'] ?? '',
+          'branch': branchName + ', ' + branchAddress,
+          'collectionType': (data['serviceType'] == 'Home Collection')
+              ? 'Home'
+              : 'Walk-in',
+          'status': data['status'] ?? 'Pending',
+        };
+
+        results.add(appointment);
+      }
+
+      return results
+          .where((a) => a['status']?.toLowerCase() != 'pending')
+          .toList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    var filtered = filter == "All"
-        ? appointments
-        : appointments.where((x) => x['status'] == filter).toList();
-
     return Scaffold(
       backgroundColor: const Color(0xFFF7F8FA),
-
       body: NestedScrollView(
         headerSliverBuilder: (context, _) {
           return [
@@ -80,7 +126,6 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // ✅ Back button + Titles
                         Padding(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 16,
@@ -89,7 +134,6 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              // 🔙 Back Button
                               GestureDetector(
                                 onTap: () => Navigator.pop(context),
                                 child: const CircleAvatar(
@@ -102,21 +146,18 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                                 ),
                               ),
                               const SizedBox(width: 14),
-                              Text(
+                              const Text(
                                 "Appointments",
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 24,
                                 ),
                               ),
-                              const SizedBox(width: 12),
-
-                              // ✅ Title & Subtitle
                             ],
                           ),
                         ),
-                        SizedBox(height: 12),
-                        Text(
+                        const SizedBox(height: 12),
+                        const Text(
                           "View and manage scheduled appointments",
                           style: TextStyle(color: Colors.white70, fontSize: 16),
                         ),
@@ -137,10 +178,54 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
             ),
           ];
         },
-        body: ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: filtered.length,
-          itemBuilder: (ctx, i) => AppointmentCard(appointment: filtered[i]),
+        body: StreamBuilder<List<Map<String, dynamic>>>(
+          stream: _getAppointments(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(
+                child: Text(
+                  "No appointments found.",
+                  style: TextStyle(color: Colors.black54, fontSize: 16),
+                ),
+              );
+            }
+
+            final allAppointments = snapshot.data!;
+
+            // Make filter case-insensitive
+            final filtered = filter.toLowerCase() == "all"
+                ? allAppointments
+                : allAppointments
+                      .where(
+                        (x) =>
+                            (x['status'] ?? '').toString().toLowerCase() ==
+                            filter.toLowerCase(),
+                      )
+                      .toList();
+
+            // Show a proper message if no appointments after filtering
+            if (filtered.isEmpty) {
+              return Center(
+                child: Text(
+                  filter == "All"
+                      ? "No appointments found."
+                      : "No $filter appointments.",
+                  style: const TextStyle(color: Colors.black54, fontSize: 16),
+                ),
+              );
+            }
+
+            return ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: filtered.length,
+              itemBuilder: (ctx, i) =>
+                  AppointmentCard(appointment: filtered[i]),
+            );
+          },
         ),
       ),
     );

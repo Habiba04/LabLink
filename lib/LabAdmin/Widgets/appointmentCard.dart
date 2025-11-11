@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lablink/LabAdmin/Pages/PrescriptionViewer.dart';
 
 class AppointmentCard extends StatelessWidget {
   final Map<String, dynamic> appointment;
@@ -25,12 +26,11 @@ class AppointmentCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Top Row: Name + Status Tag
+          // Top Row: Name + Status
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Name + phone
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -68,25 +68,21 @@ class AppointmentCard extends StatelessWidget {
                   ),
                 ],
               ),
-
-              // Status Badge
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: appointment['status'] == 'Upcoming'
-                      ? const Color(0xFF0A84FF).withOpacity(.12)
-                      : const Color(0xFF34C759).withOpacity(.12),
+                  color: _getStatusColor(
+                    appointment['status'],
+                  ).withOpacity(0.15),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   appointment['status'],
                   style: TextStyle(
-                    color: appointment['status'] == 'Upcoming'
-                        ? const Color(0xFF0A84FF)
-                        : const Color(0xFF34C759),
+                    color: _getStatusColor(appointment['status']),
                     fontWeight: FontWeight.bold,
                     fontSize: 12,
                   ),
@@ -97,22 +93,78 @@ class AppointmentCard extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          // Test List (blue highlight)
+          // Test list
           Container(
             decoration: BoxDecoration(
-              color: Color.fromARGB(21, 0, 179, 219),
+              color: const Color.fromARGB(21, 0, 179, 219),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Row(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(Icons.article_outlined, color: Color(0xFF00BBA7)),
-                  const SizedBox(width: 8),
-                  Text(
-                    appointment['test'],
-                    style: const TextStyle(fontSize: 18, color: Colors.black),
+                  Row(
+                    children: const [
+                      Icon(Icons.article_outlined, color: Color(0xFF00BBA7)),
+                      SizedBox(width: 8),
+                      Text(
+                        "Tests",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
                   ),
+                  const SizedBox(height: 8),
+                  ...List.generate(
+  (appointment['tests'] as List).length,
+  (index) {
+    final test = appointment['tests'][index] as Map<String, dynamic>;
+    final hasPrescription = test['prescription'] != null;
+
+    return Padding(
+      padding: const EdgeInsets.only(left: 32, bottom: 4),
+      child: GestureDetector(
+        onTap: hasPrescription
+            ? () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PrescriptionViewer(
+                      url: test['prescription'],
+                    ),
+                  ),
+                );
+              }
+            : null,
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                test['name'],
+                style: TextStyle(
+                  fontSize: 16,
+                  color: hasPrescription ? Colors.blue : Colors.black54,
+                  decoration: hasPrescription ? TextDecoration.underline : null,
+                ),
+              ),
+            ),
+            if (hasPrescription)
+              const Icon(
+                Icons.attach_file,
+                size: 16,
+                color: Colors.blue,
+              ),
+          ],
+        ),
+      ),
+    );
+  },
+),
+
                 ],
               ),
             ),
@@ -120,18 +172,15 @@ class AppointmentCard extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          // Three info rows
           _infoRow(Icons.calendar_today_outlined, appointment['date']),
           const SizedBox(height: 8),
           _infoRow(Icons.access_time, appointment['time']),
           const SizedBox(height: 8),
           _infoRow(Icons.location_on_outlined, appointment['branch']),
-
           const SizedBox(height: 16),
           const Divider(color: Color(0xFFE0E0E0)),
           const SizedBox(height: 10),
 
-          // Collection Type Tag
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
@@ -155,7 +204,7 @@ class AppointmentCard extends StatelessWidget {
   Widget _infoRow(IconData icon, String text) {
     return Row(
       children: [
-        Icon(icon, size: 18, color: Color(0xFF00BBA7)),
+        Icon(icon, size: 18, color: const Color(0xFF00BBA7)),
         const SizedBox(width: 8),
         Expanded(
           child: Text(
@@ -165,5 +214,23 @@ class AppointmentCard extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'upcoming': // lab view
+      case 'scheduled': // patient view
+        return const Color(0xFF0A84FF); // blue
+      case 'awaiting results':
+        return const Color(0xFFFF9500); // orange
+      case 'completed':
+        return const Color(0xFF34C759); // green
+      case 'cancelled':
+        return const Color(0xFFFF3B30); // red
+      case 'no show':
+        return const Color(0xFF8E8E93); // gray
+      default:
+        return Colors.blueGrey;
+    }
   }
 }
