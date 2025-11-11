@@ -92,6 +92,3 @@ class ConfirmButton extends StatelessWidget {
   }
 }
 
-extension on DocumentReference<Object?> {
-  void operator [](String other) {}
-}

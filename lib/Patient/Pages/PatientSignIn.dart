@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lablink/Patient/Pages/ForgotPassword.dart';
+import 'package:lablink/LabAdmin/Pages/LabAdminSignIn.dart';
 import 'package:lablink/Patient/Pages/MainScreen.dart';
 import 'package:lablink/Patient/Pages/PatientSignUp.dart';
 import 'package:lablink/Patient/Pages/splashScreen.dart';
@@ -323,6 +325,21 @@ class _PatientSigninState extends State<PatientSignin> {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+  onPressed: () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const LabLoginScreen()),
+    );
+  },
+  backgroundColor: const Color(0xFF00BBA7), // your main green color
+  shape: const CircleBorder(),
+  child: const FaIcon(
+    FontAwesomeIcons.vial, // vial icon from FontAwesome
+    color: Colors.white,
+    size: 24,
+  ),
+),
     );
   }
 }

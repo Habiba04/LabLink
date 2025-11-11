@@ -1,33 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:lablink/Patient/Pages/BookingHistory.dart';
-import 'package:lablink/Patient/Pages/HomeScreen.dart';
-import 'package:lablink/Patient/Pages/lab_details.dart';
-import 'package:lablink/Patient/Pages/profile_screen.dart';
+import 'package:lablink/LabAdmin/Pages/LabAdminDashboard.dart';
+import 'package:lablink/LabAdmin/Pages/OrdersScreen.dart';
 
-
-*/
-// --- Main Navigation Wrapper ---
-
-class MainScreen extends StatefulWidget {
-  // Mock data needed to initialize the history screen
-  final Map<String, dynamic> labData;
-  final Map<String, dynamic> locationData;
-  final List<Map<String, dynamic>> selectedTests;
-  final String selectedService;
-
-  const MainScreen({
-    super.key,
-    required this.labData,
-    required this.locationData,
-    required this.selectedTests,
-    required this.selectedService,
-  });
+class LabMainScreen extends StatefulWidget {
+  const LabMainScreen({super.key});
 
   @override
-  State<MainScreen> createState() => _MainScreenState();
+  State<LabMainScreen> createState() => _LabMainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
+class _LabMainScreenState extends State<LabMainScreen> {
   int _selectedIndex = 0; // Default to History tab
 
   late List<Widget> _screens;
@@ -36,9 +18,11 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     super.initState();
     _screens = [
-      const HomeScreen(),
-      BookingHistoryScreen(),
-      const ProfileScreen(),
+      const LabDashboardScreen(),
+      OrdersScreen(),
+      const Text('Reviews'),
+      const Text('Reports'),
+      const Text('Profile'),
     ];
   }
 
@@ -55,14 +39,24 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home_rounded),
-            label: 'Home',
+            icon: Icon(Icons.dashboard_outlined),
+            activeIcon: Icon(Icons.dashboard_rounded),
+            label: 'Dashboard',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.history_toggle_off_outlined),
-            activeIcon: Icon(Icons.history_rounded),
-            label: 'History',
+            icon: Icon(Icons.assignment_outlined),
+            activeIcon: Icon(Icons.assignment_rounded),
+            label: 'Orders',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.star_border),
+            activeIcon: Icon(Icons.star_rounded),
+            label: 'Reviews',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.insert_drive_file_outlined),
+            activeIcon: Icon(Icons.insert_drive_file_rounded),
+            label: 'Reports',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),

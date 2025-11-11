@@ -4,12 +4,14 @@ class Appointment {
   final String docId;
   final String bookingId;
   final DateTime date;
+  final String patientId;
   final String labName;
   final double totalAmount;
   final String status;
   final String labId;
   final String locationId;
   final String time;
+  final String? resultUrl;
 
   Appointment({
     required this.docId,
@@ -21,6 +23,8 @@ class Appointment {
     required this.labId,
     required this.locationId,
     required this.time,
+    required this.patientId,
+    this.resultUrl,
   });
 
   factory Appointment.fromFirestore(QueryDocumentSnapshot doc) {
@@ -33,6 +37,7 @@ class Appointment {
     return Appointment(
       docId: doc.id,
       bookingId: data['displayBookingId'] as String? ?? doc.id.substring(0, 8).toUpperCase(), 
+      patientId: data['patientId'] as String? ?? '',
       date: DateTime.parse(dateString),
       labName: labData['name'] ?? 'Central Diagnostics',
       totalAmount: (data['totalAmount'] as num?)?.toDouble() ?? 0.0,

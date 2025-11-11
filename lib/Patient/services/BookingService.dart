@@ -117,7 +117,7 @@ class BookingService {
     final locationId = locationData['id'];
 
     final appointmentData = {
-      'userId': userId,
+      'patientId': userId,
       'date': formattedDate,
       'time': time,
       'totalAmount': totalAmount,
@@ -126,7 +126,7 @@ class BookingService {
       'tests': selectedTests,
       'labData': labData,
       'locationData': locationData,
-      'status': 'pending',
+      'status': 'Pending',
       'createdAt': FieldValue.serverTimestamp(),
     };
 
