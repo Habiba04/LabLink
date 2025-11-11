@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:lablink/LabAdmin/Pages/PrescriptionViewer.dart';
 import 'package:lablink/Models/Appointment.dart';
 import 'package:lablink/Patient/services/BookingService.dart';
 
@@ -31,13 +32,13 @@ class _AppointmentCardState extends State<AppointmentCard> {
       case 'scheduled':
         return const Color(0xFF3A82F7);
       case 'completed':
-        return const Color(0xFF00BBA7); 
+        return const Color(0xFF00BBA7);
       case 'awaiting results':
-        return const Color(0xFFFFA726); 
+        return const Color(0xFFFFA726);
       case 'pending':
-        return const Color(0xFF9C27B0); 
+        return const Color(0xFF9C27B0);
       case 'cancelled':
-        return const Color(0xFFE53935); 
+        return const Color(0xFFE53935);
       default:
         return Colors.grey;
     }
@@ -74,13 +75,12 @@ class _AppointmentCardState extends State<AppointmentCard> {
         setState(() {
           currentStatus = 'Cancelled';
         });
-        
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to cancel booking: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to cancel booking: $e')));
       }
     }
   }
@@ -179,7 +179,22 @@ class _AppointmentCardState extends State<AppointmentCard> {
             if (currentStatus.toLowerCase() == 'completed')
               OutlinedButton.icon(
                 onPressed: () {
-                  // TODO: Navigate to result view
+                  if (widget.appointment.resultUrl != null &&
+                      widget.appointment.resultUrl!.isNotEmpty) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => PrescriptionViewer(
+                          url: widget.appointment.resultUrl!,
+                          title: 'Appointment Result',
+                        ),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('No result available.')),
+                    );
+                  }
                 },
                 style: OutlinedButton.styleFrom(
                   foregroundColor: const Color(0xFF00BBA7),
