@@ -1,11 +1,10 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lablink/Database/firebaseDB.dart';
 import 'package:lablink/Models/Lab.dart';
 import 'package:lablink/Models/LabLocation.dart';
-import 'package:lablink/Models/LabTests.dart';
 import 'package:lablink/Patient/Pages/ServiceType.dart';
+import 'package:lablink/Patient/Pages/review_screen.dart';
 
 class LabDetails extends StatefulWidget {
   final String labId;
@@ -151,6 +150,7 @@ class _LabDetailsState extends State<LabDetails> {
                                 style: TextStyle(
                                   fontSize: width * 0.04,
                                   color: Colors.black,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ],
@@ -219,7 +219,31 @@ class _LabDetailsState extends State<LabDetails> {
               ],
             ),
 
-            SizedBox(height: 260),
+            SizedBox(height: height * 0.2),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF00BBA7),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ReviewScreen(labId: widget.labId),
+                    ),
+                  );
+                },
+                child: Text(
+                  "View Reviews",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: width * 0.04,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
             ListTile(
               title: Text(
                 "Upload Prescription",
@@ -342,7 +366,6 @@ class _LabDetailsState extends State<LabDetails> {
                                                     test['id'] ==
                                                     tests[testIndex].id,
                                               );
-                                              print("isAdded = ${isAdded}");
                                             }
                                           });
                                         },
@@ -358,7 +381,6 @@ class _LabDetailsState extends State<LabDetails> {
                                               selectedTests.add(
                                                 tests[testIndex].toMap(),
                                               );
-                                              print("isAdded = ${isAdded}");
                                             }
                                           });
                                         },

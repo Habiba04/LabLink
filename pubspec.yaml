@@ -46,7 +46,7 @@ dependencies:
   image_picker: ^1.2.0
   photo_view: ^0.15.0
   rxdart: ^0.28.0
-  
+  url_launcher: ^6.3.2
 
 dev_dependencies:
   flutter_test:

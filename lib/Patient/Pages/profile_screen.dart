@@ -1,6 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:lablink/Database/firebaseDB.dart';
+import 'package:lablink/Models/Patient.dart';
+import 'package:lablink/Patient/Pages/PatientSignIn.dart';
+import 'package:lablink/Patient/Pages/editing_personal_info.dart';
+import 'package:lablink/Patient/Pages/help_and_support.dart';
 import 'package:lablink/Patient/Widgets/profile_listTile.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -12,14 +16,52 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  Patient? currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    loadUserData();
+  }
+
+  void loadUserData() async {
+    final userData = await FirebaseDatabase().getCurrentUserData();
+    if (userData != null) {
+      setState(() {
+        currentUser = userData;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
+    if (currentUser == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       backgroundColor: Color(0xFFF9FAFB),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white,
+        unselectedItemColor: Color(0xFF99A1AF),
+        selectedItemColor: Color(0xFF0092B8),
+        currentIndex: 2,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.history), label: 'History'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            label: 'Profile',
+          ),
+        ],
+      ),
+
       body: SafeArea(
         child: Column(
           children: [
@@ -47,7 +89,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       radius: width * 0.1,
                       backgroundColor: Colors.white,
                       child: Text(
-                        'JD',
+                        currentUser!.name.substring(
+                          0,
+                          currentUser!.name.length >= 2
+                              ? 2
+                              : currentUser!.name.length,
+                        ),
                         style: TextStyle(
                           color: Color(0xFF0092B8),
                           fontSize: width * 0.06,
@@ -60,7 +107,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'John Doe',
+                          currentUser!.name,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: width * 0.04,
@@ -74,7 +121,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               color: Color(0xFFCEFAFE),
                             ),
                             Text(
-                              'john.doe@email.com',
+                              " ${currentUser!.email}",
                               style: TextStyle(
                                 color: Color(0xFFCEFAFE),
                                 fontSize: width * 0.04,
@@ -86,7 +133,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           children: [
                             Icon(Icons.phone, color: Color(0xFFCEFAFE)),
                             Text(
-                              '+1 (555) 123-4567',
+                              " ${currentUser!.phone}",
                               style: TextStyle(
                                 color: Color(0xFFCEFAFE),
                                 fontSize: width * 0.04,
@@ -106,16 +153,28 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 padding: EdgeInsets.all(width * 0.06),
                 child: ListView(
                   children: [
-                    ProfileListtile(
-                      icon: Icons.person_outline,
-                      bgColor: Color(0xFFCEFAFE),
-                      title: 'Personal Information',
-                      iconColor: Color(0xFF0092B8),
-                      width: width * 0.1,
-                      height: width * 0.1,
-                      borderRadiusWidget: BorderRadius.only(
-                        topLeft: Radius.circular(16),
-                        topRight: Radius.circular(16),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditProfileScreen(),
+                          ),
+                        ).then((_) {
+                          loadUserData();
+                        });
+                      },
+                      child: ProfileListtile(
+                        icon: Icons.person_outline,
+                        bgColor: Color(0xFFCEFAFE),
+                        title: 'Edit Personal Information',
+                        iconColor: Color(0xFF0092B8),
+                        width: width * 0.1,
+                        height: width * 0.1,
+                        borderRadiusWidget: BorderRadius.only(
+                          topLeft: Radius.circular(16),
+                          topRight: Radius.circular(16),
+                        ),
                       ),
                     ),
                     ProfileListtile(
@@ -123,7 +182,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: width * 0.1,
                       icon: Icons.location_on_outlined,
                       bgColor: Color(0xFFDBEAFE),
-                      title: 'Saved Addresses',
+                      title: currentUser!.address,
                       iconColor: Color(0xFF155DFC),
                     ),
                     ProfileListtile(
@@ -134,16 +193,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       title: 'Notifications',
                       iconColor: Color(0xFF9810FA),
                     ),
-                    ProfileListtile(
-                      width: width * 0.1,
-                      height: width * 0.1,
-                      icon: Icons.help_outline,
-                      bgColor: Color(0xFFFFEDD4),
-                      title: 'Help & Support',
-                      iconColor: Color(0xFFF54900),
-                      borderRadiusWidget: BorderRadius.only(
-                        bottomLeft: Radius.circular(16),
-                        bottomRight: Radius.circular(16),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HelpAndSupport(),
+                          ),
+                        );
+                      },
+                      child: ProfileListtile(
+                        width: width * 0.1,
+                        height: width * 0.1,
+                        icon: Icons.help_outline,
+                        bgColor: Color(0xFFFFEDD4),
+                        title: 'Help & Support',
+                        iconColor: Color(0xFFF54900),
+                        borderRadiusWidget: BorderRadius.only(
+                          bottomLeft: Radius.circular(16),
+                          bottomRight: Radius.circular(16),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -151,6 +220,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: GestureDetector(
                         onTap: () {
                           _auth.signOut();
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const PatientSignin(),
+                            ),
+                            (Route<dynamic> route) => false,
+                          );
                         },
                         child: Container(
                           width: width * 0.9,

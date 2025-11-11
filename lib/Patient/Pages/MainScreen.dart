@@ -5,6 +5,9 @@ import 'package:lablink/Patient/Pages/lab_details.dart';
 import 'package:lablink/Patient/Pages/profile_screen.dart';
 
 
+*/
+// --- Main Navigation Wrapper ---
+
 class MainScreen extends StatefulWidget {
   // Mock data needed to initialize the history screen
   final Map<String, dynamic> labData;
