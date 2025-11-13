@@ -29,22 +29,25 @@ class Appointment {
 
   factory Appointment.fromFirestore(QueryDocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
-    final labData = data['labData'] as Map<String, dynamic>? ?? {}; 
+    final labData = data['labData'] as Map<String, dynamic>? ?? {};
     final locationData = data['locationData'] as Map<String, dynamic>? ?? {};
 
-    final dateString = data['date'] as String? ?? DateTime.now().toIso8601String();
-    
+    final dateString =
+        data['date'] as String? ?? DateTime.now().toIso8601String();
+
     return Appointment(
       docId: doc.id,
-      bookingId: data['displayBookingId'] as String? ?? doc.id.substring(0, 8).toUpperCase(), 
+      bookingId:
+          data['displayBookingId'] as String? ??
+          doc.id.substring(0, 8).toUpperCase(),
       patientId: data['patientId'] as String? ?? '',
       date: DateTime.parse(dateString),
       labName: labData['name'] ?? 'Central Diagnostics',
       totalAmount: (data['totalAmount'] as num?)?.toDouble() ?? 0.0,
       status: data['status'] as String? ?? 'Scheduled',
-      labId: labData['id'] as String? ?? '', 
-      locationId: locationData['id'] as String? ?? '', 
-      time: data['time'] as String? ?? '', 
+      labId: labData['id'] as String? ?? '',
+      locationId: locationData['id'] as String? ?? '',
+      time: data['time'] as String? ?? '',
     );
   }
 }

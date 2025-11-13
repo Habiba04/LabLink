@@ -11,10 +11,10 @@ class OrdersScreen extends StatefulWidget {
 }
 
 class _OrdersScreenState extends State<OrdersScreen> {
-  String filter = "Manual Booking"; // Manual Booking / Prescriptions
+  String filter = "Pending"; // Pending / Awaiting Results
   String searchQuery = "";
 
-  Stream<List<Map<String, dynamic>>> _getPendingOrders() {
+  Stream<List<Map<String, dynamic>>> _getOrders() {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return const Stream.empty();
 
@@ -28,11 +28,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
 
       for (var doc in snapshot.docs) {
         final data = doc.data();
+        final status = (data['status'] ?? '').toString().toLowerCase();
 
-        // Only Pending appointments
-        if ((data['status'] ?? '').toLowerCase() != 'pending') continue;
+        // ✅ Include only Pending and Awaiting Results
+        if (status != 'pending' && status != 'awaiting results') continue;
 
-        // Patient info
+        // ✅ Fetch patient info
         Map<String, dynamic>? patientData;
         final patientId = data['patientId'];
         if (patientId != null && patientId.toString().isNotEmpty) {
@@ -43,9 +44,10 @@ class _OrdersScreenState extends State<OrdersScreen> {
           if (patientSnap.exists) patientData = patientSnap.data();
         }
 
-        // Map appointment/order for UI
+        // ✅ Map order data for UI
         final order = {
           'id': doc.id,
+          'patientId': patientId ?? '',
           'name': patientData?['name'] ?? 'Unknown Patient',
           'age': patientData?['age'] ?? '',
           'date': data['date'] ?? '',
@@ -54,15 +56,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
               ? 'Home Collection'
               : 'Visit Lab',
           'status': data['status'] ?? 'Pending',
-          'type': data['serviceType'] == 'Manual Booking'
-              ? 'Manual Booking'
-              : 'Prescriptions',
-          'manual': data['serviceType'] == 'Manual Booking',
           'tests': (data['tests'] != null && data['tests'].isNotEmpty)
               ? List<Map<String, dynamic>>.from(
                   data['tests'].map(
                     (t) => {
-                      'name': t['name'],
+                      'name': t['name'] ?? '',
                       'prescription': t['prescriptionUrl'] ?? null,
                     },
                   ),
@@ -88,6 +86,13 @@ class _OrdersScreenState extends State<OrdersScreen> {
         .collection('appointments')
         .doc(order['id'])
         .update({'status': 'Upcoming'});
+
+    await FirebaseFirestore.instance
+        .collection('patient')
+        .doc(order['patientId'])
+        .collection('appointments')
+        .doc(order['id'])
+        .update({'status': 'Upcoming'});
   }
 
   // Reject function
@@ -98,6 +103,13 @@ class _OrdersScreenState extends State<OrdersScreen> {
     await FirebaseFirestore.instance
         .collection('lab')
         .doc(uid)
+        .collection('appointments')
+        .doc(order['id'])
+        .update({'status': 'Cancelled'});
+
+    await FirebaseFirestore.instance
+        .collection('patient')
+        .doc(order['patientId'])
         .collection('appointments')
         .doc(order['id'])
         .update({'status': 'Cancelled'});
@@ -167,7 +179,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: FilterBar(
-                      items: const ["Prescriptions", "Manual Booking"],
+                      items: const ["Pending", "Awaiting Results"],
                       selected: filter,
                       onSelected: (v) => setState(() => filter = v),
                     ),
@@ -179,7 +191,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
         },
 
         body: StreamBuilder<List<Map<String, dynamic>>>(
-          stream: _getPendingOrders(),
+          stream: _getOrders(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
@@ -195,7 +207,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
             }
 
             var filtered = snapshot.data!
-                .where((x) => x['type'] == filter)
+                .where(
+                  (x) =>
+                      (x['status'] ?? '').toString().toLowerCase() ==
+                      filter.toLowerCase(),
+                )
                 .where(
                   (x) => x['name'].toString().toLowerCase().contains(
                     searchQuery.toLowerCase(),
@@ -215,23 +231,24 @@ class _OrdersScreenState extends State<OrdersScreen> {
             return ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: filtered.length,
-              itemBuilder: (_, i) => OrderCard(
-                order: filtered[i],
-                onAccept: filtered[i]['manual']
-                    ? null
-                    : () => acceptOrder(filtered[i]),
-                onReject: filtered[i]['manual']
-                    ? null
-                    : () => rejectOrder(filtered[i]),
-                onViewDetails: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => OrderDetailsScreen(order: filtered[i]),
-                    ),
-                  );
-                },
-              ),
+              itemBuilder: (_, i) {
+                final order = filtered[i];
+                final isAwaiting =
+                    order['status'].toString().toLowerCase() ==
+                    'awaiting results';
+                return OrderCard(
+                  order: order,
+                  onViewDetails: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => OrderDetailsScreen(order: order),
+                      ),
+                    );
+                  },
+                  onAccept: isAwaiting ? null : () => acceptOrder(order),
+                );
+              },
             );
           },
         ),

@@ -1,11 +1,24 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:lablink/LabAdmin/Pages/PrescriptionViewer.dart';
+import 'package:lablink/LabAdmin/Pages/ResultsViewerScreen.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AppointmentCard extends StatelessWidget {
   final Map<String, dynamic> appointment;
+  final Function(Map<String, dynamic> order, String status) onStatusChange;
+  final bool isActionableToday;
 
-  const AppointmentCard({required this.appointment, Key? key})
-    : super(key: key);
+  const AppointmentCard({
+    required this.appointment,
+    required this.onStatusChange,
+    required this.isActionableToday,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +39,7 @@ class AppointmentCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Top Row: Name + Status
+          // 🔹 Top Row: Name + Status
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,7 +106,7 @@ class AppointmentCard extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          // Test list
+          // 🔹 Test list
           Container(
             decoration: BoxDecoration(
               color: const Color.fromARGB(21, 0, 179, 219),
@@ -119,52 +132,55 @@ class AppointmentCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  ...List.generate(
-  (appointment['tests'] as List).length,
-  (index) {
-    final test = appointment['tests'][index] as Map<String, dynamic>;
-    final hasPrescription = test['prescription'] != null;
+                  ...List.generate((appointment['tests'] as List).length, (
+                    index,
+                  ) {
+                    final test =
+                        appointment['tests'][index] as Map<String, dynamic>;
+                    final hasPrescription = test['prescription'] != null;
 
-    return Padding(
-      padding: const EdgeInsets.only(left: 32, bottom: 4),
-      child: GestureDetector(
-        onTap: hasPrescription
-            ? () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => PrescriptionViewer(
-                      url: test['prescription'],
-                    ),
-                  ),
-                );
-              }
-            : null,
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                test['name'],
-                style: TextStyle(
-                  fontSize: 16,
-                  color: hasPrescription ? Colors.blue : Colors.black54,
-                  decoration: hasPrescription ? TextDecoration.underline : null,
-                ),
-              ),
-            ),
-            if (hasPrescription)
-              const Icon(
-                Icons.attach_file,
-                size: 16,
-                color: Colors.blue,
-              ),
-          ],
-        ),
-      ),
-    );
-  },
-),
-
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 32, bottom: 4),
+                      child: GestureDetector(
+                        onTap: hasPrescription
+                            ? () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => PrescriptionViewer(
+                                      url: test['prescription'],
+                                    ),
+                                  ),
+                                );
+                              }
+                            : null,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                test['name'],
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: hasPrescription
+                                      ? Colors.blue
+                                      : Colors.black54,
+                                  decoration: hasPrescription
+                                      ? TextDecoration.underline
+                                      : null,
+                                ),
+                              ),
+                            ),
+                            if (hasPrescription)
+                              const Icon(
+                                Icons.attach_file,
+                                size: 16,
+                                color: Colors.blue,
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
                 ],
               ),
             ),
@@ -172,6 +188,7 @@ class AppointmentCard extends StatelessWidget {
 
           const SizedBox(height: 16),
 
+          // 🔹 Appointment Info
           _infoRow(Icons.calendar_today_outlined, appointment['date']),
           const SizedBox(height: 8),
           _infoRow(Icons.access_time, appointment['time']),
@@ -181,6 +198,7 @@ class AppointmentCard extends StatelessWidget {
           const Divider(color: Color(0xFFE0E0E0)),
           const SizedBox(height: 10),
 
+          // 🔹 Collection Type
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
@@ -196,6 +214,101 @@ class AppointmentCard extends StatelessWidget {
               ),
             ),
           ),
+          if (isActionableToday)
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: Column(
+                children: [
+                  ElevatedButton(
+                    onPressed: () =>
+                        onStatusChange(appointment, 'Awaiting Results'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Appointment Completed',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  OutlinedButton(
+                    onPressed: () => onStatusChange(appointment, 'No Show'),
+                    style: OutlinedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      side: const BorderSide(color: Colors.red),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Mark No Show',
+                          style: TextStyle(fontSize: 16, color: Colors.red),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          // 🔹 View Results button (only for completed appointments)
+          if (appointment['status'].toLowerCase() == 'completed')
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    final link = appointment['results'];
+
+                    // 1. Initial Link/Empty Check (Kept your original logic)
+                    if (link == null || link.isEmpty) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Results link not available yet.'),
+                          ),
+                        );
+                      });
+                      return;
+                    }
+
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ResultsViewerScreen(pdfUrl: link),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF00BBA7),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  label: const Text(
+                    'View Results',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );

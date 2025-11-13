@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:lablink/LabAdmin/Pages/PrescriptionViewer.dart';
 import 'package:lablink/Models/Appointment.dart';
 import 'package:lablink/Patient/services/BookingService.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AppointmentCard extends StatefulWidget {
   final Appointment appointment;
@@ -83,6 +84,37 @@ class _AppointmentCardState extends State<AppointmentCard> {
         ).showSnackBar(SnackBar(content: Text('Failed to cancel booking: $e')));
       }
     }
+  }
+
+  // ✅ New: Method to open Google Drive result link if available
+  // Inside your AppointmentCard widget (Stateless → convert to Stateful if needed)
+  Future<void> _viewResults(BuildContext context, String? resultUrl) async {
+    if (resultUrl == null || resultUrl.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Result URL is not available.')),
+      );
+      return;
+    }
+
+    final url = Uri.parse(resultUrl);
+
+    // Try opening externally
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not open link externally.')),
+      );
+    }
+
+    // Also open inside the app using PrescriptionViewer
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            PrescriptionViewer(url: resultUrl, title: 'Appointment Result'),
+      ),
+    );
   }
 
   @override
@@ -176,26 +208,11 @@ class _AppointmentCardState extends State<AppointmentCard> {
 
             const SizedBox(height: 12),
 
+            // ✅ Enhanced View Result button logic
             if (currentStatus.toLowerCase() == 'completed')
               OutlinedButton.icon(
-                onPressed: () {
-                  if (widget.appointment.resultUrl != null &&
-                      widget.appointment.resultUrl!.isNotEmpty) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => PrescriptionViewer(
-                          url: widget.appointment.resultUrl!,
-                          title: 'Appointment Result',
-                        ),
-                      ),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('No result available.')),
-                    );
-                  }
-                },
+                onPressed: () =>
+                    _viewResults(context, widget.appointment.resultUrl),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: const Color(0xFF00BBA7),
                   side: const BorderSide(color: Color(0xFF00BBA7), width: 1.3),

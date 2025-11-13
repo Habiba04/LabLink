@@ -122,7 +122,14 @@ class _PatientSigninState extends State<PatientSignin> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => HomeScreen()),
+        MaterialPageRoute(
+          builder: (_) => MainScreen(
+            labData: {},
+            locationData: {},
+            selectedTests: [],
+            selectedService: '',
+          ),
+        ),
       );
     } catch (e) {
       ScaffoldMessenger.of(
@@ -283,9 +290,14 @@ class _PatientSigninState extends State<PatientSignin> {
                       borderRadius: BorderRadius.circular(25),
                     ),
                   ),
-                  child: const Text(
-                    "Google",
-                    style: TextStyle(fontSize: 17, color: Colors.black),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Google",
+                        style: TextStyle(fontSize: 17, color: Colors.black),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -327,20 +339,20 @@ class _PatientSigninState extends State<PatientSignin> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-  onPressed: () {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const LabLoginScreen()),
-    );
-  },
-  backgroundColor: const Color(0xFF00BBA7), // your main green color
-  shape: const CircleBorder(),
-  child: const FaIcon(
-    FontAwesomeIcons.vial, // vial icon from FontAwesome
-    color: Colors.white,
-    size: 24,
-  ),
-),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const LabLoginScreen()),
+          );
+        },
+        backgroundColor: const Color(0xFF00BBA7), // your main green color
+        shape: const CircleBorder(),
+        child: const FaIcon(
+          FontAwesomeIcons.vial, // vial icon from FontAwesome
+          color: Colors.white,
+          size: 24,
+        ),
+      ),
     );
   }
 }
