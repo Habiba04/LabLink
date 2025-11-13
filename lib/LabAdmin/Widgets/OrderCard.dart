@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lablink/LabAdmin/Pages/PrescriptionViewer.dart';
+import '../Pages/prescription_viewer.dart';
 
 class OrderCard extends StatelessWidget {
   final Map<String, dynamic> order;
@@ -12,8 +12,8 @@ class OrderCard extends StatelessWidget {
     required this.onViewDetails,
     required this.onAccept,
     required this.onReject,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -196,7 +196,10 @@ class OrderCard extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: TextButton(
-                onPressed: onViewDetails,
+                onPressed: () {
+                  print("View Details clicked");
+                  onViewDetails();
+                },
                 child: const Text(
                   "View Details",
                   style: TextStyle(fontWeight: FontWeight.bold),

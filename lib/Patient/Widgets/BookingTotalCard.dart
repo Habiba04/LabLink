@@ -49,11 +49,11 @@ class BookingTotalCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          /*  const SizedBox(height: 14),
           const Text(
             "Including all tests and service charges",
             style: TextStyle(color: Colors.white70, fontSize: 16),
-          ),
+          ),*/
         ],
       ),
     );

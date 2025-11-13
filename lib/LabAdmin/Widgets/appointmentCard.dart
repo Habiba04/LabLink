@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lablink/LabAdmin/Pages/PrescriptionViewer.dart';
+import 'package:lablink/LabAdmin/Pages/prescription_viewer.dart';
 
 class AppointmentCard extends StatelessWidget {
   final Map<String, dynamic> appointment;
 
-  const AppointmentCard({required this.appointment, Key? key})
-    : super(key: key);
+  const AppointmentCard({required this.appointment, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -119,52 +118,55 @@ class AppointmentCard extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  ...List.generate(
-  (appointment['tests'] as List).length,
-  (index) {
-    final test = appointment['tests'][index] as Map<String, dynamic>;
-    final hasPrescription = test['prescription'] != null;
+                  ...List.generate((appointment['tests'] as List).length, (
+                    index,
+                  ) {
+                    final test =
+                        appointment['tests'][index] as Map<String, dynamic>;
+                    final hasPrescription = test['prescription'] != null;
 
-    return Padding(
-      padding: const EdgeInsets.only(left: 32, bottom: 4),
-      child: GestureDetector(
-        onTap: hasPrescription
-            ? () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => PrescriptionViewer(
-                      url: test['prescription'],
-                    ),
-                  ),
-                );
-              }
-            : null,
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                test['name'],
-                style: TextStyle(
-                  fontSize: 16,
-                  color: hasPrescription ? Colors.blue : Colors.black54,
-                  decoration: hasPrescription ? TextDecoration.underline : null,
-                ),
-              ),
-            ),
-            if (hasPrescription)
-              const Icon(
-                Icons.attach_file,
-                size: 16,
-                color: Colors.blue,
-              ),
-          ],
-        ),
-      ),
-    );
-  },
-),
-
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 32, bottom: 4),
+                      child: GestureDetector(
+                        onTap: hasPrescription
+                            ? () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => PrescriptionViewer(
+                                      url: test['prescription'],
+                                    ),
+                                  ),
+                                );
+                              }
+                            : null,
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                test['name'],
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: hasPrescription
+                                      ? Colors.blue
+                                      : Colors.black54,
+                                  decoration: hasPrescription
+                                      ? TextDecoration.underline
+                                      : null,
+                                ),
+                              ),
+                            ),
+                            if (hasPrescription)
+                              const Icon(
+                                Icons.attach_file,
+                                size: 16,
+                                color: Colors.blue,
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
                 ],
               ),
             ),

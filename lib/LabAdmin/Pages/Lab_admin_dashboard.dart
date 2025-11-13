@@ -6,7 +6,7 @@ import 'package:lablink/LabAdmin/Widgets/StatCard.dart';
 import 'package:lablink/LabAdmin/Widgets/StatRow.dart';
 import 'package:lablink/Models/DashboardData.dart';
 
-import 'package:lablink/LabAdmin/Pages/appointmentScreen.dart';
+import 'package:lablink/LabAdmin/Pages/appointment_screen.dart';
 import '../Utils/firestore_helpers.dart';
 
 class LabDashboardScreen extends StatefulWidget {

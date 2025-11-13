@@ -16,7 +16,7 @@ class Review {
   factory Review.fromMap(String id, Map<String, dynamic> data) {
     return Review(
       userName: data['userName'] ?? 'Anonymous',
-      comment: data['comment'] ?? '',
+      comment: data['comments'] ?? '',
       rating: (data['rating'] ?? 0).toDouble(),
       createdAt: (data['createdAt'] != null)
           ? (data['createdAt'] as Timestamp).toDate()

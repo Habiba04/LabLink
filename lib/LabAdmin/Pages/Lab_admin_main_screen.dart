@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lablink/LabAdmin/Pages/LabAdminDashboard.dart';
-import 'package:lablink/LabAdmin/Pages/OrdersScreen.dart';
+import 'package:lablink/LabAdmin/Pages/Lab_admin_dashboard.dart';
+import 'package:lablink/LabAdmin/Pages/orders_screen.dart';
+import 'package:lablink/LabAdmin/Pages/analytics_report_screen.dart';
+import 'package:lablink/LabAdmin/Pages/profile_screen.dart';
+import 'package:lablink/LabAdmin/Pages/review_screen.dart';
 
 class LabMainScreen extends StatefulWidget {
   const LabMainScreen({super.key});
@@ -20,9 +23,9 @@ class _LabMainScreenState extends State<LabMainScreen> {
     _screens = [
       const LabDashboardScreen(),
       OrdersScreen(),
-      const Text('Reviews'),
-      const Text('Reports'),
-      const Text('Profile'),
+      ReviewScreen(),
+      AnalyticsReportScreen(),
+      ProfileScreen(),
     ];
   }
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:lablink/LabAdmin/Pages/LabAdminMainScreen.dart';
+import 'package:lablink/LabAdmin/Pages/Lab_admin_main_screen.dart';
 import 'package:lablink/Patient/Pages/ForgotPassword.dart';
 
 class LabLoginScreen extends StatefulWidget {
@@ -43,9 +43,7 @@ class _LabLoginScreenState extends State<LabLoginScreen> {
 
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => LabMainScreen()
-        ),
+        MaterialPageRoute(builder: (context) => LabMainScreen()),
       );
     } on FirebaseAuthException catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

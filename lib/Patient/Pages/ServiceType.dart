@@ -5,13 +5,15 @@ import '../widgets/ServiceOptionCard.dart';
 class ServiceTypeScreen extends StatefulWidget {
   final Map<String, dynamic> labData;
   final Map<String, dynamic> locationData;
-  final List<Map<String, dynamic>> selectedTests;
+  final List<Map<String, dynamic>>? selectedTests;
+  final String? prescroptionPath;
 
   const ServiceTypeScreen({
     super.key,
     required this.labData,
     required this.locationData,
-    required this.selectedTests,
+    this.selectedTests,
+    this.prescroptionPath,
   });
 
   @override
@@ -87,6 +89,7 @@ class _ServiceTypeScreenState extends State<ServiceTypeScreen> {
                               locationData: widget.locationData,
                               selectedTests: widget.selectedTests,
                               selectedService: selectedOption!,
+                              prescriptionPath: widget.prescroptionPath,
                             ),
                           ),
                         );
