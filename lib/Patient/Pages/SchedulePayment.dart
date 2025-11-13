@@ -7,20 +7,22 @@ import '../widgets/BookingTestsCard.dart';
 import '../widgets/BookingPaymentCard.dart';
 import '../widgets/NonWorkingDayMessage.dart';
 import '../widgets/ConfirmButton.dart';
-import '../utils/BookingHelpers.dart'; 
+import '../utils/BookingHelpers.dart';
 
 class SchedulePaymentScreen extends StatefulWidget {
   final Map<String, dynamic> labData;
   final Map<String, dynamic> locationData;
-  final List<Map<String, dynamic>> selectedTests;
+  List<Map<String, dynamic>>? selectedTests;
   final String selectedService;
+  String? prescriptionPath;
 
-  const SchedulePaymentScreen({
+  SchedulePaymentScreen({
     super.key,
     required this.labData,
     required this.locationData,
-    required this.selectedTests,
     required this.selectedService,
+    this.selectedTests,
+    this.prescriptionPath,
   });
 
   @override
@@ -48,10 +50,10 @@ class _SchedulePaymentScreenState extends State<SchedulePaymentScreen> {
       locationData: widget.locationData,
       selectedTests: widget.selectedTests,
       selectedService: widget.selectedService,
+      prescriptionPath: widget.prescriptionPath,
     );
     _loadInitialData();
   }
-
 
   Future<void> _loadInitialData() async {
     final data = await _bookingService.fetchLocationDetails();
@@ -60,9 +62,9 @@ class _SchedulePaymentScreenState extends State<SchedulePaymentScreen> {
     setState(() {
       openAt = data['openAt'];
       closeAt = data['closeAt'];
-      workingDays = List<String>.from(data['workingDays'] ?? [])
-          .map((d) => d.trim().substring(0, 3).toLowerCase())
-          .toList();
+      workingDays = List<String>.from(
+        data['workingDays'] ?? [],
+      ).map((d) => d.trim().substring(0, 3).toLowerCase()).toList();
     });
 
     await _fetchDisabledSlots();
@@ -88,7 +90,6 @@ class _SchedulePaymentScreenState extends State<SchedulePaymentScreen> {
     }
   }
 
-
   void _handleDateSelected(DateTime newDate) {
     setState(() => selectedDate = newDate);
     _fetchDisabledSlots();
@@ -108,7 +109,6 @@ class _SchedulePaymentScreenState extends State<SchedulePaymentScreen> {
     setState(() => selectedTime = time);
   }
 
-
   bool _isWorkingDayForWidget(DateTime date) {
     return checkIsWorkingDay(date, workingDays);
   }
@@ -121,7 +121,8 @@ class _SchedulePaymentScreenState extends State<SchedulePaymentScreen> {
   @override
   Widget build(BuildContext context) {
     final totalAmount = _bookingService.calculateTotal();
-    final bool isTimeDisabled = selectedTime != null && disabledTimes.contains(selectedTime!);
+    final bool isTimeDisabled =
+        selectedTime != null && disabledTimes.contains(selectedTime!);
 
     return Scaffold(
       appBar: AppBar(

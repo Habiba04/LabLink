@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:lablink/Database/firebaseDB.dart';
-import 'package:lablink/Patient/Widgets/edit_profile_text_field.dart';
+import 'package:lablink/shared_files/common_widgets/edit_profile_text_field.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -11,45 +11,42 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  final labId = FirebaseAuth.instance.currentUser!.uid;
   final _formKey = GlobalKey<FormState>();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _closingTimeController = TextEditingController();
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    _loadCurrentUserData();
+    loadCurrentLabData();
   }
 
-  Future<void> _loadCurrentUserData() async {
-    final patient = await FirebaseDatabase().getCurrentUserData();
+  Future<void> loadCurrentLabData() async {
+    final labData = await FirebaseDatabase().getLabDetails(labId);
 
     setState(() {
-      _nameController.text = patient!.name;
-      _phoneController.text = patient.phone;
-      _addressController.text = patient.address;
-      _ageController.text = patient.age;
-      _emailController.text = patient.email;
+      _nameController.text = labData!.name;
+      _phoneController.text = labData.phone;
+      _closingTimeController.text = labData.closingTime;
+      _emailController.text = labData.email;
     });
   }
 
-  Future<void> _updateUserProfile() async {
+  Future<void> updateLabProfile() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 
-    await FirebaseDatabase().updateUserData(
+    await FirebaseDatabase().updateLabData(
       name: _nameController.text,
       phone: _phoneController.text,
-      address: _addressController.text,
       email: _emailController.text,
-      age: _ageController.text,
+      closingTime: _closingTimeController.text,
     );
 
     setState(() => _isLoading = false);
@@ -78,36 +75,30 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     EditProfileTextField(
                       controller: _nameController,
                       prefixIcon: Icon(Icons.person),
-                      hintText: 'Enter your name',
+                      hintText: 'Enter lab name',
                       labelText: 'Name',
                     ),
                     const SizedBox(height: 12),
                     EditProfileTextField(
                       controller: _emailController,
                       prefixIcon: Icon(Icons.email_outlined),
-                      hintText: 'Enter your email',
+                      hintText: 'Enter lab email',
                       labelText: 'Email',
-                    ),
-                    const SizedBox(height: 12),
-                    EditProfileTextField(
-                      controller: _ageController,
-                      prefixIcon: Icon(Icons.calendar_month_outlined),
-                      hintText: 'Enter your age',
-                      labelText: 'Age',
                     ),
                     const SizedBox(height: 12),
                     EditProfileTextField(
                       controller: _phoneController,
                       prefixIcon: Icon(Icons.phone),
-                      hintText: 'Enter your phone',
+                      hintText: 'Enter lab phone',
                       labelText: 'Phone',
                     ),
                     const SizedBox(height: 12),
+
                     EditProfileTextField(
-                      controller: _addressController,
-                      prefixIcon: Icon(Icons.home),
-                      hintText: 'Enter your address',
-                      labelText: 'Address',
+                      controller: _closingTimeController,
+                      prefixIcon: Icon(Icons.calendar_month_outlined),
+                      hintText: 'Enter closing time like this "5:00 PM"',
+                      labelText: 'Age',
                     ),
 
                     const SizedBox(height: 24),
@@ -121,7 +112,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                       child: ElevatedButton(
                         onPressed: () {
-                          _updateUserProfile();
+                          updateLabProfile();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent,

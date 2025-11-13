@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
+import 'package:lablink/Models/Appointment.dart';
 import 'package:lablink/Models/Lab.dart';
 import 'package:lablink/Models/LabLocation.dart';
 import 'package:lablink/Models/LabTests.dart';
@@ -11,13 +13,11 @@ class FirebaseDatabase {
 
   Future<Lab?> getLabDetails(String labId) async {
     try {
-      // Get main lab document
       final labDoc = await _firestore.collection('lab').doc(labId).get();
       if (!labDoc.exists) return null;
 
       final labData = labDoc.data()!;
 
-      // Get all locations (branches)
       final locationsSnapshot = await _firestore
           .collection('lab')
           .doc(labId)
@@ -29,7 +29,6 @@ class FirebaseDatabase {
       for (var locationDoc in locationsSnapshot.docs) {
         final locData = locationDoc.data();
 
-        // Get all tests in this location
         final testsSnapshot = await _firestore
             .collection('lab')
             .doc(labId)
@@ -47,18 +46,98 @@ class FirebaseDatabase {
         );
       }
 
-      // Return full Lab object
-      return Lab.fromMap(labData, locations: locations);
+      return Lab.fromMap(labData, id: labDoc.id, locations: locations);
     } catch (e) {
       print(' Error fetching lab details: $e');
       return null;
+    }
+
+    print("Fetching details for ID: $labId");
+  }
+
+  Future<void> updateLabData({
+    required String name,
+    required String phone,
+    required String closingTime,
+    required String email,
+  }) async {
+    try {
+      final lab = FirebaseAuth.instance.currentUser;
+      if (lab == null) {
+        print("❌ No lab logged in");
+        return;
+      }
+
+      await _firestore.collection('lab').doc(lab.uid).update({
+        'name': name.trim(),
+        'phone': phone.trim(),
+        'closingTime': closingTime.trim(),
+        'email': email.trim(),
+      });
+
+      print("✅ Lab data updated successfully");
+    } catch (e) {
+      print("❌ Error updating lab data: $e");
+    }
+  }
+
+  Future<Map<String, dynamic>> getMonthlyLabAnalytics(String labId) async {
+    try {
+      final snapshot = await _firestore
+          .collection('lab')
+          .doc(labId)
+          .collection('appointments')
+          .where('status', isEqualTo: 'Pending')
+          .get();
+
+      Map<String, Map<String, dynamic>> monthlyData = {};
+      double labVisitsRevenue = 0;
+      double homeVisitsRevenue = 0;
+
+      for (var doc in snapshot.docs) {
+        final appointment = Appointment.fromFirestore(doc);
+        if (appointment.serviceType == "Visit Lab") {
+          labVisitsRevenue += appointment.totalAmount;
+        } else if (appointment.serviceType == "Home Collection") {
+          homeVisitsRevenue += appointment.totalAmount;
+        }
+
+        final monthKey = DateFormat('MMM yyyy').format(appointment.date);
+
+        monthlyData.putIfAbsent(monthKey, () {
+          print("month is not found");
+          return {'patients': <String>{}, 'tests': 0, 'revenue': 0.0};
+        });
+
+        monthlyData[monthKey]!['patients'].add(appointment.patientId);
+        monthlyData[monthKey]!['tests'] += appointment.tests?.length ?? 0;
+        monthlyData[monthKey]!['revenue'] += appointment.totalAmount ?? 0.0;
+      }
+
+      Map<String, dynamic> monthlyResults = {};
+      monthlyData.forEach((month, data) {
+        monthlyResults[month] = {
+          'patients': (data['patients'] as Set).length,
+          'tests': data['tests'],
+          'revenue': data['revenue'],
+        };
+      });
+
+      return {
+        'monthlyData': monthlyResults,
+        'labVisitsRevenue': labVisitsRevenue,
+        'homeVisitsRevenue': homeVisitsRevenue,
+      };
+    } catch (e) {
+      print('❌ Error fetching monthly analytics: $e');
+      return {};
     }
   }
 
   Future<List<Review>> getLabReviews(String labId) async {
     try {
       final reviewsSnapshot = await _firestore
-          .collection('labs')
+          .collection('lab')
           .doc(labId)
           .collection('reviews')
           .orderBy('createdAt', descending: true)
@@ -79,7 +158,7 @@ class FirebaseDatabase {
   }) async {
     try {
       await _firestore
-          .collection('labs')
+          .collection('lab')
           .doc(labId)
           .collection('reviews')
           .add(review.toMap());
@@ -91,13 +170,13 @@ class FirebaseDatabase {
   Future<void> updateLabRating(String labId) async {
     try {
       final reviewsSnapshot = await _firestore
-          .collection('labs')
+          .collection('lab')
           .doc(labId)
           .collection('reviews')
           .get();
 
       if (reviewsSnapshot.docs.isEmpty) {
-        await _firestore.collection('labs').doc(labId).update({
+        await _firestore.collection('lab').doc(labId).update({
           'labRating': 0.0,
         });
         return;
@@ -110,7 +189,7 @@ class FirebaseDatabase {
       }
       final avgRating = total / reviewsSnapshot.docs.length;
 
-      await _firestore.collection('labs').doc(labId).update({
+      await _firestore.collection('lab').doc(labId).update({
         'labRating': double.parse(avgRating.toStringAsFixed(1)),
       });
     } catch (e) {

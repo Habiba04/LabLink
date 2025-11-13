@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lablink/Models/LabLocation.dart';
 import 'package:lablink/Patient/Pages/lab_details.dart';
 import 'package:lablink/Models/Lab.dart';
 
@@ -25,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final snapshot = await labsRef.get();
     return snapshot.docs.map((doc) {
       final data = doc.data();
-      return Lab.fromMap(data);
+      return Lab.fromMap(data, id: doc.id);
     }).toList();
   }
 
@@ -113,9 +112,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   );
                 }
                 if (snapshot.hasError) {
-                  return Center(
-                    child: Text("Error: ${snapshot.error}"),
-                  );
+                  return Center(child: Text("Error: ${snapshot.error}"));
                 }
 
                 List<Lab> labs = snapshot.data ?? [];
@@ -124,19 +121,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 List<Lab> filtered = labs
                     .where(
                       (lab) =>
-                          (lab.name
-                                  .toLowerCase()
-                                  .contains(searchQuery.toLowerCase()) ||
-                              lab.rating
-                                  .toString()
-                                  .contains(searchQuery)) &&
+                          (lab.name.toLowerCase().contains(
+                                searchQuery.toLowerCase(),
+                              ) ||
+                              lab.rating.toString().contains(searchQuery)) &&
                           (minRatingFilter == null ||
                               lab.rating >= minRatingFilter!),
                     )
                     .toList();
 
-                final displayedLabs =
-                    showAllLabs ? filtered : filtered.take(6).toList();
+                final displayedLabs = showAllLabs
+                    ? filtered
+                    : filtered.take(6).toList();
 
                 return SingleChildScrollView(
                   child: Padding(
@@ -147,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(height: 20),
                         _buildListHeader(),
                         const SizedBox(height: 10),
-                        ...displayedLabs.map((lab) => LabCard(lab: lab)).toList(),
+                        ...displayedLabs.map((lab) => LabCard(lab: lab)),
                         if (displayedLabs.isEmpty)
                           const Padding(
                             padding: EdgeInsets.all(20),
@@ -176,7 +172,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildHeader(BuildContext context) {
     final topPadding = MediaQuery.of(context).padding.top;
-    final patientName = FirebaseAuth.instance.currentUser?.displayName ??
+    final patientName =
+        FirebaseAuth.instance.currentUser?.displayName ??
         FirebaseAuth.instance.currentUser?.email ??
         "Patient";
 
@@ -399,7 +396,10 @@ class LabCard extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () => _navigateToLabDetails(context),
+                    onPressed: () {
+                      _navigateToLabDetails(context);
+                      print("Navigating with lab.id = ${lab.id}");
+                    },
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.zero,
                       backgroundColor: Colors.transparent,

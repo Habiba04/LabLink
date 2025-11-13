@@ -26,19 +26,20 @@ class Lab {
   final String imageUrl = 'assets/images/labs.jpeg';
 
   factory Lab.fromMap(
-    Map<String, dynamic> map, {
-    List<LabLocation> locations = const [],
+    Map<String, dynamic> data, {
+    String? id,
+    List<LabLocation>? locations,
   }) {
     return Lab(
-      id: map['id'] ?? '',
-      name: map['name'] ?? '',
-      email: map['email'] ?? '',
-      phone: map['phone'] ?? '',
-      locations: map['locations'] ?? [],
-      rating: map['labRating']?.toDouble() ?? 0.0,
-      reviewCount: map['reviewCount']?.toInt() ?? 0,
-      distanceKm: map['distanceKm']?.toDouble() ?? 0.0,
-      closingTime: map['closingTime'] ?? '',
+      id: id ?? data['id'] ?? '', // <-- الأهم هنا
+      name: data['name'] ?? '',
+      email: data['email'] ?? '',
+      phone: data['phone'] ?? '',
+      rating: (data['labRating'] ?? 0).toDouble(),
+      locations: locations ?? [],
+      reviewCount: data['reviewCount'],
+      distanceKm: data['distanceKm'],
+      closingTime: data['closingTime'],
     );
   }
 
@@ -53,7 +54,7 @@ class Lab {
       'reviewCount': reviewCount,
       'distanceKm': distanceKm,
       'closingTime': closingTime,
-      'imageUrl': imageUrl
+      'imageUrl': imageUrl,
     };
   }
 }
