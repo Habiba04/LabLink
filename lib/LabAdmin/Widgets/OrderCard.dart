@@ -70,14 +70,18 @@ class OrderCard extends StatelessWidget {
           .update({'status': 'Completed', 'results': downloadUrl});
 
       if (!context.mounted) return;
-      ScaffoldMessenger.of(
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+    ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text("Results uploaded.")));
+    ).showSnackBar(const SnackBar(content: Text("Results uploaded.")));
+});
     } catch (e) {
       if (!context.mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to upload results.")),
-      );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Failed to upload results.")),
+        );
+    });
     }
   }
 
