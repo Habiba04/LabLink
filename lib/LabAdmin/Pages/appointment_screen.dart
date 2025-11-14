@@ -27,7 +27,6 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
       for (var doc in snapshot.docs) {
         final data = doc.data();
 
-        // ✅ Get patient info
         final patientId = data['patientId'];
         Map<String, dynamic>? patientData;
 
@@ -36,30 +35,22 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
               .collection('patient')
               .doc(patientId)
               .get();
-          if (patientSnap.exists) {
-            patientData = patientSnap.data();
-          }
+          if (patientSnap.exists) patientData = patientSnap.data();
         }
 
-        // ✅ Get branch address
-        final branchId = data['branchId'];
-        String branchAddress = 'Unknown Branch';
+        // Retrieve branch info directly from embedded locationData
+        String branchAddress = 'Unknown Address';
         String branchName = 'Unknown Branch Name';
-        if (branchId != null && branchId.toString().isNotEmpty) {
-          final branchSnap = await FirebaseFirestore.instance
-              .collection('lab')
-              .doc(uid)
-              .collection('locations')
-              .doc(branchId)
-              .get();
-          if (branchSnap.exists) {
-            branchAddress = branchSnap.data()?['address'] ?? 'No address';
-            branchName = branchSnap.data()?['name'] ?? 'No address';
-          }
+        final locationData = data['locationData'] as Map<String, dynamic>?;
+
+        if (locationData != null) {
+          branchAddress = locationData['address'] ?? 'Unknown Address';
+          branchName = locationData['name'] ?? 'Unknown Branch Name';
         }
 
-        // ✅ Map appointment data for UI
         final appointment = {
+          'id': doc.id,
+          'patientId': patientId ?? '',
           'name': patientData?['name'] ?? 'Unknown Patient',
           'phone': patientData?['phone'] ?? 'No phone',
           'tests': (data['tests'] != null && data['tests'].isNotEmpty)
@@ -67,15 +58,13 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                   data['tests'].map(
                     (t) => {
                       'name': t['name'] ?? 'Unnamed Test',
-                      'prescription':
-                          t['prescription'] ?? null, 
+                      'prescription': t['prescription'] ?? null,
                     },
                   ),
                 )
               : [
                   {'name': 'No tests', 'prescription': null},
                 ],
-
           'date': data['date'] ?? '',
           'time': data['time'] ?? '',
           'branch': branchName + ', ' + branchAddress,
@@ -83,16 +72,49 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
               ? 'Home'
               : 'Walk-in',
           'status': data['status'] ?? 'Pending',
+          'results': data['results'] ?? null,
         };
 
         results.add(appointment);
       }
 
-      return results
-          .where((a) => a['status']?.toLowerCase() != 'pending')
-          .toList();
+      // Filter out "Pending" and "Awaiting Results"
+      return results.where((a) {
+        final status = (a['status'] ?? '').toString().toLowerCase();
+        return status != 'pending' && status != 'awaiting results';
+      }).toList();
     });
   }
+
+  bool _isAppointmentToday(String dateString) {
+    final today = DateTime.now();
+    final todayFormatted =
+        "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
+
+    return dateString == todayFormatted;
+  }
+
+  Future<void> handleStatus(Map<String, dynamic> order, String status) async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+
+    // Update lab appointment status
+    await FirebaseFirestore.instance
+        .collection('lab')
+        .doc(uid)
+        .collection('appointments')
+        .doc(order['id'])
+        .update({'status': status});
+
+    // Update patient appointment status
+    await FirebaseFirestore.instance
+        .collection('patient')
+        .doc(order['patientId'])
+        .collection('appointments')
+        .doc(order['id'])
+        .update({'status': status});
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -222,8 +244,17 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
             return ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: filtered.length,
-              itemBuilder: (ctx, i) =>
-                  AppointmentCard(appointment: filtered[i]),
+              itemBuilder: (ctx, i) {
+                final appointment = filtered[i];
+                final isReadyForCompletion =
+                    appointment['status'].toLowerCase() == 'upcoming' &&
+                    _isAppointmentToday(appointment['date']);
+                return AppointmentCard(
+                  appointment: appointment,
+                  onStatusChange: handleStatus,
+                  isActionableToday: isReadyForCompletion,
+                );
+              },
             );
           },
         ),
