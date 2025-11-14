@@ -1,7 +1,8 @@
+import 'dart:core';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lablink/LabAdmin/Pages/OrderDetailsScreen.dart';
+import 'package:lablink/LabAdmin/Pages/order_details_screen.dart';
 import 'package:lablink/LabAdmin/Widgets/FilterBar.dart';
 import 'package:lablink/LabAdmin/Widgets/OrderCard.dart';
 
@@ -47,7 +48,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
         // ✅ Map order data for UI
         final order = {
           'id': doc.id,
-          'patientId': patientId ?? '',
+          'patientId': patientId ?? '', // Crucial for status updates
           'name': patientData?['name'] ?? 'Unknown Patient',
           'age': patientData?['age'] ?? '',
           'date': data['date'] ?? '',
@@ -75,7 +76,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
     });
   }
 
-  // Accept function
+  // Accept function: Updates status to 'Upcoming' for Lab and Patient
   Future<void> acceptOrder(Map<String, dynamic> order) async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
@@ -95,7 +96,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
         .update({'status': 'Upcoming'});
   }
 
-  // Reject function
+  // Reject function: Updates status to 'Cancelled' for Lab and Patient
   Future<void> rejectOrder(Map<String, dynamic> order) async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;

@@ -9,16 +9,18 @@ class BookingService {
 
   final Map<String, dynamic> labData;
   final Map<String, dynamic> locationData;
-  final List<Map<String, dynamic>> selectedTests;
+  final List<Map<String, dynamic>>? selectedTests;
   final String selectedService;
+  final String? prescriptionPath;
   final double homeCollectionCharge = 50.0;
 
   BookingService({
     // Only required when creating a new booking, not when viewing history
     required this.labData,
     required this.locationData,
-    required this.selectedTests,
+    this.selectedTests,
     required this.selectedService,
+    this.prescriptionPath,
   });
   // --- Utility Function ---
   String getCurrentUserId() {
@@ -35,7 +37,7 @@ class BookingService {
 
   // --- Calculation Function ---
   double calculateTotal() {
-    double total = selectedTests.fold<double>(
+    double total = selectedTests!.fold<double>(
       0.0,
       (sum, test) => sum + (test['price'] ?? 0),
     );
@@ -124,6 +126,7 @@ class BookingService {
       'paymentMethod': paymentMethod,
       'serviceType': selectedService,
       'tests': selectedTests,
+      'prescription': prescriptionPath,
       'labData': labData,
       'locationData': locationData,
       'status': 'Pending',
@@ -134,8 +137,6 @@ class BookingService {
     final appointmentsCollectionRef = firestore
         .collection('lab')
         .doc(labId)
-        .collection('locations')
-        .doc(locationId)
         .collection('appointments');
 
     // Create a new document reference with an auto-generated ID
@@ -207,8 +208,6 @@ class BookingService {
     final appointmentRef = firestore
         .collection('lab')
         .doc(labId)
-        .collection('locations')
-        .doc(locationId)
         .collection('appointments')
         .doc(appointmentDocId);
 

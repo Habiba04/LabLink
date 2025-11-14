@@ -1,11 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'package:lablink/LabAdmin/Pages/PrescriptionViewer.dart';
-import 'package:lablink/LabAdmin/Pages/ResultsViewerScreen.dart';
-import 'package:open_filex/open_filex.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:lablink/LabAdmin/Pages/ResultsViewerScreen.dart'; // REQUIRED for viewing results
+import 'package:lablink/LabAdmin/Pages/prescription_viewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AppointmentCard extends StatelessWidget {
@@ -67,7 +62,6 @@ class AppointmentCard extends StatelessWidget {
                       const Icon(
                         Icons.phone_outlined,
                         size: 20,
-                        color: Colors.blueGrey,
                       ),
                       const SizedBox(width: 6),
                       Text(
@@ -214,10 +208,13 @@ class AppointmentCard extends StatelessWidget {
               ),
             ),
           ),
+          
+          // 🔹 Action buttons for appointments scheduled today
           if (isActionableToday)
             Padding(
               padding: const EdgeInsets.only(top: 16),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   ElevatedButton(
                     onPressed: () =>
@@ -229,14 +226,9 @@ class AppointmentCard extends StatelessWidget {
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Appointment Completed',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
-                        ),
-                      ],
+                    child: const Text(
+                      'Appointment Completed',
+                      style: TextStyle(fontSize: 16, color: Colors.white),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -249,19 +241,15 @@ class AppointmentCard extends StatelessWidget {
                       side: const BorderSide(color: Colors.red),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Mark No Show',
-                          style: TextStyle(fontSize: 16, color: Colors.red),
-                        ),
-                      ],
+                    child: const Text(
+                      'Mark No Show',
+                      style: TextStyle(fontSize: 16, color: Colors.red),
                     ),
                   ),
                 ],
               ),
             ),
+          
           // 🔹 View Results button (only for completed appointments)
           if (appointment['status'].toLowerCase() == 'completed')
             Padding(
@@ -272,7 +260,7 @@ class AppointmentCard extends StatelessWidget {
                   onPressed: () async {
                     final link = appointment['results'];
 
-                    // 1. Initial Link/Empty Check (Kept your original logic)
+                    // 1. Initial Link/Empty Check
                     if (link == null || link.isEmpty) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -284,6 +272,7 @@ class AppointmentCard extends StatelessWidget {
                       return;
                     }
 
+                    // 2. Navigate to the in-app PDF Viewer Screen
                     Navigator.push(
                       context,
                       MaterialPageRoute(

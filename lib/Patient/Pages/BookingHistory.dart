@@ -27,6 +27,7 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
       labData: {},
       locationData: {},
       selectedTests: [],
+      prescriptionPath: '',
       selectedService: '',
     );
 

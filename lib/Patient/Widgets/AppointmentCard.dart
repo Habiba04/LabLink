@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:lablink/LabAdmin/Pages/PrescriptionViewer.dart';
 import 'package:lablink/Models/Appointment.dart';
 import 'package:lablink/Patient/services/BookingService.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../../LabAdmin/Pages/prescription_viewer.dart';
 
 class AppointmentCard extends StatefulWidget {
   final Appointment appointment;

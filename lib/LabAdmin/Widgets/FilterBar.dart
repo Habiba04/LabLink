@@ -9,8 +9,8 @@ class FilterBar extends StatelessWidget {
     required this.items,
     required this.selected,
     required this.onSelected,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

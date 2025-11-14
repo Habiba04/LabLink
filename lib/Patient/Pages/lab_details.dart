@@ -27,17 +27,14 @@ class _LabDetailsState extends State<LabDetails> {
     fetchLabDetails();
   }
 
-
-
   Future<void> fetchLabDetails() async {
     try {
-    final data = await FirebaseDatabase().getLabDetails(widget.labId);
-    print("Fetched data: $data");
-    setState(() {
-      labData = data;
-    });
-    }
-    catch(e){
+      final data = await FirebaseDatabase().getLabDetails(widget.labId);
+      print("Fetched data: $data");
+      setState(() {
+        labData = data;
+      });
+    } catch (e) {
       print("Error fetching lab details: $e");
     }
   }
@@ -244,44 +241,7 @@ class _LabDetailsState extends State<LabDetails> {
                 ),
               ),
             ),
-            ListTile(
-              title: Text(
-                "Upload Prescription",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: width * 0.04,
-                ),
-              ),
-              trailing: IconButton(
-                icon: Icon(Icons.camera_alt_outlined),
-                onPressed: () async {
-                  showImageSourceDialog();
-                },
-              ),
-            ),
 
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(child: Divider(thickness: 1, endIndent: 10)),
-
-                  Text("OR"),
-                  Expanded(child: Divider(thickness: 1, indent: 10)),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                "Choose from tests",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: width * 0.04,
-                ),
-              ),
-            ),
             ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
@@ -302,6 +262,45 @@ class _LabDetailsState extends State<LabDetails> {
                   ),
                   subtitle: Text(locations[locationIndex].address),
                   children: [
+                    ListTile(
+                      title: Text(
+                        "Upload Prescription",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: width * 0.04,
+                        ),
+                      ),
+                      trailing: IconButton(
+                        icon: Icon(Icons.camera_alt_outlined),
+                        onPressed: () async {
+                          showImageSourceDialog();
+                          selectedBranch = locations[locationIndex];
+                        },
+                      ),
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(child: Divider(thickness: 1, endIndent: 10)),
+
+                          Text("OR"),
+                          Expanded(child: Divider(thickness: 1, indent: 10)),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        "Choose from tests",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: width * 0.04,
+                        ),
+                      ),
+                    ),
                     ListView.builder(
                       itemCount: locations[locationIndex].tests.length,
                       shrinkWrap: true,
@@ -430,6 +429,7 @@ class _LabDetailsState extends State<LabDetails> {
                       labData: labData!.toMap(),
                       locationData: selectedBranch!.toMap(),
                       selectedTests: selectedTests,
+                      prescroptionPath: uploadedImagePath,
                     ),
                   ),
                 );
@@ -449,39 +449,3 @@ class _LabDetailsState extends State<LabDetails> {
     );
   }
 }
-
-// SizedBox(
-//                   width: double.infinity,
-//                   child: ElevatedButton(
-//                     onPressed: () =>
-//                         Navigator.popUntil(context, (r) => r.isFirst),
-//                     style: ElevatedButton.styleFrom(
-//                       padding: EdgeInsets.zero,
-//                       backgroundColor: Colors.transparent,
-//                       shadowColor: Colors.transparent,
-//                       shape: RoundedRectangleBorder(
-//                         borderRadius: BorderRadius.circular(30),
-//                       ),
-//                     ),
-//                     child: Ink(
-//                       decoration: const BoxDecoration(
-//                         gradient: LinearGradient(
-//                           colors: [Color(0xFF00B4DB), Color(0xFF00BBA7)],
-//                         ),
-//                         borderRadius: BorderRadius.all(Radius.circular(30)),
-//                       ),
-//                       child: Container(
-//                         alignment: Alignment.center,
-//                         padding: const EdgeInsets.symmetric(vertical: 16),
-//                         child: const Text(
-//                           "Done",
-//                           style: TextStyle(
-//                             color: Colors.white,
-//                             fontSize: 16,
-//                             fontWeight: FontWeight.w600,
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
