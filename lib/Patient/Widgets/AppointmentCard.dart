@@ -3,7 +3,6 @@ import 'package:intl/intl.dart';
 import 'package:lablink/LabAdmin/Pages/PrescriptionViewer.dart';
 import 'package:lablink/Models/Appointment.dart';
 import 'package:lablink/Patient/services/BookingService.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class AppointmentCard extends StatefulWidget {
   final Appointment appointment;
@@ -111,7 +110,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  widget.appointment.bookingId,
+                  "#${widget.appointment.bookingId}",
                   style: const TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w600,
@@ -220,7 +219,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                 ),
               )
-            else if (currentStatus.toLowerCase() == 'scheduled')
+            else if (currentStatus.toLowerCase() == 'upcoming')
               OutlinedButton.icon(
                 onPressed: cancelBooking,
                 style: OutlinedButton.styleFrom(
