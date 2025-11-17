@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:lablink/LabAdmin/Pages/PrescriptionViewer.dart';
+import 'package:lablink/LabAdmin/Pages/order_details_screen.dart';
 
 class OrderCard extends StatefulWidget {
   final Map<String, dynamic> order;
@@ -146,6 +147,13 @@ class _OrderCardState extends State<OrderCard> {
           .doc(widget.order['id'])
           .update({'status': 'Cancelled'});
 
+      await FirebaseFirestore.instance
+          .collection('patient')
+          .doc(widget.order['patientId'])
+          .collection('appointments')
+          .doc(widget.order['id'])
+          .update({'status': 'Cancelled'});
+
       if (!context.mounted) return;
       ScaffoldMessenger.of(
         context,
@@ -162,6 +170,7 @@ class _OrderCardState extends State<OrderCard> {
     final String date = widget.order['date'] ?? '-';
     final String time = widget.order['time'] ?? '-';
     final String service = widget.order['collection'] ?? '-';
+    final String prescription = widget.order['prescription'] ?? '';
     final List tests = widget.order['tests'] ?? [];
     final status = widget.order['status']?.toLowerCase() ?? '';
     final isAwaiting = status == 'awaiting results';
@@ -223,7 +232,8 @@ class _OrderCardState extends State<OrderCard> {
             const SizedBox(height: 8),
             _infoRow(Icons.article_outlined, service),
             const SizedBox(height: 16),
-            if (tests.isNotEmpty) _buildTestSection(context, tests),
+            if (tests.isNotEmpty)
+              _buildTestSection(context, tests, prescription),
             const SizedBox(height: 16),
 
             // Action buttons
@@ -277,23 +287,15 @@ class _OrderCardState extends State<OrderCard> {
                     width: double.infinity,
                     child: TextButton(
                       onPressed: () {
-                        final link = widget.order['results'];
-                        if (link == null || link.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Results not available yet."),
-                            ),
-                          );
-                          return;
-                        }
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => PrescriptionViewer(url: link),
+                            builder: (_) =>
+                                OrderDetailsScreen(order: widget.order),
                           ),
                         );
                       },
-                      child: const Text("View Results"),
+                      child: const Text("View Details"),
                     ),
                   ),
                 ],
@@ -314,7 +316,11 @@ class _OrderCardState extends State<OrderCard> {
     ],
   );
 
-  Widget _buildTestSection(BuildContext context, List tests) => Container(
+  Widget _buildTestSection(
+    BuildContext context,
+    List tests,
+    String prescription,
+  ) => Container(
     decoration: BoxDecoration(
       color: const Color(0x1100BBA7),
       borderRadius: BorderRadius.circular(12),
@@ -324,27 +330,49 @@ class _OrderCardState extends State<OrderCard> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text("Tests", style: TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+
+        // 1. List all tests using a Column and text widgets
         ...tests.map((t) {
-          final prescriptionUrl = t['prescription'];
-          return Row(
-            children: [
-              Expanded(child: Text(t['name'] ?? '')),
-              if (prescriptionUrl != null)
-                IconButton(
-                  icon: const Icon(
-                    Icons.visibility_outlined,
-                    color: Colors.teal,
-                  ),
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => PrescriptionViewer(url: prescriptionUrl),
-                    ),
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 4.0),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.check_circle_outline,
+                  size: 16,
+                  color: Color(0xFF00BBA7),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    t['name'] ?? '',
+                    style: const TextStyle(color: Colors.black87),
                   ),
                 ),
-            ],
+              ],
+            ),
           );
-        }),
+        }).toList(),
+
+        // 2. Add the prescription view button once, if available
+        if (prescription.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: TextButton.icon(
+              icon: const Icon(Icons.description, size: 18),
+              label: const Text(
+                "View Uploaded Prescription",
+                style: TextStyle(decoration: TextDecoration.underline),
+              ),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PrescriptionViewer(url: prescription),
+                ),
+              ),
+            ),
+          ),
       ],
     ),
   );

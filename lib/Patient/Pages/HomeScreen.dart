@@ -262,7 +262,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 setState(() => searchQuery = value);
               },
               decoration: InputDecoration(
-                hintText: "Search labs or tests",
+                hintText: "Search labs",
                 hintStyle: const TextStyle(color: Colors.grey),
                 prefixIcon: const Icon(Icons.search, color: Colors.grey),
                 suffixIcon: IconButton(

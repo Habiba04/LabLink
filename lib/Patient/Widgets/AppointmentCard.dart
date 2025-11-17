@@ -30,7 +30,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
 
   Color statusColor() {
     switch (currentStatus.toLowerCase()) {
-      case 'scheduled':
+      case 'upcoming':
         return const Color(0xFF3A82F7);
       case 'completed':
         return const Color(0xFF00BBA7);

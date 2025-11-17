@@ -1,10 +1,17 @@
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lablink/Database/firebaseDB.dart';
+import 'package:lablink/LabAdmin/Pages/PrescriptionViewer.dart';
 import 'package:lablink/Models/Lab.dart';
 import 'package:lablink/Models/LabLocation.dart';
 import 'package:lablink/Patient/Pages/ServiceType.dart';
 import 'package:lablink/Patient/Pages/review_screen.dart';
+import 'package:uuid/uuid.dart';
 
 class LabDetails extends StatefulWidget {
   final String labId;
@@ -20,7 +27,15 @@ class _LabDetailsState extends State<LabDetails> {
   List<Map<String, dynamic>> selectedTests = [];
   Lab? labData;
   final picker = ImagePicker();
-  //File? image;
+  bool isUploading = false;
+  bool get canBookTest {
+    return selectedBranch != null && (uploadedImagePath != null || selectedTests.isNotEmpty);
+  }
+
+  Uint8List? localFileBytes;
+  String? localFileName;
+  
+
   @override
   void initState() {
     super.initState();
@@ -39,12 +54,99 @@ class _LabDetailsState extends State<LabDetails> {
     }
   }
 
-  Future<void> pickImage(ImageSource source) async {
-    final pickedFile = await picker.pickImage(source: source);
-    if (pickedFile != null) {
-      setState(() {
-        uploadedImagePath = pickedFile.path;
-      });
+  // inside _LabDetailsState
+  Future<void> uploadPrescription() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('User not authenticated. Please log in.')),
+        );
+      }
+      return;
+    }
+
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['png', 'jpg', 'jpeg', 'pdf'],
+      withData: true, // Crucial for getting the bytes
+    );
+
+    if (result == null || result.files.first.bytes == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('File selection cancelled.')),
+        );
+      }
+      return;
+    }
+
+    final picked = result.files.first;
+
+    setState(() {
+      // 1. Store the local file details
+      localFileBytes = picked.bytes;
+      localFileName = picked.name;
+
+      // 2. Clear any previously uploaded URL (if the user is replacing a file)
+      uploadedImagePath = null;
+      isUploading = true;
+
+      // 3. Reset selected tests if user chooses prescription instead
+      // (Optional logic based on your UI flow, but good practice to consider)
+      // selectedTests = [];
+    });
+
+    // Display a confirmation message
+    try {
+      // Create a unique file name to avoid collisions
+      const uuid = Uuid();
+      final extension = localFileName?.split('.').last ?? 'jpg';
+      final uniqueFileName = '${uuid.v4()}.$extension';
+      
+      // The storage path must match the security rules: /results/{allPaths=**}
+      final storagePath = 'results/$uid/${widget.labId}/prescriptions/$uniqueFileName';
+
+      // 2. Create Storage Reference and Upload
+      final storageRef = FirebaseStorage.instance.ref().child(storagePath);
+      
+      final uploadTask = storageRef.putData(
+        localFileBytes!,  // Pass MIME type for correct handling
+      );
+
+      final snapshot = await uploadTask.whenComplete(() {});
+      
+      // 3. Get the download URL
+      final downloadUrl = await snapshot.ref.getDownloadURL();
+
+      // 4. Update state with the URL
+      if (mounted) {
+        setState(() {
+          uploadedImagePath = downloadUrl;
+          isUploading = false;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("${picked.name} uploaded successfully!")),
+        );
+      }
+
+    } on FirebaseException catch (e) {
+      print("Firebase upload failed: ${e.message}");
+      if (mounted) {
+        setState(() => isUploading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Upload failed: ${e.message}")),
+        );
+      }
+    } catch (e) {
+      print("Upload failed: $e");
+      if (mounted) {
+        setState(() => isUploading = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("An unknown error occurred during upload.")),
+        );
+      }
     }
   }
 
@@ -54,23 +156,15 @@ class _LabDetailsState extends State<LabDetails> {
       builder: (context) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text("Upload Prescription"),
-        content: const Text("Choose an option to upload your prescription:"),
+        content: const Text("Choose a file to upload your prescription:"),
         actions: [
           TextButton.icon(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
-              pickImage(ImageSource.camera);
+              await uploadPrescription();
             },
-            icon: const Icon(Icons.camera_alt_outlined),
-            label: const Text("Capture from Camera"),
-          ),
-          TextButton.icon(
-            onPressed: () {
-              Navigator.pop(context);
-              pickImage(ImageSource.gallery);
-            },
-            icon: const Icon(Icons.photo_library_outlined),
-            label: const Text("Choose from Gallery"),
+            icon: const Icon(Icons.upload_file_outlined),
+            label: const Text("Choose File"),
           ),
         ],
       ),
@@ -81,10 +175,19 @@ class _LabDetailsState extends State<LabDetails> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    if (labData == null) {
+    if (labData == null || isUploading) {
       return Scaffold(
         backgroundColor: Colors.white,
-        body: Center(child: CircularProgressIndicator(color: Colors.blue)),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(
+                color: Colors.blue
+                ),
+                if(isUploading) const Padding(padding: EdgeInsets.all(16.0), child: Text("Uploading..."),)
+            ],
+          )),
       );
     }
     return Scaffold(
@@ -129,7 +232,7 @@ class _LabDetailsState extends State<LabDetails> {
                           Text(
                             labData!.name,
                             style: TextStyle(
-                              fontSize: width * 0.04,
+                              fontSize: width * 0.06,
                               color: Colors.black,
                             ),
                           ),
@@ -142,12 +245,23 @@ class _LabDetailsState extends State<LabDetails> {
                                 color: Color(0xFFFDC700),
                               ),
                               SizedBox(width: height * 0.014),
-                              Text(
-                                labData!.rating.toString(),
-                                style: TextStyle(
-                                  fontSize: width * 0.04,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
+                              RichText(
+                                text: TextSpan(
+                                  text: labData!.rating.toString(),
+                                  style: TextStyle(
+                                    fontSize: width * 0.04,
+                                    color: Colors.black,
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text:
+                                          " (${labData!.reviewCount} reviews)",
+                                      style: TextStyle(
+                                        fontSize: width * 0.04,
+                                        color: Colors.black45,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
@@ -218,7 +332,7 @@ class _LabDetailsState extends State<LabDetails> {
 
             SizedBox(height: height * 0.2),
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFF00BBA7),
@@ -231,13 +345,21 @@ class _LabDetailsState extends State<LabDetails> {
                     ),
                   );
                 },
-                child: Text(
-                  "View Reviews",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: width * 0.04,
-                    color: Colors.white,
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Text(
+                        "View Reviews",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: width * 0.04,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -250,6 +372,7 @@ class _LabDetailsState extends State<LabDetails> {
                 final locations = labData!.locations;
 
                 return ExpansionTile(
+                  
                   shape: const RoundedRectangleBorder(
                     side: BorderSide(color: Colors.transparent),
                   ),
@@ -262,22 +385,79 @@ class _LabDetailsState extends State<LabDetails> {
                   ),
                   subtitle: Text(locations[locationIndex].address),
                   children: [
-                    ListTile(
-                      title: Text(
-                        "Upload Prescription",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: width * 0.04,
-                        ),
-                      ),
-                      trailing: IconButton(
-                        icon: Icon(Icons.camera_alt_outlined),
-                        onPressed: () async {
-                          showImageSourceDialog();
-                          selectedBranch = locations[locationIndex];
-                        },
-                      ),
-                    ),
+                    uploadedImagePath == null
+                        ? ListTile(
+                            title: Text(
+                              "Upload Prescription",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: width * 0.04,
+                              ),
+                            ),
+                            trailing: IconButton(
+                              icon: Icon(Icons.camera_alt_outlined),
+                              onPressed: () async {
+                                selectedBranch = locations[locationIndex];
+                                showImageSourceDialog();
+                              },
+                            ),
+                          )
+                        : ListTile(
+                          onTap: () {
+                            selectedBranch = locations[locationIndex];
+                            showImageSourceDialog();
+                          },
+                            title: Row(
+                              children: [
+                                Icon(Icons.check_circle, color: Colors.green),
+                                SizedBox(width: 8),
+                                Text(
+                                  "Prescription Uploaded",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green,
+                                    fontSize: width * 0.04,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            subtitle: Text(
+                              "Tap to view or change",
+                              style: TextStyle(color: Colors.grey),
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // VIEW BUTTON
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.visibility,
+                                    color: Colors.blue,
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => PrescriptionViewer(
+                                          url:
+                                              uploadedImagePath!, // Must be an image URL
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+
+                                // CHANGE BUTTON
+                                IconButton(
+                                  icon: Icon(Icons.edit, color: Colors.orange),
+                                  onPressed: () {
+                                    selectedBranch = locations[locationIndex];
+                                    showImageSourceDialog(); // Pick new file
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
 
                     Padding(
                       padding: const EdgeInsets.all(10.0),
@@ -410,32 +590,39 @@ class _LabDetailsState extends State<LabDetails> {
       bottomNavigationBar: Container(
         color: Colors.white,
         width: width,
-        height: height * 0.09,
+        height: height * 0.1,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(30),
-              gradient: LinearGradient(
-                colors: [Color(0xFF00B8DB), Color(0xFF00BBA7)],
-              ),
+              gradient: canBookTest
+                  ? LinearGradient(
+                      colors: [Color(0xFF00B8DB), Color(0xFF00BBA7)],
+                    )
+                  : null, // ❗ No gradient when disabled
+              color: canBookTest ? null : Colors.grey.shade400,
             ),
             child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ServiceTypeScreen(
-                      labData: labData!.toMap(),
-                      locationData: selectedBranch!.toMap(),
-                      selectedTests: selectedTests,
-                      prescroptionPath: uploadedImagePath,
-                    ),
-                  ),
-                );
-              },
+              onPressed: canBookTest
+                  ? () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ServiceTypeScreen(
+                            labData: labData!.toMap(),
+                            locationData: selectedBranch!.toMap(),
+                            selectedTests: selectedTests,
+                            prescroptionPath: uploadedImagePath,
+                          ),
+                        ),
+                      );
+                    }
+                  : null, // ← disables the button
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
+                backgroundColor: canBookTest
+                    ? Colors.transparent
+                    : Colors.grey.shade400,
                 shadowColor: Colors.transparent,
               ),
               child: Text(
