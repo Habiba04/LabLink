@@ -9,6 +9,7 @@ import 'package:lablink/Patient/Pages/HomeScreen.dart';
 import 'package:lablink/Patient/Pages/MainScreen.dart';
 import 'package:lablink/Patient/Pages/PatientSignUp.dart';
 import 'package:lablink/Patient/Pages/splashScreen.dart';
+import 'package:lablink/SuperAdmin/Pages/super-admin-login.dart';
 
 class PatientSignin extends StatefulWidget {
   const PatientSignin({super.key});
@@ -338,20 +339,45 @@ class _PatientSigninState extends State<PatientSignin> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const LabLoginScreen()),
-          );
-        },
-        backgroundColor: const Color(0xFF00BBA7), // your main green color
-        shape: const CircleBorder(),
-        child: const FaIcon(
-          FontAwesomeIcons.vial, // vial icon from FontAwesome
-          color: Colors.white,
-          size: 24,
-        ),
+      floatingActionButton: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const LabLoginScreen()),
+              );
+            },
+            heroTag: "Lab Administrator",
+            backgroundColor: const Color(0xFF00BBA7), // your main green color
+            shape: const CircleBorder(),
+            child: const FaIcon(
+              FontAwesomeIcons.vial, // vial icon from FontAwesome
+              color: Colors.white,
+              size: 24,
+            ),
+          ),
+          SizedBox(height: 12),
+          FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SuperAdminLoginScreen(),
+                ),
+              );
+            },
+            heroTag: "Super Administrator",
+            backgroundColor: const Color(0xFF155DFC),
+            shape: const CircleBorder(),
+            child: Icon(
+              Icons.verified_user_outlined,
+              color: Colors.white,
+              size: 24,
+            ),
+          ),
+        ],
       ),
     );
   }
