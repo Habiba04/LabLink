@@ -49,26 +49,6 @@ class BookingService {
 
   // --- Data Fetching Functions ---
 
-  // Fetches appointments ONLY from the patient's dedicated collection (Fast read)
-  Future<List<Appointment>> fetchPatientAppointments(String uid) async {
-    final userId = getCurrentUserId(); // Fetches UID internally
-
-    try {
-      final snapshot = await FirebaseFirestore.instance
-          .collection('patient')
-          .doc(userId)
-          .collection('appointments')
-          .orderBy('createdAt', descending: true) // Sort by most recent booking
-          .get();
-
-      return snapshot.docs
-          .map((doc) => Appointment.fromFirestore(doc))
-          .toList();
-    } catch (e) {
-      print('❌ Error fetching patient appointments for UID $userId: $e');
-      rethrow;
-    }
-  }
 
   Future<Map<String, dynamic>> fetchLocationDetails() async {
     final doc = await FirebaseFirestore.instance
@@ -204,7 +184,7 @@ class BookingService {
     final firestore = FirebaseFirestore.instance;
     final batch = firestore.batch();
 
-    // 1. Primary Appointment Ref (Lab/Location)
+    // 1. Primary Appointment Ref (Lab/appointments)
     final appointmentRef = firestore
         .collection('lab')
         .doc(labId)
