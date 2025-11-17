@@ -53,17 +53,17 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
           'patientId': patientId ?? '',
           'name': patientData?['name'] ?? 'Unknown Patient',
           'phone': patientData?['phone'] ?? 'No phone',
+          'prescription': data['prescription'] ?? "",
           'tests': (data['tests'] != null && data['tests'].isNotEmpty)
               ? List<Map<String, dynamic>>.from(
                   data['tests'].map(
                     (t) => {
                       'name': t['name'] ?? 'Unnamed Test',
-                      'prescription': t['prescription'] ?? null,
                     },
                   ),
                 )
               : [
-                  {'name': 'No tests', 'prescription': null},
+                  {'name': 'No tests'},
                 ],
           'date': data['date'] ?? '',
           'time': data['time'] ?? '',

@@ -144,7 +144,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                                       ),
                                       SizedBox(height: width * 0.02),
                                       Text(
-                                        review.comment,
+                                        review.comments,
                                         style: TextStyle(
                                           fontSize: width * 0.043,
                                           color: Color(0xFF364153),

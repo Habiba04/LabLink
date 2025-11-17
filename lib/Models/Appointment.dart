@@ -54,6 +54,7 @@ class Appointment {
       serviceType: data['serviceType'] ?? '',
       time: data['time'] as String? ?? '',
       prescription: data['prescription'] ?? '',
+      resultUrl: data['results'] ?? '',
       tests:
           (data['tests'] as List<dynamic>?)
               ?.map((test) => Map<String, dynamic>.from(test))

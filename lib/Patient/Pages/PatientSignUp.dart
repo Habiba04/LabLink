@@ -357,11 +357,6 @@ class _PatientSignupState extends State<PatientSignup> {
                       ),
                       elevation: 1,
                     ),
-                    icon: Image.asset(
-                      'assets/images/gg.png',
-                      width: 70,
-                      height: 70,
-                    ),
                     label: Text(
                       'Google',
                       style: TextStyle(

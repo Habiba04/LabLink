@@ -4,11 +4,13 @@ import '../utils/BookingHelpers.dart';
 class BookingTestsCard extends StatelessWidget {
   final List<Map<String, dynamic>>? selectedTests;
   final String selectedService;
+  final bool isPrescribed;
 
   const BookingTestsCard({
     super.key,
     required this.selectedTests,
     required this.selectedService,
+    required this.isPrescribed,
   });
 
   @override
@@ -21,7 +23,7 @@ class BookingTestsCard extends StatelessWidget {
         children: [
           buildSectionTitle(Icons.medical_services, "Selected Tests"),
           const SizedBox(height: 12),
-          if (selectedTests == null || selectedTests!.isEmpty)
+          if (isPrescribed)
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -34,8 +36,8 @@ class BookingTestsCard extends StatelessWidget {
                   style: const TextStyle(fontSize: 15, color: Colors.grey),
                 ),
               ],
-            )
-          else
+            ),
+          if (selectedTests != null || selectedTests!.isNotEmpty)
             ...selectedTests!.map(
               (test) => Padding(
                 padding: const EdgeInsets.symmetric(vertical: 6),

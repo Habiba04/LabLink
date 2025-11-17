@@ -14,7 +14,7 @@ class PrescriptionViewer extends StatelessWidget {
       return Scaffold(
         appBar: AppBar(
           title: const Text(
-            'PDF Viewer',
+            'Results Viewer',
             style: TextStyle(color: Colors.black),
           ),
         ),
@@ -34,8 +34,10 @@ class PrescriptionViewer extends StatelessWidget {
     // 🖼️ Image Viewer using CachedNetworkImage (for better reliability)
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Image Viewer'),
-        backgroundColor: Colors.teal,
+        title: const Text(
+          'Prescription Viewer',
+          style: TextStyle(color: Colors.black),
+        ),
       ),
       body: Center(
         child: InteractiveViewer(

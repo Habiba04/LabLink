@@ -170,6 +170,7 @@ class _SchedulePaymentScreenState extends State<SchedulePaymentScreen> {
             BookingTestsCard(
               selectedTests: widget.selectedTests,
               selectedService: widget.selectedService,
+              isPrescribed: widget.prescriptionPath != null,
             ),
             const SizedBox(height: 20),
 
