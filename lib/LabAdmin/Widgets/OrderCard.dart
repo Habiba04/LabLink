@@ -6,7 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:lablink/LabAdmin/Pages/PrescriptionViewer.dart';
 
-class OrderCard extends StatelessWidget {
+class OrderCard extends StatefulWidget {
   final Map<String, dynamic> order;
   final VoidCallback onViewDetails;
   final VoidCallback? onAccept;
@@ -18,14 +18,23 @@ class OrderCard extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
+  @override
+  State<OrderCard> createState() => _OrderCardState();
+}
+
+class _OrderCardState extends State<OrderCard> {
+  bool isUploading = false;
   // Upload PDF/image to Firebase Storage
   Future<void> uploadResults(BuildContext context) async {
+    setState(() => isUploading = true);
+
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('User not authenticated.')),
         );
+        setState(() => isUploading = false);
       }
       return;
     }
@@ -43,6 +52,7 @@ class OrderCard extends StatelessWidget {
           const SnackBar(content: Text('File selection cancelled or failed.')),
         );
       }
+      setState(() => isUploading = false);
       return;
     }
 
@@ -52,7 +62,7 @@ class OrderCard extends StatelessWidget {
     // NOTE: The Firebase Storage security rules from your image check the path:
     // match /results/{allPaths=**}.
     // We use 'results/' followed by the order ID and filename.
-    final String storagePath = 'results/${order['id']}/$filename';
+    final String storagePath = 'results/${widget.order['id']}/$filename';
 
     try {
       // 2. Create Storage Reference
@@ -73,20 +83,20 @@ class OrderCard extends StatelessWidget {
           .collection('lab')
           .doc(uid)
           .collection('appointments')
-          .doc(order['id'])
+          .doc(widget.order['id'])
           .update({'status': 'Completed', 'results': downloadUrl});
 
       // Update the Patient's appointment status
       await firestore
           .collection('patient')
-          .doc(order['patientId'])
+          .doc(widget.order['patientId'])
           .collection('appointments')
-          .doc(order['id'])
+          .doc(widget.order['id'])
           .update({'status': 'Completed', 'results': downloadUrl});
 
       // Update local map so UI reacts immediately (optional but good practice)
-      order['results'] = downloadUrl;
-      order['status'] = 'Completed';
+      widget.order['results'] = downloadUrl;
+      widget.order['status'] = 'Completed';
 
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -103,6 +113,7 @@ class OrderCard extends StatelessWidget {
         context,
       ).showSnackBar(SnackBar(content: Text("Failed to upload results: $e")));
     }
+    if (mounted) setState(() => isUploading = false);
   }
 
   Future<void> confirmReject(BuildContext context) async {
@@ -132,7 +143,7 @@ class OrderCard extends StatelessWidget {
           .collection('lab')
           .doc(uid)
           .collection('appointments')
-          .doc(order['id'])
+          .doc(widget.order['id'])
           .update({'status': 'Cancelled'});
 
       if (!context.mounted) return;
@@ -144,15 +155,27 @@ class OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String name = order['name'] ?? '';
-    final String age = order['age'] != null ? "${order['age']} yrs" : '';
-    final String date = order['date'] ?? '-';
-    final String time = order['time'] ?? '-';
-    final String service = order['collection'] ?? '-';
-    final List tests = order['tests'] ?? [];
-    final status = order['status']?.toLowerCase() ?? '';
+    final String name = widget.order['name'] ?? '';
+    final String age = widget.order['age'] != null
+        ? "${widget.order['age']} yrs"
+        : '';
+    final String date = widget.order['date'] ?? '-';
+    final String time = widget.order['time'] ?? '-';
+    final String service = widget.order['collection'] ?? '-';
+    final List tests = widget.order['tests'] ?? [];
+    final status = widget.order['status']?.toLowerCase() ?? '';
     final isAwaiting = status == 'awaiting results';
 
+    if (isUploading) {
+      return SizedBox.expand(
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: CircularProgressIndicator(color: Color(0xFF00BBA7)),
+          ),
+        ),
+      );
+    }
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       decoration: BoxDecoration(
@@ -221,10 +244,10 @@ class OrderCard extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      if (onAccept != null)
+                      if (widget.onAccept != null)
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: onAccept,
+                            onPressed: widget.onAccept,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.teal,
                             ),
@@ -234,7 +257,7 @@ class OrderCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                      if (onAccept != null) const SizedBox(width: 10),
+                      if (widget.onAccept != null) const SizedBox(width: 10),
                       Expanded(
                         child: OutlinedButton(
                           onPressed: () => confirmReject(context),
@@ -254,7 +277,7 @@ class OrderCard extends StatelessWidget {
                     width: double.infinity,
                     child: TextButton(
                       onPressed: () {
-                        final link = order['results'];
+                        final link = widget.order['results'];
                         if (link == null || link.isEmpty) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
