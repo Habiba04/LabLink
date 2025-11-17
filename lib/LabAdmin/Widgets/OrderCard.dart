@@ -1,9 +1,10 @@
-import 'package:file_picker/file_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:lablink/LabAdmin/Pages/prescription_viewer.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:lablink/LabAdmin/Pages/PrescriptionViewer.dart';
 
 class OrderCard extends StatelessWidget {
   final Map<String, dynamic> order;
@@ -17,11 +18,19 @@ class OrderCard extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  // 🧩 Upload results
+  // Upload PDF/image to Firebase Storage
   Future<void> uploadResults(BuildContext context) async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) return;
+    if (uid == null) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('User not authenticated.')),
+        );
+      }
+      return;
+    }
 
+    // 1. File Selection and Validation
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
@@ -37,56 +46,101 @@ class OrderCard extends StatelessWidget {
       return;
     }
 
-    final fileBytes = result.files.single.bytes!;
-    final fileName =
-        'results/${order['id']}/${DateTime.now().microsecondsSinceEpoch}_results.pdf';
+    final Uint8List fileBytes = result.files.single.bytes!;
+    final String filename = result.files.single.name;
+
+    // NOTE: The Firebase Storage security rules from your image check the path:
+    // match /results/{allPaths=**}.
+    // We use 'results/' followed by the order ID and filename.
+    final String storagePath = 'results/${order['id']}/$filename';
 
     try {
-      final storageRef = FirebaseStorage.instance.ref().child(fileName);
-      await storageRef.putData(fileBytes);
+      // 2. Create Storage Reference
+      final storageRef = FirebaseStorage.instance.ref().child(storagePath);
 
-      // CRITICAL FIX: Manually construct the public GCS URL 
-      const String BUCKET_NAME = 'lablink-53a91.appspot.com';
-      final String filePathEncoded = Uri.encodeComponent(fileName);
+      // 3. Upload the file (putData is used since we have bytes)
+      final uploadTask = storageRef.putData(fileBytes);
+      final snapshot = await uploadTask.whenComplete(() {});
 
-      // Append correct mimeType parameter for reliable PDF viewing in the app.
-      final String downloadUrl = 
-      'https://storage.googleapis.com/$BUCKET_NAME/$filePathEncoded?mimeType=application/pdf';
+      // 4. Get the download URL
+      final downloadUrl = await snapshot.ref.getDownloadURL();
 
-      // Update Lab Appointment
-      await FirebaseFirestore.instance
+      // 5. Update Firestore for lab and patient
+      final firestore = FirebaseFirestore.instance;
+
+      // Update the Lab's appointment status
+      await firestore
           .collection('lab')
           .doc(uid)
           .collection('appointments')
           .doc(order['id'])
           .update({'status': 'Completed', 'results': downloadUrl});
 
-      // Update Patient Appointment
-      await FirebaseFirestore.instance
+      // Update the Patient's appointment status
+      await firestore
           .collection('patient')
           .doc(order['patientId'])
           .collection('appointments')
           .doc(order['id'])
           .update({'status': 'Completed', 'results': downloadUrl});
 
+      // Update local map so UI reacts immediately (optional but good practice)
+      order['results'] = downloadUrl;
+      order['status'] = 'Completed';
+
       if (!context.mounted) return;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-    ScaffoldMessenger.of(
-        context,
-    ).showSnackBar(const SnackBar(content: Text("Results uploaded.")));
-});
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Results uploaded successfully.")),
+      );
+    } on FirebaseException catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Firebase upload failed: ${e.message}")),
+      );
     } catch (e) {
       if (!context.mounted) return;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Failed to upload results.")),
-        );
-    });
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Failed to upload results: $e")));
     }
   }
 
-  // 🧩 Confirm before rejecting (omitted body for brevity)
-  Future<void> confirmReject(BuildContext context) async { /* ... */ }
+  Future<void> confirmReject(BuildContext context) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Confirm Rejection"),
+        content: const Text("Are you sure you want to reject this order?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text("Reject", style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) return;
+
+      await FirebaseFirestore.instance
+          .collection('lab')
+          .doc(uid)
+          .collection('appointments')
+          .doc(order['id'])
+          .update({'status': 'Cancelled'});
+
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text("Order rejected.")));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -96,7 +150,7 @@ class OrderCard extends StatelessWidget {
     final String time = order['time'] ?? '-';
     final String service = order['collection'] ?? '-';
     final List tests = order['tests'] ?? [];
-    final status = order['status'].toString().toLowerCase();
+    final status = order['status']?.toLowerCase() ?? '';
     final isAwaiting = status == 'awaiting results';
 
     return Container(
@@ -117,9 +171,14 @@ class OrderCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Name row
             Row(
               children: [
-                _avatar(),
+                const CircleAvatar(
+                  radius: 23,
+                  backgroundColor: Color(0x3300BBA7),
+                  child: Icon(Icons.person_outline, color: Colors.white),
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -144,8 +203,8 @@ class OrderCard extends StatelessWidget {
             if (tests.isNotEmpty) _buildTestSection(context, tests),
             const SizedBox(height: 16),
 
+            // Action buttons
             if (isAwaiting)
-              // ✅ Upload Results Button (Full Width)
               ElevatedButton(
                 onPressed: () => uploadResults(context),
                 style: ElevatedButton.styleFrom(
@@ -158,24 +217,24 @@ class OrderCard extends StatelessWidget {
                 ),
               )
             else
-              // ✅ Accept / Reject + View Details
               Column(
                 children: [
                   Row(
                     children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: onAccept,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.teal,
-                          ),
-                          child: const Text(
-                            "Accept",
-                            style: TextStyle(color: Colors.white),
+                      if (onAccept != null)
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: onAccept,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.teal,
+                            ),
+                            child: const Text(
+                              "Accept",
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 10),
+                      if (onAccept != null) const SizedBox(width: 10),
                       Expanded(
                         child: OutlinedButton(
                           onPressed: () => confirmReject(context),
@@ -194,8 +253,24 @@ class OrderCard extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: TextButton(
-                      onPressed: onViewDetails,
-                      child: const Text("View Details"),
+                      onPressed: () {
+                        final link = order['results'];
+                        if (link == null || link.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Results not available yet."),
+                            ),
+                          );
+                          return;
+                        }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => PrescriptionViewer(url: link),
+                          ),
+                        );
+                      },
+                      child: const Text("View Results"),
                     ),
                   ),
                 ],
@@ -205,12 +280,6 @@ class OrderCard extends StatelessWidget {
       ),
     );
   }
-
-  Widget _avatar() => const CircleAvatar(
-    radius: 23,
-    backgroundColor: Color(0x3300BBA7),
-    child: Icon(Icons.person_outline, color: Colors.white),
-  );
 
   Widget _infoRow(IconData icon, String text) => Row(
     children: [
