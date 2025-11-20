@@ -7,7 +7,8 @@ import 'package:lablink/Models/LabTests.dart';
 // ignore: must_be_immutable
 class AddNewTest extends StatefulWidget {
    String   locationId;
-    AddNewTest({super.key,required  this.locationId});
+   String  labid;
+    AddNewTest({super.key,required  this.locationId,required this.labid});
 
   @override
   State<AddNewTest> createState() => _AddNewTestState();
@@ -22,8 +23,7 @@ class _AddNewTestState extends State<AddNewTest> {
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController sampleTypeController = TextEditingController();
   final TextEditingController preparationController = TextEditingController();
-
-  @override
+   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Form(
@@ -35,7 +35,7 @@ class _AddNewTestState extends State<AddNewTest> {
               top_screen(
                 context: context,
                 title: 'Add New Test',
-                subtitle: 'Create a new test for this location',
+                subtitle: 'Create a new test for your ',
               ),
 
               const SizedBox(height: 24),
@@ -348,27 +348,36 @@ class _AddNewTestState extends State<AddNewTest> {
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-                  onPressed: () async{
-                    if (formKey.currentState!.validate()) {
-                      await TestsServices().addNewTest(
-                        Labtest(
-                          id: '',
-                          name: testNameController.text,
-                          category:  categoryController.text,
-                          price: double.parse(priceController.text),
-                          duration: durationController.text,
-                          sampleType: sampleTypeController.text,
-                          description: descriptionController.text,
-                          preparation: preparationController.text,
-                        ),
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar( 
-                        const SnackBar(content: Text('Test added successfully!')),
-                      );
-                      //Navigator.pop(context);
-                    }
-                  },
-                  child: const Text(
+               
+                  onPressed: () async {
+                     print('lab ID issssssssssss: ${widget.labid}');
+                     print('Location ID issssssssssss: ${widget.locationId}');
+  if (formKey.currentState!.validate()) {
+    
+    await TestsServices().addNewTest(
+      LabTest(
+        id: '' ,
+         name: testNameController.text,
+        category: categoryController.text,
+        price: double.parse(priceController.text),
+        durationMinutes: durationController.text,
+        sampleType: sampleTypeController.text,
+        description: descriptionController.text,
+        preparation: preparationController.text,
+      ),
+      widget.labid,
+      widget.locationId, 
+    );
+    
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Test added successfully!')),
+    );
+   
+  }
+  Navigator.pop(  context);
+},
+  child: const Text(
                     'Add Test',
                     style: TextStyle(
                       fontSize: 18,

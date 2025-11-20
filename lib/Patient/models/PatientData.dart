@@ -19,10 +19,8 @@ class PatientData {
         'ssn':ssn  ,
           'createdAt': FieldValue.serverTimestamp(),
       });
-        print('✅ User data saved successfully!');
-    }catch(e){
-        print('❌ Error saving user data: $e');
-       
+     }  catch(e){
+      print(e.toString());
     }
   }
 }

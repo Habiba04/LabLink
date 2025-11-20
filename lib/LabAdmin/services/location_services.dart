@@ -4,40 +4,46 @@ import 'package:lablink/Models/LabLocation.dart';
 class LocationServices {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<void> addLocation(Lablocation location, String labId) async {
-         String newLocationId = _firestore
-        .collection('labs')
+  Future<void> addLocation(LabLocation location, String labId) async {
+    String newLocationId = _firestore
+        .collection('lab')
         .doc(labId)
         .collection('locations')
         .doc()
-        .id;     
-    location.locationId = newLocationId;
-    await  _firestore
-        .collection('labs')
+        .id;
+
+    location.id = newLocationId;
+
+    await _firestore
+        .collection('lab')
         .doc(labId)
         .collection('locations')
-        .doc(location.locationId)
+        .doc(location.id)
         .set(location.toMap());
-       
   }
-  Stream<List<Lablocation>> getLocations(String labId)  {
-    var snapshots =   _firestore
-    .collection('labs')
-    .doc(labId)
-    .collection('locations')
-    . snapshots();
-    return snapshots.map((shots)=>shots.docs.map((doc) => Lablocation.fromMap(doc.data())).toList());
-    
-   }
-  //  String getlocationid(String labId){
-  //   String locationId = _firestore
-  //       .collection('labs')
-  //       .doc(labId)
-  //       .collection('locations')
-  //       .doc()
-  //       .id;     
-  //   return locationId;
-  //  }
- 
 
+  Future<void> deletLocation(String locationId, String labId) async {
+    await _firestore
+        .collection('lab')
+        .doc(labId)
+        .collection('locations')
+        .doc(locationId)
+        .delete();
+  }
+
+  Stream<List<LabLocation>> getLocations(String labId) {
+    return _firestore
+        .collection('lab')
+        .doc(labId)
+        .collection('locations')
+        .snapshots()
+        .map((shots) {
+          return shots.docs.map((doc) {
+            return LabLocation.fromMap(
+              doc.id,
+              doc.data(),
+            );
+          }).toList();
+        });
+  }
 }

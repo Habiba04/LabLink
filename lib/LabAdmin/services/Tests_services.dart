@@ -1,33 +1,75 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
- import 'package:lablink/Models/LabTests.dart';
+import 'package:lablink/Models/LabTests.dart';
 
 class TestsServices {
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  Future addNewTest(Labtest labtest) async {
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    String locationId = "svcdxbxN6pePsTcOTZTo";
-    String labId = 'sJAWUw2DnhZDibT5EeUqf2D5qXr2';
-  //  String locationId = "svcdxbxN6pePsTcOTZTo";
-    try{
-      firestore
-        .collection('labs')
+  Future<void> addNewTest(LabTest labtest, String labId, String locationId) async {
+    try {
+      await firestore
+          .collection('lab')
+          .doc(labId)
+          .collection('locations')
+          .doc(locationId)
+          .collection('tests')
+          .doc()
+          .set(labtest.toMap());
+      print('Test added successfully!');
+    } catch (e) {
+      print('Error adding test: $e');
+    }
+  }
+
+  Stream<List<LabTest>> getTests(String labId, String locationId) {
+    return FirebaseFirestore.instance
+        .collection('lab')
         .doc(labId)
         .collection('locations')
         .doc(locationId)
         .collection('tests')
-        .doc()
-        .set({
-          'name': labtest.name,
-          'category': labtest.category,
-          'price': labtest.price,
-          'duration': labtest.duration,
-          'sampleType': labtest.sampleType,
-          'description': labtest.description,
-          'preparation': labtest.preparation,
-        });
-    }catch(e){
-      print('Error adding test: $e');
-    }
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) {
+              var data = doc.data();
+              data['id'] = doc.id;
+              return LabTest.fromMap(data);
+            }).toList());
+  }
+  Future<void>updatetest(LabTest labtest,String labId,String locationId,String testId)async{
+    await firestore
+     .collection('lab')
+     .doc(labId)
+     .collection('locations')
+     .doc(locationId)
+     .collection('tests')
+     .doc(testId)
+     .update(labtest.toMap());
+  }
+  Future<void>delettest(String testId,String labId,String locationId)async{
+    await firestore
+        .collection('lab')
+        .doc(labId)
+        .collection('locations')
+        .doc(locationId)
+        .collection('tests')
+        .doc(testId)
+        .delete();
+  }
+ 
+  Stream<List<LabTest>> searchTests(
+      String labId, String locationId, String keyword) {
+    return FirebaseFirestore.instance
+        .collection('lab')
+        .doc(labId)
+        .collection('locations')
+        .doc(locationId)
+        .collection('tests')
+        .where("testName", isGreaterThanOrEqualTo: keyword)
+        .where("testName", isLessThanOrEqualTo: "$keyword\uf8ff")
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) {
+              var data = doc.data();
+              data['id'] = doc.id;
+              return LabTest.fromMap(data);
+            }).toList());
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lablink/LabAdmin/Pages/Add_New_Location.dart';
 import 'package:lablink/LabAdmin/Pages/Add_New_Test.dart';
+import 'package:lablink/LabAdmin/Pages/Manage_Tests_screen.dart';
 import 'package:lablink/LabAdmin/Widgets/top_widget.dart';
 import 'package:lablink/LabAdmin/services/location_services.dart';
 
@@ -12,8 +13,8 @@ class LabLocations_screen extends StatefulWidget {
 }
 
 class _LabLocations_screenState extends State<LabLocations_screen> {
-  final labid = 'sJAWUw2DnhZDibT5EeUqf2D5qXr2';
-  String locationId = "";
+  final labid = 'StetfS8KpRZCntXqc46wAzIhnVI2';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,29 +25,30 @@ class _LabLocations_screenState extends State<LabLocations_screen> {
             title: 'Lab Locations',
             subtitle: 'Manage your laboratory locations',
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           SizedBox(
             width: 290,
             child: ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return AddNewLocation();
-                    },
-                  ),
+                  MaterialPageRoute(builder: (_) => const AddNewLocation()),
                 );
-               
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFF009689),
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                backgroundColor: const Color(0xFF009689),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 10,
+                ),
+                textStyle: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+                children: const [
                   Icon(Icons.add, color: Colors.white),
                   Text(
                     ' Add New Location',
@@ -56,92 +58,105 @@ class _LabLocations_screenState extends State<LabLocations_screen> {
               ),
             ),
           ),
-
           Expanded(
             child: StreamBuilder(
               stream: LocationServices().getLocations(labid),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
                 if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 }
-                var locations = snapshot.data;
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text('No locations found'));
+                }
+
+                var locations = snapshot.data!;
+
                 return ListView.builder(
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  itemCount: locations?.length ?? 0,
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  itemCount: locations.length,
                   itemBuilder: (context, index) {
+                    final location = locations[index];
                     return Card(
                       elevation: 1,
-                      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 5,
+                      ),
                       child: Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              '  ${locations?[index].name}',
-                              style: TextStyle(fontSize: 16),
+                              location.name,
+                              style: const TextStyle(fontSize: 16),
                             ),
-                            SizedBox(height: 10),
+                            const SizedBox(height: 10),
                             Row(
                               children: [
-                                Icon(Icons.location_on, color: Colors.grey),
-                                SizedBox(width: 5),
+                                const Icon(
+                                  Icons.location_on,
+                                  color: Colors.grey,
+                                ),
+                                const SizedBox(width: 5),
                                 Text(
-                                  '${locations?[index].address}',
-                                  style: TextStyle(
+                                  location.address,
+                                  style: const TextStyle(
                                     fontSize: 14,
                                     color: Colors.grey,
                                   ),
                                 ),
                               ],
                             ),
-                            SizedBox(height: 5),
+                            const SizedBox(height: 5),
                             Row(
                               children: [
-                                Icon(Icons.phone, color: Colors.grey),
-                                SizedBox(width: 5),
+                                const Icon(Icons.phone, color: Colors.grey),
+                                const SizedBox(width: 5),
                                 Text(
-                                  '${locations?[index].phone}',
-                                  style: TextStyle(
+                                  location.phone,
+                                  style: const TextStyle(
                                     fontSize: 14,
                                     color: Colors.grey,
                                   ),
                                 ),
                               ],
                             ),
-                            SizedBox(height: 5),
+                            const SizedBox(height: 5),
                             Row(
                               children: [
-                                Icon(Icons.timer_outlined, color: Colors.grey),
-                                SizedBox(width: 5),
+                                const Icon(
+                                  Icons.timer_outlined,
+                                  color: Colors.grey,
+                                ),
+                                const SizedBox(width: 5),
                                 Text(
-                                  ' ${locations?[index].startday.substring(0,3)} - ${locations?[index].endday.substring(0,3)}',
-                                  style: TextStyle(
+                                  '${location.startday.substring(0, 3)} - ${location.endday?.substring(0, 3) ?? ''}',
+                                  style: const TextStyle(
                                     fontSize: 14,
                                     color: Colors.grey,
                                   ),
                                 ),
-                                SizedBox(width: 5),
+                                const SizedBox(width: 5),
                                 Text(
-                                  ' ${locations?[index].openinghours} - ${locations?[index].closinghours}',
-                                  style: TextStyle(
+                                  '${location.openinghours} - ${location.closinghours}',
+                                  style: const TextStyle(
                                     fontSize: 14,
                                     color: Colors.grey,
                                   ),
                                 ),
                               ],
                             ),
-                            SizedBox(height: 5),
-                            Divider(),
+                            const SizedBox(height: 5),
+                            const Divider(),
                             Row(
-                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Column(
-                                  children: [
+                                  children: const [
                                     Text(
                                       '20 Tests',
                                       style: TextStyle(
@@ -158,75 +173,74 @@ class _LabLocations_screenState extends State<LabLocations_screen> {
                                     ),
                                   ],
                                 ),
-                                SizedBox(width: 10),
-
-                                GestureDetector(
-                                  onTap: () {},
-                                  child: Row(
-                                    children: [
-                                      InkWell(
-                                        onTap: () {
-                                          locationId= locations?[index].locationId ?? "";
-                                          Navigator.push(context, MaterialPageRoute(builder: (context){
-                                            return AddNewTest(locationId: locationId,);
-                                          }));
-                                        },
-                                        child: Container(
-                                          width: 113,
-                                          height: 31,
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 10,
-                                            vertical: 5,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                              color: const Color(0xFF009689),
-                                            ),
-                                            borderRadius: BorderRadius.circular(
-                                              5,
+                                Row(
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                   print(location.id); 
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => ManageTests(
+                                              locationid: location.id ?? '',
+                                               labid: labid,
                                             ),
                                           ),
+                                        );
+                                      },
+                                      child: Container(
+                                        width: 113,
+                                        height: 31,
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 10,
+                                          vertical: 5,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: const Color(0xFF009689),
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
+                                        ),
+                                        child: const Center(
                                           child: Text(
                                             'Manage Tests',
                                             style: TextStyle(
-                                              color: const Color(0xFF009689),
+                                              color: Color(0xFF009689),
                                               fontSize: 14,
                                             ),
                                           ),
                                         ),
                                       ),
-                                      SizedBox(width: 10),
-                                      InkWell(
-                                        onTap: () {},
-                                        child: Container(
-                                          width: 38,
-                                          height: 31,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                              color: Colors.red,
-                                            ),
-                                            borderRadius: BorderRadius.circular(
-                                              5,
-                                            ),
-                                          ),
-                                          child: IconButton(
-                                            padding: EdgeInsets.zero,
-                                            iconSize: 20,
-                                            icon: Icon(
-                                              Icons.delete_outlined,
-                                              color: const Color.fromARGB(
-                                                255,
-                                                228,
-                                                11,
-                                                11,
-                                              ),
-                                            ),
-                                            onPressed: () {},
+                                    ),
+                                    const SizedBox(width: 10),
+                                    InkWell(
+                                      onTap: () async {
+                                        if (location.id != null) {
+                                          await LocationServices()
+                                              .deletLocation(
+                                                location.id!,
+                                                labid,
+                                              );
+                                        }
+                                      },
+                                      child: Container(
+                                        width: 38,
+                                        height: 31,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(color: Colors.red),
+                                          borderRadius: BorderRadius.circular(
+                                            5,
                                           ),
                                         ),
+                                        child: const Icon(
+                                          Icons.delete_outlined,
+                                          color: Colors.red,
+                                        ),
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 Widget top_screen({ required BuildContext context,required  String title,   String ? subtitle}) {
   return Container(
-    height: 127,
+    height: 150,
     decoration: BoxDecoration(
       gradient: LinearGradient(
         colors: [Color(0xFF00BBA7), Color(0xFF155DFC)],

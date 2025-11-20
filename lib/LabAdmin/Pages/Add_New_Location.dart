@@ -18,7 +18,7 @@ class _AddNewLocationState extends State<AddNewLocation> {
   final TextEditingController startdayController = TextEditingController();
   final TextEditingController enddayController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-   final TextEditingController openAtController = TextEditingController();
+  final TextEditingController openAtController = TextEditingController();
   final TextEditingController closeAtController = TextEditingController();
   final formkey = GlobalKey<FormState>();
 
@@ -27,15 +27,14 @@ class _AddNewLocationState extends State<AddNewLocation> {
     locationNameController.dispose();
     addressController.dispose();
     phoneController.dispose();
-     openAtController.dispose();
+    openAtController.dispose();
     closeAtController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final String? labid = 'sJAWUw2DnhZDibT5EeUqf2D5qXr2';
-    bool isSaving = false;
+    final String? labid = 'StetfS8KpRZCntXqc46wAzIhnVI2';
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -51,7 +50,7 @@ class _AddNewLocationState extends State<AddNewLocation> {
                 subtitle: 'Set up a new laboratory branch',
               ),
               const SizedBox(height: 4),
-              buildLabel('Location Name',  Icon(Icons.location_city_outlined)),
+              buildLabel('Location Name', Icon(Icons.location_city_outlined)),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
                 child: TextFormField(
@@ -75,7 +74,7 @@ class _AddNewLocationState extends State<AddNewLocation> {
                   ),
                 ),
               ),
-              buildLabel('Address',  Icon(Icons.location_on_rounded)),
+              buildLabel('Address', Icon(Icons.location_on_rounded)),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
                 child: TextFormField(
@@ -103,7 +102,7 @@ class _AddNewLocationState extends State<AddNewLocation> {
                   ),
                 ),
               ),
-             buildLabel('Phone Numper', Icon(Icons.call_outlined)),
+              buildLabel('Phone Numper', Icon(Icons.call_outlined)),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
                 child: TextFormField(
@@ -130,77 +129,119 @@ class _AddNewLocationState extends State<AddNewLocation> {
               ),
               buildLabel('Working Days', Icon(Icons.access_time)),
               Padding(
-                padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
-                child: 
-               Padding(
-  padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
-  child: Row(
-    children: [
-      Expanded(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: Color(0xFFD1D5DC),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: DropdownButtonFormField<String>(
-            value: startdayController.text.isEmpty
-                ? null
-                : startdayController.text,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: 'Start Day',
-            ),
-            items: const [
-              DropdownMenuItem(value: 'Monday', child: Text('Monday')),
-              DropdownMenuItem(value: 'Tuesday', child: Text('Tuesday')),
-              DropdownMenuItem(value: 'Wednesday', child: Text('Wednesday')),
-              DropdownMenuItem(value: 'Thursday', child: Text('Thursday')),
-              DropdownMenuItem(value: 'Friday', child: Text('Friday')),
-              DropdownMenuItem(value: 'Saturday', child: Text('Saturday')),
-              DropdownMenuItem(value: 'Sunday', child: Text('Sunday')),
-            ],
-            onChanged: (value) {
-              startdayController.text = value!;
-            },
-          ),
-        ),
-      ),
-      const SizedBox(width: 12),
-      Expanded(
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: Color(0xFFD1D5DC),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: DropdownButtonFormField<String>(
-            value: enddayController.text.isEmpty
-                ? null
-                : enddayController.text,
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              hintText: 'End Day',
-            ),
-            items: const [
-              DropdownMenuItem(value: 'Monday', child: Text('Monday')),
-              DropdownMenuItem(value: 'Tuesday', child: Text('Tuesday')),
-              DropdownMenuItem(value: 'Wednesday', child: Text('Wednesday')),
-              DropdownMenuItem(value: 'Thursday', child: Text('Thursday')),
-              DropdownMenuItem(value: 'Friday', child: Text('Friday')),
-              DropdownMenuItem(value: 'Saturday', child: Text('Saturday')),
-              DropdownMenuItem(value: 'Sunday', child: Text('Sunday')),
-            ],
-            onChanged: (value) {
-              enddayController.text = value!;
-            },
-          ),
-        ),
-      ),
-    ],
-  ),
-),
-   ),
+                padding: const EdgeInsets.fromLTRB(12.0, 8.0, 12.0, 16.0),
+                child: Row(
+                  children: [
+                    Flexible(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: Color(0xFFD1D5DC),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: DropdownButtonFormField<String>(
+                          value: startdayController.text.isEmpty
+                              ? null
+                              : startdayController.text,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'Start Day',
+                            isDense: true,
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                          items: const [
+                            DropdownMenuItem(
+                              value: 'Saturday',
+                              child: Text('Saturday'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Sunday',
+                              child: Text('Sunday'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Monday',
+                              child: Text('Monday'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Tuesday',
+                              child: Text('Tuesday'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Wednesday',
+                              child: Text('Wednesday'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Thursday',
+                              child: Text('Thursday'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Friday',
+                              child: Text('Friday'),
+                            ),
+                          ],
+                          onChanged: (value) {
+                            startdayController.text = value!;
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Flexible(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 10),
+                        decoration: BoxDecoration(
+                          color: Color(0xFFD1D5DC),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: DropdownButtonFormField<String>(
+                          value: enddayController.text.isEmpty
+                              ? null
+                              : enddayController.text,
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: 'End Day',
+                            isDense: true,
+                            contentPadding: EdgeInsets.zero,
+                          ),
+                          items: const [
+                            DropdownMenuItem(
+                              value: 'Saturday',
+                              child: Text('Saturday'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Sunday',
+                              child: Text('Sunday'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Monday',
+                              child: Text('Monday'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Tuesday',
+                              child: Text('Tuesday'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Wednesday',
+                              child: Text('Wednesday'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Thursday',
+                              child: Text('Thursday'),
+                            ),
+                            DropdownMenuItem(
+                              value: 'Friday',
+                              child: Text('Friday'),
+                            ),
+                          ],
+                          onChanged: (value) {
+                            enddayController.text = value!;
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               buildLabel('Opening Hours', Icon(Icons.schedule)),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
@@ -273,13 +314,12 @@ class _AddNewLocationState extends State<AddNewLocation> {
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () async {
-                      if (isSaving) return;
-                      isSaving = true;
-
                       if (formkey.currentState!.validate()) {
                         if (labid != null) {
                           await LocationServices().addLocation(
-                            Lablocation(
+                            LabLocation(
+                              openAt: openAtController.text,
+                              closeAt: closeAtController.text,
                               name: locationNameController.text,
                               address: addressController.text,
                               phone: phoneController.text,
@@ -290,14 +330,14 @@ class _AddNewLocationState extends State<AddNewLocation> {
                             ),
                             labid,
                           );
-                          if (mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text('Location Added Successfully!'),
-                              ),
-                            );
-                            Navigator.pop(context ,true);
-                          }
+
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Location Added Successfully!'),
+                            ),
+                          );
+
+                          Navigator.of(context).pop();
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -306,7 +346,6 @@ class _AddNewLocationState extends State<AddNewLocation> {
                           );
                         }
                       }
-                      isSaving = false;
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF00BBA7),
