@@ -12,8 +12,8 @@ class AppointmentCard extends StatelessWidget {
     required this.appointment,
     required this.onStatusChange,
     required this.isActionableToday,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -59,10 +59,7 @@ class AppointmentCard extends StatelessWidget {
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      const Icon(
-                        Icons.phone_outlined,
-                        size: 20,
-                      ),
+                      const Icon(Icons.phone_outlined, size: 20),
                       const SizedBox(width: 6),
                       Text(
                         appointment['phone'],
@@ -208,7 +205,7 @@ class AppointmentCard extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // 🔹 Action buttons for appointments scheduled today
           if (isActionableToday)
             Padding(
@@ -249,7 +246,7 @@ class AppointmentCard extends StatelessWidget {
                 ],
               ),
             ),
-          
+
           // 🔹 View Results button (only for completed appointments)
           if (appointment['status'].toLowerCase() == 'completed')
             Padding(

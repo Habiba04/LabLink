@@ -14,8 +14,8 @@ class OrderCard extends StatelessWidget {
     required this.order,
     required this.onViewDetails,
     this.onAccept,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   // 🧩 Upload results
   Future<void> uploadResults(BuildContext context) async {
@@ -45,13 +45,13 @@ class OrderCard extends StatelessWidget {
       final storageRef = FirebaseStorage.instance.ref().child(fileName);
       await storageRef.putData(fileBytes);
 
-      // CRITICAL FIX: Manually construct the public GCS URL 
-      const String BUCKET_NAME = 'lablink-53a91.appspot.com';
+      // CRITICAL FIX: Manually construct the public GCS URL
+      const String bucketName = 'lablink-53a91.appspot.com';
       final String filePathEncoded = Uri.encodeComponent(fileName);
 
       // Append correct mimeType parameter for reliable PDF viewing in the app.
-      final String downloadUrl = 
-      'https://storage.googleapis.com/$BUCKET_NAME/$filePathEncoded?mimeType=application/pdf';
+      final String downloadUrl =
+          'https://storage.googleapis.com/$bucketName/$filePathEncoded?mimeType=application/pdf';
 
       // Update Lab Appointment
       await FirebaseFirestore.instance
@@ -71,22 +71,24 @@ class OrderCard extends StatelessWidget {
 
       if (!context.mounted) return;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-    ScaffoldMessenger.of(
-        context,
-    ).showSnackBar(const SnackBar(content: Text("Results uploaded.")));
-});
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text("Results uploaded.")));
+      });
     } catch (e) {
       if (!context.mounted) return;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Failed to upload results.")),
+          const SnackBar(content: Text("Failed to upload results.")),
         );
-    });
+      });
     }
   }
 
   // 🧩 Confirm before rejecting (omitted body for brevity)
-  Future<void> confirmReject(BuildContext context) async { /* ... */ }
+  Future<void> confirmReject(BuildContext context) async {
+    /* ... */
+  }
 
   @override
   Widget build(BuildContext context) {

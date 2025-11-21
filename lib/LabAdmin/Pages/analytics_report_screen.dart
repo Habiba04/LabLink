@@ -24,7 +24,7 @@ class _AnalyticsReportScreenState extends State<AnalyticsReportScreen> {
     final _monthlyData = results['monthlyData'] as Map<String, dynamic>;
     final _labVisitsRevenue = results['labVisitsRevenue'] as double;
     final _homeVisitsRevenue = results['homeVisitsRevenue'] as double;
-    print('✅ Lab Analytics Results: $results');
+
     setState(() {
       labData = _labData;
       monthlyData = _monthlyData;

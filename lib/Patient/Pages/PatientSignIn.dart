@@ -5,7 +5,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lablink/Patient/Pages/ForgotPassword.dart';
 import 'package:lablink/LabAdmin/Pages/Lab_admin_sign_in.dart';
-import 'package:lablink/Patient/Pages/HomeScreen.dart';
 import 'package:lablink/Patient/Pages/MainScreen.dart';
 import 'package:lablink/Patient/Pages/PatientSignUp.dart';
 import 'package:lablink/Patient/Pages/splashScreen.dart';

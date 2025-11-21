@@ -5,6 +5,8 @@ import 'package:lablink/LabAdmin/Widgets/appointmentCard.dart';
 import 'package:lablink/LabAdmin/Widgets/FilterBar.dart';
 
 class AppointmentsScreen extends StatefulWidget {
+  const AppointmentsScreen({super.key});
+
   @override
   State<AppointmentsScreen> createState() => _AppointmentsScreenState();
 }
@@ -58,7 +60,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                   data['tests'].map(
                     (t) => {
                       'name': t['name'] ?? 'Unnamed Test',
-                      'prescription': t['prescription'] ?? null,
+                      'prescription': t['prescription'],
                     },
                   ),
                 )
@@ -67,12 +69,12 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                 ],
           'date': data['date'] ?? '',
           'time': data['time'] ?? '',
-          'branch': branchName + ', ' + branchAddress,
+          'branch': '$branchName, $branchAddress',
           'collectionType': (data['serviceType'] == 'Home Collection')
               ? 'Home'
               : 'Walk-in',
           'status': data['status'] ?? 'Pending',
-          'results': data['results'] ?? null,
+          'results': data['results'],
         };
 
         results.add(appointment);
@@ -114,7 +116,6 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
         .doc(order['id'])
         .update({'status': status});
   }
-
 
   @override
   Widget build(BuildContext context) {

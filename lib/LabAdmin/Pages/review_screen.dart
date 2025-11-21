@@ -19,10 +19,10 @@ class _ReviewScreenState extends State<ReviewScreen> {
   final double _rating = 0.0;
   Future<void> _loadData() async {
     setState(() => _isLoading = true);
-    final lab_data = await FirebaseDatabase().getLabDetails(labId);
+    final _labData = await FirebaseDatabase().getLabDetails(labId);
     final reviews_ = await FirebaseDatabase().getLabReviews(labId);
     setState(() {
-      labData = lab_data;
+      labData = _labData;
       reviews = reviews_;
       _isLoading = false;
     });

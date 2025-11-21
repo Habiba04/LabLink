@@ -20,7 +20,7 @@ class _LabDetailsState extends State<LabDetails> {
   List<Map<String, dynamic>> selectedTests = [];
   Lab? labData;
   final picker = ImagePicker();
-  //File? image;
+  XFile? image;
   @override
   void initState() {
     super.initState();
@@ -43,6 +43,7 @@ class _LabDetailsState extends State<LabDetails> {
     final pickedFile = await picker.pickImage(source: source);
     if (pickedFile != null) {
       setState(() {
+        image = pickedFile;
         uploadedImagePath = pickedFile.path;
       });
     }
