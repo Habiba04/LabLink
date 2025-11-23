@@ -108,6 +108,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                   child: ElevatedButton(
                     onPressed: () {
                       resetPassword(context, _emailController.text);
+                        _emailController.clear();
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF00BBA7),

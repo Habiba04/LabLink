@@ -4,7 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:lablink/Patient/Pages/MainScreen.dart';
 import 'package:lablink/Patient/Pages/PatientSignIn.dart';
-import 'package:lablink/Patient/Services/PatientData.dart';
+import 'package:lablink/Patient/models/PatientData.dart';
 
 class PatientSignup extends StatefulWidget {
   const PatientSignup({super.key});
