@@ -59,12 +59,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
               ? 'Home Collection'
               : 'Visit Lab',
           'status': data['status'] ?? 'Pending',
+          'prescription': data['prescription'] ?? "",
           'tests': (data['tests'] != null && data['tests'].isNotEmpty)
               ? List<Map<String, dynamic>>.from(
                   data['tests'].map(
                     (t) => {
                       'name': t['name'] ?? '',
-                      'prescription': t['prescriptionUrl'],
                     },
                   ),
                 )

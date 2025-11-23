@@ -44,7 +44,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
     final newReview = Review(
       userName: userName,
-      comment: _controller.text,
+      comments: _controller.text,
       rating: _rating,
       createdAt: DateTime.now(),
     );
@@ -116,7 +116,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                                       ),
                                       SizedBox(height: width * 0.02),
                                       Text(
-                                        review.comment,
+                                        review.comments,
                                         style: TextStyle(
                                           fontSize: width * 0.043,
                                         ),

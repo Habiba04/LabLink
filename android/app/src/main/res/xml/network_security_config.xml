@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">firebasestorage.googleapis.com</domain>
+        <domain includeSubdomains="true">storage.googleapis.com</domain>
+        
+        <domain includeSubdomains="true">appspot.com</domain>
+        
+        <base-config>
+            <trust-anchors>
+                <certificates overridePins="true" />
+            </trust-anchors>
+        </base-config>
+    </domain-config>
+</network-security-config>

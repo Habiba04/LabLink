@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import '../services/BookingService.dart';
 import '../widgets/BookingDateCard.dart';
@@ -31,6 +34,7 @@ class SchedulePaymentScreen extends StatefulWidget {
 
 class _SchedulePaymentScreenState extends State<SchedulePaymentScreen> {
   late final BookingService _bookingService;
+  StreamSubscription? _disabledSlotsSub;
 
   DateTime selectedDate = DateTime.now();
   DateTime currentMonth = DateTime.now();
@@ -67,32 +71,48 @@ class _SchedulePaymentScreenState extends State<SchedulePaymentScreen> {
       ).map((d) => d.trim().substring(0, 3).toLowerCase()).toList();
     });
 
-    await _fetchDisabledSlots();
+    await _listenToDisabledSlots();
   }
 
-  Future<void> _fetchDisabledSlots() async {
-    final bool isWork = checkIsWorkingDay(selectedDate, workingDays);
+  Future<void> _listenToDisabledSlots() {
+    // Cancel old listener if exists
+    _disabledSlotsSub?.cancel();
 
-    if (mounted) {
-      setState(() {
-        selectedTime = null;
-        disabledTimes = {};
-      });
-    }
+    final labId = widget.labData['id'];
+    final locationId = widget.locationData['id'];
+    final formattedDate =
+        "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
 
-    if (!isWork) return;
+    final stream = FirebaseFirestore.instance
+        .collection('lab')
+        .doc(labId)
+        .collection('locations')
+        .doc(locationId)
+        .collection('disabled_slots')
+        .where('date', isEqualTo: formattedDate)
+        .snapshots();
 
-    final fetchedTimes = await _bookingService.fetchDisabledSlots(selectedDate);
-    if (mounted) {
-      setState(() {
-        disabledTimes = fetchedTimes;
-      });
-    }
+    _disabledSlotsSub = stream.listen((snapshot) {
+      final times = snapshot.docs
+          .map((doc) => doc.data()['time'] as String?)
+          .where((t) => t != null)
+          .cast<String>()
+          .toSet();
+
+      if (mounted) {
+        setState(() {
+          disabledTimes = times;
+          selectedTime = null; // Reset chosen time if it becomes disabled
+        });
+      }
+    });
+
+    return stream.first;
   }
 
   void _handleDateSelected(DateTime newDate) {
     setState(() => selectedDate = newDate);
-    _fetchDisabledSlots();
+    _listenToDisabledSlots();
   }
 
   void _handleMonthChanged() {
@@ -102,7 +122,7 @@ class _SchedulePaymentScreenState extends State<SchedulePaymentScreen> {
         selectedDate = currentMonth;
       }
     });
-    _fetchDisabledSlots();
+    _listenToDisabledSlots();
   }
 
   void _handleTimeSelected(String time) {
@@ -116,6 +136,12 @@ class _SchedulePaymentScreenState extends State<SchedulePaymentScreen> {
   List<String> _generateAvailableTimesForWidget() {
     if (openAt == null || closeAt == null) return [];
     return generateAvailableTimes(openAt!, closeAt!, selectedDate);
+  }
+
+  @override
+  void dispose() {
+    _disabledSlotsSub?.cancel();
+    super.dispose();
   }
 
   @override
@@ -170,6 +196,7 @@ class _SchedulePaymentScreenState extends State<SchedulePaymentScreen> {
             BookingTestsCard(
               selectedTests: widget.selectedTests,
               selectedService: widget.selectedService,
+              isPrescribed: widget.prescriptionPath != null,
             ),
             const SizedBox(height: 20),
 

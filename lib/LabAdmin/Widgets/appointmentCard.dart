@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lablink/LabAdmin/Pages/ResultsViewerScreen.dart'; // REQUIRED for viewing results
-import 'package:lablink/LabAdmin/Pages/prescription_viewer.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:lablink/LabAdmin/Pages/PrescriptionViewer.dart'; // REQUIRED for viewing prescriptions
 
 class AppointmentCard extends StatelessWidget {
   final Map<String, dynamic> appointment;
@@ -17,6 +15,14 @@ class AppointmentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Helper variables for clean access
+    final List tests = appointment['tests'] ?? [];
+    final String prescriptions = appointment['prescription'] ?? '';
+    final String date = appointment['date'] ?? 'N/A';
+    final String time = appointment['time'] ?? 'N/A';
+    final String branch = appointment['branch'] ?? 'N/A';
+    final String collection = appointment['collectionType'] ?? 'N/A';
+
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(16),
@@ -52,14 +58,18 @@ class AppointmentCard extends StatelessWidget {
                       const SizedBox(width: 6),
                       Text(
                         appointment['name'],
-                        style: const TextStyle(fontSize: 20),
+                        style: const TextStyle(fontSize: 22),
                       ),
                     ],
                   ),
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      const Icon(Icons.phone_outlined, size: 20),
+                      const Icon(
+                        Icons.phone_outlined,
+                        color: Colors.blueGrey,
+                        size: 20,
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         appointment['phone'],
@@ -97,114 +107,24 @@ class AppointmentCard extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          // 🔹 Test list
-          Container(
-            decoration: BoxDecoration(
-              color: const Color.fromARGB(21, 0, 179, 219),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: const [
-                      Icon(Icons.article_outlined, color: Color(0xFF00BBA7)),
-                      SizedBox(width: 8),
-                      Text(
-                        "Tests",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  ...List.generate((appointment['tests'] as List).length, (
-                    index,
-                  ) {
-                    final test =
-                        appointment['tests'][index] as Map<String, dynamic>;
-                    final hasPrescription = test['prescription'] != null;
-
-                    return Padding(
-                      padding: const EdgeInsets.only(left: 32, bottom: 4),
-                      child: GestureDetector(
-                        onTap: hasPrescription
-                            ? () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => PrescriptionViewer(
-                                      url: test['prescription'],
-                                    ),
-                                  ),
-                                );
-                              }
-                            : null,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                test['name'],
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: hasPrescription
-                                      ? Colors.blue
-                                      : Colors.black54,
-                                  decoration: hasPrescription
-                                      ? TextDecoration.underline
-                                      : null,
-                                ),
-                              ),
-                            ),
-                            if (hasPrescription)
-                              const Icon(
-                                Icons.attach_file,
-                                size: 16,
-                                color: Colors.blue,
-                              ),
-                          ],
-                        ),
-                      ),
-                    );
-                  }),
-                ],
-              ),
-            ),
-          ),
+          // 🔹 Test list (FIXED: Display the test name)
+          _buildTestSection(context, tests, prescriptions),
 
           const SizedBox(height: 16),
 
-          // 🔹 Appointment Info
-          _infoRow(Icons.calendar_today_outlined, appointment['date']),
+          // 🔹 Appointment Info (FIXED: Display Date, Time, and Branch)
+          _infoRow(Icons.calendar_today_outlined, date),
           const SizedBox(height: 8),
-          _infoRow(Icons.access_time, appointment['time']),
+          _infoRow(Icons.access_time_outlined, time),
           const SizedBox(height: 8),
-          _infoRow(Icons.location_on_outlined, appointment['branch']),
+          _infoRow(Icons.location_on_outlined, branch),
+
           const SizedBox(height: 16),
           const Divider(color: Color(0xFFE0E0E0)),
           const SizedBox(height: 10),
 
-          // 🔹 Collection Type
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.grey.shade300),
-            ),
-            child: Text(
-              appointment['collectionType'],
-              style: const TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: Colors.black54,
-              ),
-            ),
-          ),
+          // 🔹 Collection Type (FIXED: Display Collection Type)
+          _buildCollectionType(collection),
 
           // 🔹 Action buttons for appointments scheduled today
           if (isActionableToday)
@@ -269,11 +189,13 @@ class AppointmentCard extends StatelessWidget {
                       return;
                     }
 
-                    // 2. Navigate to the in-app PDF Viewer Screen
+                    // 2. Navigate to the internal Results Viewer Screen
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => ResultsViewerScreen(pdfUrl: link),
+                        // Passing the fileName is crucial for file type check in viewer
+                        builder: (_) =>
+                            PrescriptionViewer(url: link, isPdf: true),
                       ),
                     );
                   },
@@ -300,20 +222,126 @@ class AppointmentCard extends StatelessWidget {
     );
   }
 
+  // Helper Widget: Renders a single row of info (like date, time, location)
   Widget _infoRow(IconData icon, String text) {
     return Row(
       children: [
-        Icon(icon, size: 18, color: const Color(0xFF00BBA7)),
+        Icon(
+          icon,
+          size: 20,
+          color: Color(0xFF00BBA7),
+        ), // Adjusted size/color to match screenshot style
         const SizedBox(width: 8),
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(fontSize: 16, color: Colors.black54),
+            style: const TextStyle(fontSize: 16, color: Colors.black87),
           ),
         ),
       ],
     );
   }
+
+  // Helper Widget: Renders the Collection Type tag
+  Widget _buildCollectionType(String collectionType) {
+    // Match the style of the "Home Collection" / "Walk-in" tags in the UI
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: const Color(0x2200BBA7), // Light teal background
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: const Color(0xAA00BBA7)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                collectionType.toLowerCase().contains('home')
+                    ? Icons.home_outlined
+                    : Icons.directions_walk_outlined,
+                size: 14,
+                color: const Color(0xFF00BBA7),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                collectionType,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: Color(0xFF00BBA7),
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const Spacer(),
+      ],
+    );
+  }
+
+  // Helper Widget: Renders the main test name
+  Widget _buildTestSection(
+    BuildContext context,
+    List tests,
+    String prescription,
+  ) => Container(
+    decoration: BoxDecoration(
+      color: const Color(0x1100BBA7),
+      borderRadius: BorderRadius.circular(12),
+    ),
+    padding: const EdgeInsets.all(12),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text("Tests", style: TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
+
+        // 1. List all tests using a Column and text widgets
+        ...tests.map((t) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 4.0),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.check_circle_outline,
+                  size: 16,
+                  color: Color(0xFF00BBA7),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    t['name'] ?? '',
+                    style: const TextStyle(color: Colors.black87),
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+
+        // 2. Add the prescription view button once, if available
+        if (prescription.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: TextButton.icon(
+              icon: const Icon(Icons.description, size: 18),
+              label: const Text(
+                "View Uploaded Prescription",
+                style: TextStyle(decoration: TextDecoration.underline),
+              ),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PrescriptionViewer(url: prescription),
+                ),
+              ),
+            ),
+          ),
+      ],
+    ),
+  );
 
   Color _getStatusColor(String status) {
     switch (status.toLowerCase()) {

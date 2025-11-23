@@ -1,66 +1,11 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lablink/Models/Appointment.dart';
+import 'package:lablink/Patient/providers/appointment_provider.dart';
+import 'package:provider/provider.dart';
 import '../services/BookingService.dart';
 import '../widgets/AppointmentCard.dart';
 
-class BookingHistoryScreen extends StatefulWidget {
-  // Removed all mock data parameters as they are irrelevant for history
+class BookingHistoryScreen extends StatelessWidget {
   const BookingHistoryScreen({super.key});
-
-  @override
-  State<BookingHistoryScreen> createState() => _BookingHistoryScreenState();
-}
-
-class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
-  late Future<List<Appointment>> _appointmentsFuture;
-  late final BookingService _bookingService;
-
-  @override
-  void initState() {
-    super.initState();
-
-    // Initialize BookingService with dummy or empty values
-    // since it's only being used for fetchPatientAppointments() here.
-    // In a production app, the service should be accessed via Provider/Riverpod.
-    _bookingService = BookingService(
-      labData: {},
-      locationData: {},
-      selectedTests: [],
-      prescriptionPath: '',
-      selectedService: '',
-    );
-
-    // Initial fetch - No user ID parameter needed!
-    final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) {
-      // no user signed in — produce a failed Future so UI shows the error branch
-      _appointmentsFuture = Future<List<Appointment>>.error(
-        FirebaseAuthException(code: 'user-not-signed-in'),
-      );
-    } else {
-      // pass uid because your real method expects it
-      _appointmentsFuture = _bookingService.fetchPatientAppointments(uid);
-    }
-  }
-
-  Future<void> _refreshAppointments() async {
-    // Refresh function now returns a Future for use with RefreshIndicator
-    setState(() {
-      final uid = FirebaseAuth.instance.currentUser?.uid;
-      if (uid == null) {
-        // no user signed in — produce a failed Future so UI shows the error branch
-        _appointmentsFuture = Future<List<Appointment>>.error(
-          FirebaseAuthException(code: 'user-not-signed-in'),
-        );
-      } else {
-        // pass uid because your real method expects it
-        _appointmentsFuture = _bookingService.fetchPatientAppointments(uid);
-      }
-    });
-    // Wait for the new Future to complete before resolving the indicator
-    await _appointmentsFuture;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,17 +22,18 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
         backgroundColor: Colors.white,
         elevation: 0.5,
       ),
-      body: FutureBuilder<List<Appointment>>(
-        future: _appointmentsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
+      body: Consumer<AppointmentNotifier>(
+        builder: (context, notifier, child) {
+          final appointments = notifier.appointments;
+
+          if (notifier.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (snapshot.hasError) {
+          if (notifier.error != null) {
             // Check for the specific authentication error
-            final errorMessage =
-                snapshot.error.toString().contains('user-not-signed-in')
+            final isAuthError = notifier.error!.contains('user-not-signed-in');
+            final errorMessage = isAuthError
                 ? 'Please sign in to view your history.'
                 : 'Error loading history.';
 
@@ -113,7 +59,7 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
                     ),
                     const SizedBox(height: 16),
                     TextButton(
-                      onPressed: _refreshAppointments,
+                      onPressed: notifier.refreshAppointments,
                       child: const Text('Try Again'),
                     ),
                   ],
@@ -122,22 +68,20 @@ class _BookingHistoryScreenState extends State<BookingHistoryScreen> {
             );
           }
 
-          final appointments = snapshot.data ?? []; // Use null-safe access
-
           if (appointments.isEmpty) {
             return const Center(child: Text("You have no booking history."));
           }
 
           return RefreshIndicator(
             // Added Pull-to-Refresh
-            onRefresh: _refreshAppointments,
+            onRefresh: notifier.refreshAppointments,
             child: ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: appointments.length,
               itemBuilder: (context, index) {
                 return AppointmentCard(
                   appointment: appointments[index],
-                  bookingService: _bookingService,
+                  bookingService: BookingService(labData: {}, locationData: {}, selectedService: '' ),
                 );
               },
             ),

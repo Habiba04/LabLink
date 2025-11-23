@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:lablink/LabAdmin/Pages/PrescriptionViewer.dart';
 import 'package:lablink/Models/Appointment.dart';
 import 'package:lablink/Patient/services/BookingService.dart';
-import 'package:url_launcher/url_launcher.dart';
-
-import '../../LabAdmin/Pages/prescription_viewer.dart';
 
 class AppointmentCard extends StatefulWidget {
   final Appointment appointment;
@@ -31,7 +29,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
 
   Color statusColor() {
     switch (currentStatus.toLowerCase()) {
-      case 'scheduled':
+      case 'upcoming':
         return const Color(0xFF3A82F7);
       case 'completed':
         return const Color(0xFF00BBA7);
@@ -87,37 +85,6 @@ class _AppointmentCardState extends State<AppointmentCard> {
     }
   }
 
-  // ✅ New: Method to open Google Drive result link if available
-  // Inside your AppointmentCard widget (Stateless → convert to Stateful if needed)
-  Future<void> _viewResults(BuildContext context, String? resultUrl) async {
-    if (resultUrl == null || resultUrl.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Result URL is not available.')),
-      );
-      return;
-    }
-
-    final url = Uri.parse(resultUrl);
-
-    // Try opening externally
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not open link externally.')),
-      );
-    }
-
-    // Also open inside the app using PrescriptionViewer
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) =>
-            PrescriptionViewer(url: resultUrl, title: 'Appointment Result'),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -143,7 +110,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  widget.appointment.bookingId,
+                  "#${widget.appointment.bookingId}",
                   style: const TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.w600,
@@ -212,8 +179,28 @@ class _AppointmentCardState extends State<AppointmentCard> {
             // ✅ Enhanced View Result button logic
             if (currentStatus.toLowerCase() == 'completed')
               OutlinedButton.icon(
-                onPressed: () =>
-                    _viewResults(context, widget.appointment.resultUrl),
+                onPressed: () async {
+                  final resultUrl = widget.appointment.resultUrl;
+
+                  // 1️⃣ Check if result link exists
+                  if (resultUrl == null || resultUrl.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Results link not available yet.'),
+                      ),
+                    );
+                    return;
+                  }
+
+                  // 2️⃣ Navigate to internal PrescriptionViewer screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          PrescriptionViewer(url: resultUrl, isPdf: true),
+                    ),
+                  );
+                },
                 style: OutlinedButton.styleFrom(
                   foregroundColor: const Color(0xFF00BBA7),
                   side: const BorderSide(color: Color(0xFF00BBA7), width: 1.3),
@@ -232,7 +219,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                 ),
               )
-            else if (currentStatus.toLowerCase() == 'scheduled')
+            else if (currentStatus.toLowerCase() == 'upcoming')
               OutlinedButton.icon(
                 onPressed: cancelBooking,
                 style: OutlinedButton.styleFrom(
