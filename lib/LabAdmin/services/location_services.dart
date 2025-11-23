@@ -12,7 +12,7 @@ class LocationServices {
         .doc()
         .id;
 
-    location.id = newLocationId;
+    // location.id = newLocationId;
 
     await _firestore
         .collection('lab')

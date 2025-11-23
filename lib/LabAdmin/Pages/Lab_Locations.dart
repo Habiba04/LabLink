@@ -134,7 +134,7 @@ class _LabLocations_screenState extends State<LabLocations_screen> {
                                 ),
                                 const SizedBox(width: 5),
                                 Text(
-                                  '${location.startday.substring(0, 3)} - ${location.endday?.substring(0, 3) ?? ''}',
+                                  '${location.startDay.substring(0, 3)} - ${location.endDay?.substring(0, 3) ?? ''}',
                                   style: const TextStyle(
                                     fontSize: 14,
                                     color: Colors.grey,
@@ -142,7 +142,7 @@ class _LabLocations_screenState extends State<LabLocations_screen> {
                                 ),
                                 const SizedBox(width: 5),
                                 Text(
-                                  '${location.openinghours} - ${location.closinghours}',
+                                  '${location.openAt} - ${location.closeAt}',
                                   style: const TextStyle(
                                     fontSize: 14,
                                     color: Colors.grey,

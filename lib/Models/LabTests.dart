@@ -1,30 +1,49 @@
 class LabTest {
-  final String id;
-  final String name;
-  final double price;
-  final int durationMinutes;
+  String id;
+  String name;
+  String category;
+  double price;
+  String durationMinutes;
+  String sampleType;
+  String description;
+  String preparation;
 
   LabTest({
     required this.id,
     required this.name,
+    required this.category,
     required this.price,
     required this.durationMinutes,
+    required this.sampleType,
+    required this.description,
+    required this.preparation,
   });
+
+  
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'name': name,
+      'category': category,
       'price': price,
-      'durationMinutes': durationMinutes,
+      'duration': durationMinutes,
+      'sampleType': sampleType,
+      'description': description,
+      'preparation': preparation,
     };
   }
 
-  factory LabTest.fromMap(String id, Map<String, dynamic> map) {
+   factory LabTest.fromMap(Map<String, dynamic> map) {
     return LabTest(
-      id: id,
+      id: map['id'] ?? '',
       name: map['name'] ?? '',
-      price: (map['price'] ?? 0).toDouble(),
-      durationMinutes: (map['durationMinutes'] ?? 0).toInt(),
+      category: map['category'] ?? '',
+      price: map['price']?.toDouble() ?? 0.0,
+      durationMinutes: map['duration'] ?? '',
+      sampleType: map['sampleType'] ?? '',
+      description: map['description'] ?? '',
+      preparation: map['preparation'] ?? '',
     );
   }
 }
+ 

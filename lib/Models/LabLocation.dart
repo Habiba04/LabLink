@@ -7,6 +7,9 @@ class LabLocation {
   final String openAt;
   final String closeAt;
   final List<LabTest> tests;
+  final String phone;
+  final String startDay;
+  final String endDay;
 
   LabLocation({
     required this.id,
@@ -15,6 +18,9 @@ class LabLocation {
     required this.openAt,
     required this.closeAt,
     this.tests = const [],
+    this.phone = '',
+    this.startDay = '',
+    this.endDay = '',
   });
   Map<String, dynamic> toMap() {
     return {
@@ -24,6 +30,9 @@ class LabLocation {
       'openAt': openAt,
       'closeAt': closeAt,
       'tests': tests.map((tests) => tests.toMap()).toList(),
+      'phone': phone,
+      'startDay': startDay,
+      'endDay': endDay
     };
   }
 
@@ -39,6 +48,9 @@ class LabLocation {
       openAt: map['openAt'] ?? '',
       closeAt: map['closeAt'] ?? '',
       tests: tests,
+      phone: map['phone'] ?? '',
+      startDay: map['startDay'] ?? '',
+      endDay: map['endDay'] ?? '',
     );
   }
 }

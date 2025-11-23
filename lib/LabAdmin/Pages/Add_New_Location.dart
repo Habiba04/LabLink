@@ -318,15 +318,14 @@ class _AddNewLocationState extends State<AddNewLocation> {
                         if (labid != null) {
                           await LocationServices().addLocation(
                             LabLocation(
+                              id: '',
                               openAt: openAtController.text,
                               closeAt: closeAtController.text,
                               name: locationNameController.text,
                               address: addressController.text,
                               phone: phoneController.text,
-                              startday: startdayController.text,
-                              endday: enddayController.text,
-                              openinghours: openAtController.text,
-                              closinghours: closeAtController.text,
+                              startDay: startdayController.text,
+                              endDay: enddayController.text,
                             ),
                             labid,
                           );

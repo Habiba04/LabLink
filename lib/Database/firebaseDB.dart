@@ -55,7 +55,7 @@ class FirebaseDatabase {
               .get();
 
           final tests = testsSnapshot.docs.map((t) {
-            return LabTest.fromMap(t.id, t.data());
+            return LabTest.fromMap(t.data());
           }).toList();
           testsNum += tests.length;
 
@@ -157,7 +157,7 @@ class FirebaseDatabase {
             .get();
 
         final tests = testsSnapshot.docs.map((t) {
-          return LabTest.fromMap(t.id, t.data());
+          return LabTest.fromMap(t.data());
         }).toList();
 
         locations.add(
