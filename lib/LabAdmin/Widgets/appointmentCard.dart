@@ -10,8 +10,8 @@ class AppointmentCard extends StatelessWidget {
     required this.appointment,
     required this.onStatusChange,
     required this.isActionableToday,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

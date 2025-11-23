@@ -20,9 +20,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _fetchLabData() async {
     setState(() => _isLoading = true);
-    final lab_data = await FirebaseDatabase().getLabDetails(labId);
+    final _labData = await FirebaseDatabase().getLabDetails(labId);
     setState(() {
-      labData = lab_data;
+      labData = _labData;
       _isLoading = false;
     });
   }

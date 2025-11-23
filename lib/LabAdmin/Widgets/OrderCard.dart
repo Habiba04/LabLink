@@ -16,8 +16,8 @@ class OrderCard extends StatefulWidget {
     required this.order,
     required this.onViewDetails,
     this.onAccept,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<OrderCard> createState() => _OrderCardState();

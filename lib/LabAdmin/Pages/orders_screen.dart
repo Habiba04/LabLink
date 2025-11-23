@@ -7,6 +7,8 @@ import 'package:lablink/LabAdmin/Widgets/FilterBar.dart';
 import 'package:lablink/LabAdmin/Widgets/OrderCard.dart';
 
 class OrdersScreen extends StatefulWidget {
+  const OrdersScreen({super.key});
+
   @override
   State<OrdersScreen> createState() => _OrdersScreenState();
 }

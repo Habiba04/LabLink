@@ -10,6 +10,9 @@ class Lab {
   final int reviewCount;
   final double distanceKm;
   final String closingTime;
+  final int testsCount;
+  final int? usersCount;
+  double lastMonthRevenue = 0.0;
 
   Lab({
     required this.rating,
@@ -20,6 +23,9 @@ class Lab {
     required this.name,
     required this.email,
     required this.phone,
+    required this.testsCount,
+    required this.usersCount,
+    required this.lastMonthRevenue,
     this.locations = const [],
   });
 
@@ -29,9 +35,12 @@ class Lab {
     Map<String, dynamic> data, {
     String? id,
     List<LabLocation>? locations,
+    int? testsCount,
+    int? usersCount,
+    double? lastMonthRevenue,
   }) {
     return Lab(
-      id: id ?? data['id'] ?? '', // <-- الأهم هنا
+      id: id ?? data['id'] ?? '',
       name: data['name'] ?? '',
       email: data['email'] ?? '',
       phone: data['phone'] ?? '',
@@ -40,6 +49,9 @@ class Lab {
       reviewCount: data['reviewCount'],
       distanceKm: data['distanceKm'],
       closingTime: data['closingTime'],
+      testsCount: testsCount ?? 0,
+      usersCount: usersCount ?? 0,
+      lastMonthRevenue: lastMonthRevenue ?? 0.0,
     );
   }
 
