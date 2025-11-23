@@ -188,7 +188,7 @@ class BookingService {
     final ref = await appointmentsRef.add(appointment);
     final docId = ref.id;
 
-    final datePrefix = DateFormat('yyyyMM').format(date);
+    DateFormat('yyyyMM').format(date);
     final displayBookingId = '${docId.substring(0, 8).toUpperCase()}';
 
     await ref.update({'displayBookingId': displayBookingId});
