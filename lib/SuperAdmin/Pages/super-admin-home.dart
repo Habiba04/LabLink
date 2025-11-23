@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lablink/SuperAdmin/Pages/manage_labs.dart';
 import 'package:lablink/SuperAdmin/Pages/super-admin-login.dart';
 import 'package:lablink/SuperAdmin/Providers/dashboard_provider.dart';
 import 'package:provider/provider.dart';
@@ -174,7 +175,10 @@ class _SuperAdminHomeScreenState extends State<SuperAdminHomeScreen> {
                     height: 55,
                     child: ElevatedButton(
                       onPressed: () {
-                        // TODO: Navigate to Manage Laboratories screen
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (_) => const ManageLabs()),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.deepPurple,
