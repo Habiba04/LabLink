@@ -22,11 +22,14 @@ class EditProfileTextField extends StatelessWidget {
         prefixIcon: prefixIcon,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: Colors.grey.shade400),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(color: Colors.grey.shade400),
         ),
       ),
+      obscureText: labelText == 'SSN' ? true : false,
       validator: (value) => value == null || value.isEmpty ? hintText : null,
     );
   }

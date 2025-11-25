@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/gestures.dart';
@@ -83,19 +84,42 @@ class _PatientSignupState extends State<PatientSignup> {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-      await FirebaseAuth.instance.signInWithCredential(credential);
-      if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MainScreen(
-            labData: {},
-            locationData: {},
-            selectedTests: [],
-            selectedService: '',
-          ),
-        ),
-      );
+
+      final UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithCredential(credential);
+      final User? user = userCredential.user;
+      if (user != null) {
+        final userDocRef = await FirebaseFirestore.instance
+            .collection('patient')
+            .doc(user.uid);
+
+        final userDoc = await userDocRef.get();
+        if (!userDoc.exists)  {
+          await userDocRef.set({
+            'name': user.displayName,
+            'email': user.email,
+            'uid': user.uid,
+            'phone': user.phoneNumber,
+            'age': '',
+            'gender': '',
+            'ssn': '',
+            'createdAt': FieldValue.serverTimestamp(),
+            'address': '',
+          });
+        }
+          if (!mounted) return;
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MainScreen(
+                labData: {},
+                locationData: {},
+                selectedTests: [],
+                selectedService: '',
+              ),
+            ),
+          );
+      }
     } catch (e) {
       ScaffoldMessenger.of(
         context,

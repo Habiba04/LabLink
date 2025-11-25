@@ -8,6 +8,7 @@ class Patient {
   final String gender;
   final String address;
   final String age;
+  final String ssn;
 
   Patient({
     required this.uid,
@@ -17,6 +18,7 @@ class Patient {
     required this.gender,
     required this.address,
     required this.age,
+    required this.ssn,
   });
 
   // من Map (Firestore document data)
@@ -29,6 +31,7 @@ class Patient {
       gender: map['gender'] ?? '',
       address: map['address'] ?? '',
       age: map['age'] ?? '',
+      ssn: map['ssn'] ?? '',
     );
   }
 
@@ -45,6 +48,7 @@ class Patient {
         gender: '',
         address: '',
         age: '',
+        ssn: '',
       );
     }
     return Patient(
@@ -55,6 +59,7 @@ class Patient {
       gender: data['gender'] ?? '',
       address: data['address'] ?? '',
       age: data['age'] ?? '',
+      ssn: data['ssn'] ?? '',
     );
   }
 
