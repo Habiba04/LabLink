@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:lablink/Patient/Pages/splashScreen.dart';
+import 'package:lablink/SuperAdmin/Pages/super-admin-home.dart';
 
 class MyApp extends StatelessWidget {
   MyApp({super.key});
@@ -17,7 +18,8 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
 
-      home: Splash(),
+      //home: Splash(),
+      home: SuperAdminHomeScreen(),
     );
   }
 }
