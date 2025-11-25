@@ -5,7 +5,7 @@ import 'package:lablink/Models/Appointment.dart';
 // Note: Assuming 'Appointment' model is defined and has fromFirestore()
 
 class BookingService {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth;
 
   final Map<String, dynamic> labData;
   final Map<String, dynamic> locationData;
@@ -16,12 +16,13 @@ class BookingService {
 
   BookingService({
     // Only required when creating a new booking, not when viewing history
+    FirebaseAuth? auth,
     required this.labData,
     required this.locationData,
     this.selectedTests,
     required this.selectedService,
     this.prescriptionPath,
-  });
+  }) : _auth = auth ?? FirebaseAuth.instance;
   // --- Utility Function ---
   String getCurrentUserId() {
     final user = _auth.currentUser;
@@ -48,7 +49,6 @@ class BookingService {
   }
 
   // --- Data Fetching Functions ---
-
 
   Future<Map<String, dynamic>> fetchLocationDetails() async {
     final doc = await FirebaseFirestore.instance
