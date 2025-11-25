@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lablink/Database/firebaseDB.dart';
 import 'package:lablink/Models/Lab.dart';
 import 'package:lablink/SuperAdmin/Pages/add_lab.dart';
+import 'package:lablink/SuperAdmin/Pages/Details_lab.dart';
 
 class ManageLabs extends StatefulWidget {
   const ManageLabs({super.key});
@@ -302,15 +303,22 @@ class _ManageLabsState extends State<ManageLabs> {
                                   children: [
                                     IconButton(
                                       onPressed: () {
-                                        /*
-                                         Navigator.push(
+                                        Navigator.push(
                                           context,
                                           MaterialPageRoute(
-                                            builder: (context) => OverView(),
+                                            builder: (context) => DetailsScreen(
+                                              labId: labs[index].id,
+                                              tests: labs[index].testsCount,
+                                              activeusers:
+                                                  labs[index].usersCount,
+                                              Monthlyrevenue:
+                                                  labs[index].lastMonthRevenue,
+                                              review: labs[index].rating,
+                                            ),
                                           ),
                                         );
-                                        */
                                       },
+
                                       icon: Icon(
                                         Icons.remove_red_eye_outlined,
                                         color: Color(0xFF9810FA),

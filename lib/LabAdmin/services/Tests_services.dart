@@ -34,6 +34,17 @@ class TestsServices {
               return LabTest.fromMap(data);
             }).toList());
   }
+  Future<int> getTestsCount(String labId, String locationId) {
+    return firestore
+        .collection('lab')
+        .doc(labId)
+        .collection('locations')
+        .doc(locationId)
+        .collection('tests')
+        .snapshots()
+        .map((snapshot) => snapshot.docs.length)
+        .first;
+  }
   Future<void>updatetest(LabTest labtest,String labId,String locationId,String testId)async{
     await firestore
      .collection('lab')
