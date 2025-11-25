@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import '../../Database/firebaseDB.dart';
@@ -53,12 +52,20 @@ class _OverviewPageState extends State<OverviewPage> {
             children: [
               Expanded(
                 child: _buildStatCard(
-                    Icons.monitor_heart, Colors.purple, "${widget.tests}", "Total Tests"),
+                  Icons.monitor_heart,
+                  Colors.purple,
+                  "${widget.tests}",
+                  "Total Tests",
+                ),
               ),
               const SizedBox(width: 15),
               Expanded(
                 child: _buildStatCard(
-                    Icons.people, Colors.blue, "${widget.activeusers}", "Active Users"),
+                  Icons.people,
+                  Colors.blue,
+                  "${widget.activeusers}",
+                  "Active Users",
+                ),
               ),
             ],
           ),
@@ -66,13 +73,22 @@ class _OverviewPageState extends State<OverviewPage> {
           Row(
             children: [
               Expanded(
-                child: _buildStatCard(Icons.attach_money, Colors.green,
-                    '${widget.Monthlyrevenue}', "Monthly Revenue"),
+                child: _buildStatCard(
+                  Icons.currency_pound,
+                  Colors.green,
+                  '£${widget.Monthlyrevenue}',
+                  "Monthly Revenue",
+                ),
               ),
               const SizedBox(width: 15),
               Expanded(
-                child: _buildStatCard(Icons.trending_up, Colors.orange,
-                    '${widget.review}', "Rating", isGrowth: true),
+                child: _buildStatCard(
+                  Icons.star,
+                  Colors.orange,
+                  '${widget.review}',
+                  "Rating",
+                  isGrowth: true,
+                ),
               ),
             ],
           ),
@@ -92,18 +108,22 @@ class _OverviewPageState extends State<OverviewPage> {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 20),
-                _buildContactRow(Icons.email_outlined,
-                    "${widget.lab?.email ?? 'N/A'}"),
+                _buildContactRow(
+                  Icons.email_outlined,
+                  "${widget.lab?.email ?? 'N/A'}",
+                ),
                 const SizedBox(height: 15),
-                _buildContactRow(Icons.phone_outlined,
-                    "${widget.lab?.phone ?? 'N/A'}"),
+                _buildContactRow(
+                  Icons.phone_outlined,
+                  "${widget.lab?.phone ?? 'N/A'}",
+                ),
                 const SizedBox(height: 15),
                 _buildContactRow(
                   Icons.location_on_outlined,
                   dataLabDetails != null && dataLabDetails!.locations.isNotEmpty
                       ? dataLabDetails!.locations
-                          .map((loc) => loc.address)
-                          .join(", ")
+                            .map((loc) => loc.address)
+                            .join(", ")
                       : "Address not available",
                 ),
               ],
@@ -115,15 +135,24 @@ class _OverviewPageState extends State<OverviewPage> {
     );
   }
 
-  Widget _buildStatCard(IconData icon, Color color, String value, String label,
-      {bool isGrowth = false}) {
+  Widget _buildStatCard(
+    IconData icon,
+    Color color,
+    String value,
+    String label, {
+    bool isGrowth = false,
+  }) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
         boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 5))
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 10,
+            offset: Offset(0, 5),
+          ),
         ],
       ),
       child: Column(
@@ -143,7 +172,7 @@ class _OverviewPageState extends State<OverviewPage> {
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
-              color: isGrowth ? Colors.green : Colors.black87,
+              color: Colors.black87,
             ),
           ),
           const SizedBox(height: 5),
@@ -169,5 +198,3 @@ class _OverviewPageState extends State<OverviewPage> {
     );
   }
 }
-
- 

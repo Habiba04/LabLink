@@ -23,6 +23,7 @@ class _AddLabState extends State<AddLab> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
+      backgroundColor: const Color(0xFFF3F3F8),
       body: SafeArea(
         child: Column(
           children: [
@@ -262,8 +263,8 @@ class _AddLabState extends State<AddLab> {
                 );
               },
               child: Container(
-                width: width * 0.8,
-                height: height * 0.05,
+                width: width * 0.93,
+                height: height * 0.055,
 
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(width * 0.04),
@@ -284,7 +285,7 @@ class _AddLabState extends State<AddLab> {
                     Text(
                       " Add Laboratory",
                       style: TextStyle(
-                        fontSize: width * 0.03,
+                        fontSize: width * 0.04,
                         color: Colors.white,
                       ),
                     ),

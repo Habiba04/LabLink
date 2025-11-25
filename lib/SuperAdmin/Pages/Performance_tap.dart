@@ -30,7 +30,9 @@ class _PerformanceScreenState extends State<PerformanceScreen> {
       final data = await db.getMonthlyLabAnalytics(widget.labId);
 
       // إذا البيانات فارغة، أنشئ شهور افتراضية للأشهر الـ 6 الماضية
-      if (data.isEmpty || data['monthlyData'] == null || data['monthlyData'].isEmpty) {
+      if (data.isEmpty ||
+          data['monthlyData'] == null ||
+          data['monthlyData'].isEmpty) {
         final Map<String, dynamic> defaultData = {};
         final now = DateTime.now();
         for (int i = 5; i >= 0; i--) {
@@ -62,11 +64,11 @@ class _PerformanceScreenState extends State<PerformanceScreen> {
     return Scaffold(
       backgroundColor: const Color(0xfff7f7fb),
       body: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.only(right: 16, left: 16, bottom: 16),
         child: isLoading
             ? const Center(child: CircularProgressIndicator())
             : SingleChildScrollView(
-              child: Column(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 20),
@@ -102,7 +104,7 @@ class _PerformanceScreenState extends State<PerformanceScreen> {
                                 buildItem(
                                   month,
                                   data['tests'].toString(),
-                                  "\$${(data['revenue'] as double).toStringAsFixed(2)}",
+                                  "£${(data['revenue'] as double).toStringAsFixed(2)}",
                                 ),
                                 buildDivider(),
                               ],
@@ -113,7 +115,7 @@ class _PerformanceScreenState extends State<PerformanceScreen> {
                     ),
                   ],
                 ),
-            ),
+              ),
       ),
     );
   }
@@ -124,10 +126,7 @@ class _PerformanceScreenState extends State<PerformanceScreen> {
       children: [
         Text(
           month,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 6),
         Row(
@@ -140,10 +139,7 @@ class _PerformanceScreenState extends State<PerformanceScreen> {
                   "Tests Completed",
                   style: TextStyle(fontSize: 13, color: Colors.black54),
                 ),
-                Text(
-                  tests,
-                  style: const TextStyle(fontSize: 15),
-                ),
+                Text(tests, style: const TextStyle(fontSize: 15)),
               ],
             ),
             Column(
@@ -172,10 +168,7 @@ class _PerformanceScreenState extends State<PerformanceScreen> {
   Widget buildDivider() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16),
-      child: Divider(
-        color: Colors.grey.withOpacity(0.3),
-        thickness: 1,
-      ),
+      child: Divider(color: Colors.grey.withOpacity(0.3), thickness: 1),
     );
   }
 }

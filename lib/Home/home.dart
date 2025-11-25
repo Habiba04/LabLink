@@ -18,8 +18,8 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
 
-      //home: Splash(),
-      home: SuperAdminHomeScreen(),
+      home: Splash(),
+      // home: SuperAdminHomeScreen(),
     );
   }
 }
