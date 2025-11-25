@@ -1,15 +1,14 @@
 import 'package:lablink/Models/LabTests.dart';
 
 class LabLocation {
-  final String id;
+  String id;
   final String name;
   final String address;
   final String openAt;
   final String closeAt;
   final List<LabTest> tests;
   final String phone;
-  final String startDay;
-  final String endDay;
+  final List<String> workingDays;
 
   LabLocation({
     required this.id,
@@ -19,8 +18,7 @@ class LabLocation {
     required this.closeAt,
     this.tests = const [],
     this.phone = '',
-    this.startDay = '',
-    this.endDay = '',
+    this.workingDays = const [],
   });
   Map<String, dynamic> toMap() {
     return {
@@ -31,8 +29,7 @@ class LabLocation {
       'closeAt': closeAt,
       'tests': tests.map((tests) => tests.toMap()).toList(),
       'phone': phone,
-      'startDay': startDay,
-      'endDay': endDay
+      'workingDays': workingDays,
     };
   }
 
@@ -49,8 +46,7 @@ class LabLocation {
       closeAt: map['closeAt'] ?? '',
       tests: tests,
       phone: map['phone'] ?? '',
-      startDay: map['startDay'] ?? '',
-      endDay: map['endDay'] ?? '',
+      workingDays: List<String>.from(map['workingDays'] ?? []),
     );
   }
 }

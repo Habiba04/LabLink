@@ -20,7 +20,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _fetchLabData() async {
     setState(() => _isLoading = true);
+    print('lab id: ${labId}');
     final _labData = await FirebaseDatabase().getLabDetails(labId);
+
+    if (!mounted) return;
+
     setState(() {
       labData = _labData;
       _isLoading = false;
@@ -216,14 +220,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           ListTile(
                             title: Text(
-                              'Address',
+                              'Address of the main branch',
                               style: TextStyle(
                                 fontSize: width * 0.04,
                                 color: Color(0xFF6A7282),
                               ),
                             ),
                             subtitle: Text(
-                              labData!.locations.first.address,
+                              labData?.locations.isNotEmpty == true
+                                  ? labData!.locations.first.address ?? ''
+                                  : '',
                               style: TextStyle(
                                 fontSize: width * 0.04,
                                 color: Color(0xFF101828),

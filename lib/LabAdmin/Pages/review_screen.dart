@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:lablink/Database/firebaseDB.dart';
 import 'package:lablink/Models/Lab.dart';
 import 'package:lablink/Models/Review.dart';
@@ -98,19 +99,22 @@ class _ReviewScreenState extends State<ReviewScreen> {
                           itemCount: reviews.length,
                           itemBuilder: (context, index) {
                             final review = reviews[index];
+                            final formattedDate = DateFormat(
+                              'MMM d, yyyy',
+                            ).format(review.createdAt!);
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Card(
                                 color: Colors.white,
                                 child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(16.0),
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
                                             review.userName,
@@ -122,7 +126,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                                           ),
 
                                           Text(
-                                            review.createdAt.toString(),
+                                            formattedDate,
                                             style: TextStyle(
                                               color: Color(0xFF6A7282),
                                               fontSize: width * 0.04,

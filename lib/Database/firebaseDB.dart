@@ -200,11 +200,19 @@ class FirebaseDatabase {
     }
   }
 
-  Future<void> addNewLab(Lab lab) async {
+  Future<void> addNewLab(Lab lab, String password) async {
     try {
-      final docRef = FirebaseFirestore.instance.collection("lab").doc();
-      await docRef.set(lab.toMap());
-      print("Lab added successfully!");
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: lab.email, password: password);
+
+      String uid = userCredential.user!.uid;
+
+      await FirebaseFirestore.instance.collection("lab").doc(uid).set({
+        ...lab.toMap(),
+        "uid": uid,
+      });
+
+      print("Lab created + Auth account created successfully!");
     } catch (e) {
       print("Error adding lab: $e");
     }
@@ -242,7 +250,7 @@ class FirebaseDatabase {
           .collection('lab')
           .doc(labId)
           .collection('appointments')
-          .where('status', isEqualTo: 'Pending')
+          .where('status', isEqualTo: 'Completed')
           .get();
 
       Map<String, Map<String, dynamic>> monthlyData = {};

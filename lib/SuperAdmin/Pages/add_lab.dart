@@ -14,7 +14,7 @@ class _AddLabState extends State<AddLab> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController licenseNumController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-  //final TextEditingController openAtController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
   final TextEditingController closeAtController = TextEditingController();
   final formkey = GlobalKey<FormState>();
 
@@ -183,6 +183,31 @@ class _AddLabState extends State<AddLab> {
                       ),
                       SizedBox(height: 10),
                       Text(
+                        'Password',
+                        style: TextStyle(
+                          fontSize: width * 0.04,
+                          color: Color(0xFF364153),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      TextField(
+                        controller: passwordController,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Color(0xFFF3F3F5),
+
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide(color: Color(0xFFD1D5DC)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            borderSide: BorderSide(color: Color(0xFFD1D5DC)),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
                         'Phone',
                         style: TextStyle(
                           fontSize: width * 0.04,
@@ -226,8 +251,8 @@ class _AddLabState extends State<AddLab> {
                   usersCount: 0,
                   lastMonthRevenue: 0,
                 );
-
-                await FirebaseDatabase().addNewLab(newLab);
+                String password = passwordController.text.trim();
+                await FirebaseDatabase().addNewLab(newLab, password);
 
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(

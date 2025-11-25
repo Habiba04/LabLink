@@ -98,7 +98,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       controller: _closingTimeController,
                       prefixIcon: Icon(Icons.calendar_month_outlined),
                       hintText: 'Enter closing time like this "5:00 PM"',
-                      labelText: 'Age',
+                      labelText: 'Closing Time',
                     ),
 
                     const SizedBox(height: 24),

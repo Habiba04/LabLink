@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lablink/LabAdmin/Widgets/top_widget.dart';
 import 'package:lablink/LabAdmin/services/location_services.dart'
@@ -34,7 +35,7 @@ class _AddNewLocationState extends State<AddNewLocation> {
 
   @override
   Widget build(BuildContext context) {
-    final String? labid = 'StetfS8KpRZCntXqc46wAzIhnVI2';
+    final String? labid = FirebaseAuth.instance.currentUser!.uid;
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -324,8 +325,11 @@ class _AddNewLocationState extends State<AddNewLocation> {
                               name: locationNameController.text,
                               address: addressController.text,
                               phone: phoneController.text,
-                              startDay: startdayController.text,
-                              endDay: enddayController.text,
+                              workingDays: LocationServices()
+                                  .generateWorkingDays(
+                                    startdayController.text,
+                                    enddayController.text,
+                                  ),
                             ),
                             labid,
                           );
