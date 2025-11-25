@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -105,11 +106,16 @@ class _PatientSigninState extends State<PatientSignin> {
 
   // ✅ GOOGLE SIGN-IN
   Future<void> signInWithGoogle() async {
+    setState(() => loading = true);
+
     try {
       final GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['email']);
       final googleUser = await googleSignIn.signIn();
 
-      if (googleUser == null) return;
+      if (googleUser == null) {
+        setState(() => loading = false);
+        return; // The user canceled the sign-in
+      }
 
       final googleAuth = await googleUser.authentication;
 
@@ -118,7 +124,30 @@ class _PatientSigninState extends State<PatientSignin> {
         idToken: googleAuth.idToken,
       );
 
-      await FirebaseAuth.instance.signInWithCredential(credential);
+      final UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithCredential(credential);
+      final User? user = userCredential.user;
+
+      if (user != null) {
+        final userDocRef = FirebaseFirestore.instance
+            .collection('patient')
+            .doc(user.uid);
+        final userDoc = await userDocRef.get();
+
+        if (!userDoc.exists) {
+          await userDocRef.set({
+            'name': user.displayName,
+            'email': user.email,
+            'uid': user.uid,
+            'phone': user.phoneNumber,
+            'age': '',
+            'gender': '',
+            'ssn': '',
+            'createdAt': FieldValue.serverTimestamp(),
+            'address': '',
+          });
+        }
+      }
 
       if (!mounted) return;
 

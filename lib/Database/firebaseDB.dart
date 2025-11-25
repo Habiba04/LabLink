@@ -382,6 +382,8 @@ class FirebaseDatabase {
     required String address,
     required String email,
     required String age,
+    required String ssn,
+    required String? gender
   }) async {
     try {
       final user = FirebaseAuth.instance.currentUser;
@@ -396,6 +398,8 @@ class FirebaseDatabase {
         'address': address.trim(),
         'email': email.trim(),
         'age': age.trim(),
+        'ssn': ssn.trim(),  
+        'gender': gender,
       });
 
       print("✅ User data updated successfully");

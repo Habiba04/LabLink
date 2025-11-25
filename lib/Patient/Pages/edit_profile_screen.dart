@@ -19,6 +19,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _ssnController = TextEditingController();
+  String? _selectedGender; 
+  final List<String> _genderOptions = ['Male', 'Female', 'Other'];
   bool _isLoading = false;
 
   @override
@@ -36,12 +39,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _addressController.text = patient.address;
       _ageController.text = patient.age;
       _emailController.text = patient.email;
+      _ssnController.text = patient.ssn;
+      _selectedGender = patient.gender;
     });
   }
 
   Future<void> _updateUserProfile() async {
     if (!_formKey.currentState!.validate()) return;
 
+
+    if (_selectedGender == null || _selectedGender!.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select a gender.')),
+        );
+        return;
+    }
+    
     setState(() => _isLoading = true);
 
     await FirebaseDatabase().updateUserData(
@@ -50,6 +63,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       address: _addressController.text,
       email: _emailController.text,
       age: _ageController.text,
+      ssn: _ssnController.text,
+      gender: _selectedGender,
     );
 
     setState(() => _isLoading = false);
@@ -75,39 +90,83 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 key: _formKey,
                 child: ListView(
                   children: [
+                    const SizedBox(height: 20),
                     EditProfileTextField(
                       controller: _nameController,
-                      prefixIcon: Icon(Icons.person),
+                      prefixIcon: Icon(Icons.person, color: Colors.grey),
                       hintText: 'Enter your name',
                       labelText: 'Name',
                     ),
                     const SizedBox(height: 12),
                     EditProfileTextField(
                       controller: _emailController,
-                      prefixIcon: Icon(Icons.email_outlined),
+                      prefixIcon: Icon(
+                        Icons.email_outlined,
+                        color: Colors.grey,
+                      ),
                       hintText: 'Enter your email',
                       labelText: 'Email',
                     ),
                     const SizedBox(height: 12),
                     EditProfileTextField(
                       controller: _ageController,
-                      prefixIcon: Icon(Icons.calendar_month_outlined),
+                      prefixIcon: Icon(
+                        Icons.calendar_month_outlined,
+                        color: Colors.grey,
+                      ),
                       hintText: 'Enter your age',
                       labelText: 'Age',
                     ),
                     const SizedBox(height: 12),
+                    DropdownButtonFormField<String>(
+                      value: _selectedGender == '' ? null : _selectedGender,
+                      decoration: InputDecoration(
+                        labelText: 'Gender',
+                        prefixIcon: const Icon(Icons.wc, color: Colors.grey),
+                        enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: BorderSide(color: Colors.grey.shade400)),
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: BorderSide(color: Colors.grey.shade400)),
+                      ),
+                      hint: const Text('Select your gender'),
+                      items: _genderOptions
+                          .map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          })
+                          .toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          _selectedGender = newValue;
+                        });
+                      },
+                      validator: (value) => 
+                          value == null || value.isEmpty ? 'Please select your gender' : null,
+                    ),
+                    const SizedBox(height: 12),
                     EditProfileTextField(
                       controller: _phoneController,
-                      prefixIcon: Icon(Icons.phone),
+                      prefixIcon: Icon(Icons.phone, color: Colors.grey),
                       hintText: 'Enter your phone',
                       labelText: 'Phone',
                     ),
                     const SizedBox(height: 12),
                     EditProfileTextField(
                       controller: _addressController,
-                      prefixIcon: Icon(Icons.home),
+                      prefixIcon: Icon(Icons.home, color: Colors.grey),
                       hintText: 'Enter your address',
                       labelText: 'Address',
+                    ),
+                    const SizedBox(height: 12),
+                    EditProfileTextField(
+                      controller: _ssnController,
+                      prefixIcon: Icon(Icons.lock_outline, color: Colors.grey),
+                      hintText: 'Enter your Social Security Number',
+                      labelText: 'SSN',
                     ),
 
                     const SizedBox(height: 24),
