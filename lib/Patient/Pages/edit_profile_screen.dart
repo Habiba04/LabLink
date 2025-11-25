@@ -20,7 +20,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _ssnController = TextEditingController();
-  String? _selectedGender; 
+  String? _selectedGender;
   final List<String> _genderOptions = ['Male', 'Female', 'Other'];
   bool _isLoading = false;
 
@@ -47,14 +47,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Future<void> _updateUserProfile() async {
     if (!_formKey.currentState!.validate()) return;
 
-
     if (_selectedGender == null || _selectedGender!.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please select a gender.')),
-        );
-        return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please select a gender.')));
+      return;
     }
-    
+
     setState(() => _isLoading = true);
 
     await FirebaseDatabase().updateUserData(
@@ -124,28 +123,34 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         labelText: 'Gender',
                         prefixIcon: const Icon(Icons.wc, color: Colors.grey),
                         enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: BorderSide(color: Colors.grey.shade400)),
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(color: Colors.grey.shade400),
+                        ),
                         focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: BorderSide(color: Colors.grey.shade400)),
+                          borderRadius: BorderRadius.circular(16),
+                          borderSide: BorderSide(color: Colors.grey.shade400),
+                        ),
                       ),
                       hint: const Text('Select your gender'),
-                      items: _genderOptions
-                          .map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          })
-                          .toList(),
+                      items: _genderOptions.map((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(
+                            value,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.normal,
+                            ),
+                          ),
+                        );
+                      }).toList(),
                       onChanged: (String? newValue) {
                         setState(() {
                           _selectedGender = newValue;
                         });
                       },
-                      validator: (value) => 
-                          value == null || value.isEmpty ? 'Please select your gender' : null,
+                      validator: (value) => value == null || value.isEmpty
+                          ? 'Please select your gender'
+                          : null,
                     ),
                     const SizedBox(height: 12),
                     EditProfileTextField(
