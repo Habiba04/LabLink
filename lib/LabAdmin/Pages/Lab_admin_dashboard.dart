@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lablink/LabAdmin/Pages/Lab_Locations.dart';
 
 import 'package:lablink/LabAdmin/Widgets/AdminButton.dart';
 import 'package:lablink/LabAdmin/Widgets/HomeOrderCard.dart';
@@ -249,6 +250,13 @@ class _LabDashboardScreenState extends State<LabDashboardScreen> {
                           label: 'Locations',
                           icon: Icons.location_on_outlined,
                           color: Colors.teal,
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => LabLocations_screen(),
+                              ),
+                            );
+                          },
                         ),
                       ),
                       const SizedBox(width: 10),

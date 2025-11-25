@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lablink/LabAdmin/Pages/Add_New_Location.dart';
 import 'package:lablink/LabAdmin/Pages/Add_New_Test.dart';
@@ -13,7 +14,7 @@ class LabLocations_screen extends StatefulWidget {
 }
 
 class _LabLocations_screenState extends State<LabLocations_screen> {
-  final labid = 'StetfS8KpRZCntXqc46wAzIhnVI2';
+  final labid = FirebaseAuth.instance.currentUser!.uid;
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +135,8 @@ class _LabLocations_screenState extends State<LabLocations_screen> {
                                 ),
                                 const SizedBox(width: 5),
                                 Text(
-                                  '${location.startDay.substring(0, 3)} - ${location.endDay?.substring(0, 3) ?? ''}',
+                                  '${(location.workingDays.first ?? '').padRight(3).substring(0, 3)} - ${(location.workingDays.last ?? '').padRight(3).substring(0, 3)}',
+
                                   style: const TextStyle(
                                     fontSize: 14,
                                     color: Colors.grey,
@@ -177,13 +179,13 @@ class _LabLocations_screenState extends State<LabLocations_screen> {
                                   children: [
                                     InkWell(
                                       onTap: () {
-                                   print(location.id); 
+                                        print(location.id);
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                             builder: (_) => ManageTests(
                                               locationid: location.id ?? '',
-                                               labid: labid,
+                                              labid: labid,
                                             ),
                                           ),
                                         );

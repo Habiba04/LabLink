@@ -12,7 +12,7 @@ class LocationServices {
         .doc()
         .id;
 
-    // location.id = newLocationId;
+    location.id = newLocationId;
 
     await _firestore
         .collection('lab')
@@ -39,11 +39,33 @@ class LocationServices {
         .snapshots()
         .map((shots) {
           return shots.docs.map((doc) {
-            return LabLocation.fromMap(
-              doc.id,
-              doc.data(),
-            );
+            return LabLocation.fromMap(doc.id, doc.data());
           }).toList();
         });
+  }
+
+  List<String> generateWorkingDays(String startDay, String endDay) {
+    const List<String> week = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ];
+
+    int startIndex = week.indexOf(startDay);
+    int endIndex = week.indexOf(endDay);
+
+    if (startIndex == -1 || endIndex == -1) return [];
+
+    // لو المدى عادي (السبت → الثلاثاء)
+    if (startIndex <= endIndex) {
+      return week.sublist(startIndex, endIndex + 1);
+    }
+
+    // لو المدى عدى على نهاية الأسبوع (الخميس → الاثنين)
+    return [...week.sublist(startIndex), ...week.sublist(0, endIndex + 1)];
   }
 }

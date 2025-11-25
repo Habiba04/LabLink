@@ -74,7 +74,8 @@ class FirestoreHelpers {
 
       if (created != null &&
           created.year == now.year &&
-          created.month == now.month) {
+          created.month == now.month &&
+          status == 'Completed') {
         earningsThisMonth += _toDoubleSafe(data['totalAmount']);
       }
 
@@ -167,4 +168,3 @@ Future<LabInfo> fetchLabInfo() async {
     return LabInfo('Lab Name', 'LD');
   }
 }
-

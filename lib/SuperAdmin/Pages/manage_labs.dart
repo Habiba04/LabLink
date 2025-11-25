@@ -357,7 +357,7 @@ class _ManageLabsState extends State<ManageLabs> {
                                                         ),
                                                       ),
                                                     );
-                                                    fetchLabs(); // لتحديث الليست بعد الحذف
+                                                    fetchLabs();
                                                   },
                                                   child: const Text(
                                                     "Delete",
