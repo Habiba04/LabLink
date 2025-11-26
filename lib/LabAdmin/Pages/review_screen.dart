@@ -61,6 +61,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
                         labData!.rating.toString(),

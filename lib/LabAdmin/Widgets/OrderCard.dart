@@ -176,12 +176,10 @@ class _OrderCardState extends State<OrderCard> {
     final isAwaiting = status == 'awaiting results';
 
     if (isUploading) {
-      return SizedBox.expand(
-        child: Center(
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 20),
-            child: CircularProgressIndicator(color: Color(0xFF00BBA7)),
-          ),
+      return Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 20),
+          child: CircularProgressIndicator(color: Color(0xFF00BBA7)),
         ),
       );
     }

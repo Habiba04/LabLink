@@ -19,6 +19,7 @@ class _LabLocations_screenState extends State<LabLocations_screen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           top_screen(
@@ -27,35 +28,39 @@ class _LabLocations_screenState extends State<LabLocations_screen> {
             subtitle: 'Manage your laboratory locations',
           ),
           const SizedBox(height: 10),
-          SizedBox(
-            width: 290,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const AddNewLocation()),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF009689),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 10,
-                ),
-                textStyle: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(Icons.add, color: Colors.white),
-                  Text(
-                    ' Add New Location',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: SizedBox(
+              width: double.infinity,
+              height: 50,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const AddNewLocation()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF009689),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 10,
                   ),
-                ],
+                  textStyle: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.add, color: Colors.white),
+                    Text(
+                      ' Add New Location',
+                      style: TextStyle(fontSize: 16, color: Colors.white),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -81,13 +86,14 @@ class _LabLocations_screenState extends State<LabLocations_screen> {
                   itemBuilder: (context, index) {
                     final location = locations[index];
                     return Card(
+                      color: Colors.white,
                       elevation: 1,
                       margin: const EdgeInsets.symmetric(
                         horizontal: 20,
                         vertical: 5,
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.all(10.0),
+                        padding: const EdgeInsets.all(16.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -134,12 +140,15 @@ class _LabLocations_screenState extends State<LabLocations_screen> {
                                   color: Colors.grey,
                                 ),
                                 const SizedBox(width: 5),
-                                Text(
-                                  '${(location.workingDays.first ?? '').padRight(3).substring(0, 3)} - ${(location.workingDays.last ?? '').padRight(3).substring(0, 3)}',
-
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey,
+                                Expanded(
+                                  child: Text(
+                                    location.workingDays.join(
+                                      ', ',
+                                    ), // Joins ["Sat", "Sun", "Mon"] into "Sat, Sun, Mon"
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(width: 5),
@@ -158,9 +167,9 @@ class _LabLocations_screenState extends State<LabLocations_screen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Column(
-                                  children: const [
+                                  children:  [
                                     Text(
-                                      '20 Tests',
+                                      '${location.tests.length} tests',
                                       style: TextStyle(
                                         fontSize: 16,
                                         color: Colors.grey,

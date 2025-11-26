@@ -29,12 +29,12 @@ class _LabDetailsState extends State<LabDetails> {
   final picker = ImagePicker();
   bool isUploading = false;
   bool get canBookTest {
-    return selectedBranch != null && (uploadedImagePath != null || selectedTests.isNotEmpty);
+    return selectedBranch != null &&
+        (uploadedImagePath != null || selectedTests.isNotEmpty);
   }
 
   Uint8List? localFileBytes;
   String? localFileName;
-  
 
   @override
   void initState() {
@@ -60,7 +60,9 @@ class _LabDetailsState extends State<LabDetails> {
     if (uid == null) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('User not authenticated. Please log in.')),
+          const SnackBar(
+            content: Text('User not authenticated. Please log in.'),
+          ),
         );
       }
       return;
@@ -103,19 +105,20 @@ class _LabDetailsState extends State<LabDetails> {
       const uuid = Uuid();
       final extension = localFileName?.split('.').last ?? 'jpg';
       final uniqueFileName = '${uuid.v4()}.$extension';
-      
+
       // The storage path must match the security rules: /results/{allPaths=**}
-      final storagePath = 'results/$uid/${widget.labId}/prescriptions/$uniqueFileName';
+      final storagePath =
+          'results/$uid/${widget.labId}/prescriptions/$uniqueFileName';
 
       // 2. Create Storage Reference and Upload
       final storageRef = FirebaseStorage.instance.ref().child(storagePath);
-      
+
       final uploadTask = storageRef.putData(
-        localFileBytes!,  // Pass MIME type for correct handling
+        localFileBytes!, // Pass MIME type for correct handling
       );
 
       final snapshot = await uploadTask.whenComplete(() {});
-      
+
       // 3. Get the download URL
       final downloadUrl = await snapshot.ref.getDownloadURL();
 
@@ -130,14 +133,13 @@ class _LabDetailsState extends State<LabDetails> {
           SnackBar(content: Text("${picked.name} uploaded successfully!")),
         );
       }
-
     } on FirebaseException catch (e) {
       print("Firebase upload failed: ${e.message}");
       if (mounted) {
         setState(() => isUploading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Upload failed: ${e.message}")),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Upload failed: ${e.message}")));
       }
     } catch (e) {
       print("Upload failed: $e");
@@ -182,12 +184,15 @@ class _LabDetailsState extends State<LabDetails> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircularProgressIndicator(
-                color: Colors.blue
+              CircularProgressIndicator(color: Colors.blue),
+              if (isUploading)
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text("Uploading..."),
                 ),
-                if(isUploading) const Padding(padding: EdgeInsets.all(16.0), child: Text("Uploading..."),)
             ],
-          )),
+          ),
+        ),
       );
     }
     return Scaffold(
@@ -372,7 +377,6 @@ class _LabDetailsState extends State<LabDetails> {
                 final locations = labData!.locations;
 
                 return ExpansionTile(
-                  
                   shape: const RoundedRectangleBorder(
                     side: BorderSide(color: Colors.transparent),
                   ),
@@ -403,10 +407,10 @@ class _LabDetailsState extends State<LabDetails> {
                             ),
                           )
                         : ListTile(
-                          onTap: () {
-                            selectedBranch = locations[locationIndex];
-                            showImageSourceDialog();
-                          },
+                            onTap: () {
+                              selectedBranch = locations[locationIndex];
+                              showImageSourceDialog();
+                            },
                             title: Row(
                               children: [
                                 Icon(Icons.check_circle, color: Colors.green),

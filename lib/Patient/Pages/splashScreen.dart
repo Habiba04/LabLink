@@ -21,7 +21,7 @@ class _SplashState extends State<Splash> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: AnimationConfiguration.toStaggeredList(
-              duration: const Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 500),
               childAnimationBuilder: (widget) => SlideAnimation(
                 horizontalOffset: 50.0,
                 child: FadeInAnimation(child: widget),

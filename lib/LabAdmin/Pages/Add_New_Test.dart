@@ -6,9 +6,9 @@ import 'package:lablink/Models/LabTests.dart';
 
 // ignore: must_be_immutable
 class AddNewTest extends StatefulWidget {
-   String   locationId;
-   String  labid;
-    AddNewTest({super.key,required  this.locationId,required this.labid});
+  String locationId;
+  String labid;
+  AddNewTest({super.key, required this.locationId, required this.labid});
 
   @override
   State<AddNewTest> createState() => _AddNewTestState();
@@ -23,13 +23,14 @@ class _AddNewTestState extends State<AddNewTest> {
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController sampleTypeController = TextEditingController();
   final TextEditingController preparationController = TextEditingController();
-   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Form(
         key: formKey,
         child: SingleChildScrollView(
-           child: Column(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               top_screen(
@@ -40,7 +41,7 @@ class _AddNewTestState extends State<AddNewTest> {
 
               const SizedBox(height: 24),
 
-               buildLabel('Test Name', const Icon(Icons.description_outlined)),
+              buildLabel('Test Name', const Icon(Icons.description_outlined)),
               const SizedBox(height: 6),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -52,12 +53,11 @@ class _AddNewTestState extends State<AddNewTest> {
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
-                      borderSide:
-                          const BorderSide(color: Color(0xFF00BBA7)),
+                      borderSide: const BorderSide(color: Color(0xFF00BBA7)),
                     ),
                     hintText: 'e.g., Complete Blood Count',
                     filled: true,
-                    fillColor: const Color(0xFFD1D5DC),
+                    fillColor: Colors.grey[200],
                     contentPadding: const EdgeInsets.all(16),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -69,13 +69,13 @@ class _AddNewTestState extends State<AddNewTest> {
 
               const SizedBox(height: 16),
 
-               buildLabel('Category', const Icon(Icons.local_offer_outlined)),
+              buildLabel('Category', const Icon(Icons.local_offer_outlined)),
               const SizedBox(height: 6),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: const Color(0xFFD1D5DC),
+                    color: Colors.grey[200],
                     borderRadius: BorderRadius.circular(16.0),
                   ),
                   child: DropdownButtonFormField<String>(
@@ -88,8 +88,7 @@ class _AddNewTestState extends State<AddNewTest> {
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16.0),
-                        borderSide:
-                            const BorderSide(color: Colors.transparent),
+                        borderSide: const BorderSide(color: Colors.transparent),
                       ),
                       contentPadding: const EdgeInsets.all(16),
                       border: InputBorder.none,
@@ -97,15 +96,25 @@ class _AddNewTestState extends State<AddNewTest> {
                     ),
                     items: const [
                       DropdownMenuItem(
-                          value: 'Hematology', child: Text('Hematology')),
+                        value: 'Hematology',
+                        child: Text('Hematology'),
+                      ),
                       DropdownMenuItem(
-                          value: 'Biochemistry', child: Text('Biochemistry')),
+                        value: 'Biochemistry',
+                        child: Text('Biochemistry'),
+                      ),
                       DropdownMenuItem(
-                          value: 'Microbiology', child: Text('Microbiology')),
+                        value: 'Microbiology',
+                        child: Text('Microbiology'),
+                      ),
                       DropdownMenuItem(
-                          value: 'Immunology', child: Text('Immunology')),
+                        value: 'Immunology',
+                        child: Text('Immunology'),
+                      ),
                       DropdownMenuItem(
-                          value: 'Urinalysis', child: Text('Urinalysis')),
+                        value: 'Urinalysis',
+                        child: Text('Urinalysis'),
+                      ),
                       DropdownMenuItem(value: 'Other', child: Text('Other')),
                     ],
                     onChanged: (value) {
@@ -117,7 +126,7 @@ class _AddNewTestState extends State<AddNewTest> {
 
               const SizedBox(height: 16),
 
-               Padding(
+              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Row(
                   children: [
@@ -125,8 +134,10 @@ class _AddNewTestState extends State<AddNewTest> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          buildLabel('Price',
-                              const Icon(Icons.attach_money_outlined)),
+                          buildLabel(
+                            'Price',
+                            const Icon(Icons.attach_money_outlined),
+                          ),
                           const SizedBox(height: 6),
                           TextFormField(
                             controller: priceController,
@@ -143,7 +154,7 @@ class _AddNewTestState extends State<AddNewTest> {
                               ),
                               hintText: 'e.g., 300',
                               filled: true,
-                              fillColor: const Color(0xFFD1D5DC),
+                              fillColor: Colors.grey[200],
                               contentPadding: const EdgeInsets.all(16),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
@@ -159,8 +170,10 @@ class _AddNewTestState extends State<AddNewTest> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          buildLabel('Duration',
-                              const Icon(Icons.access_time_outlined)),
+                          buildLabel(
+                            'Duration',
+                            const Icon(Icons.access_time_outlined),
+                          ),
                           const SizedBox(height: 6),
                           TextFormField(
                             controller: durationController,
@@ -175,9 +188,9 @@ class _AddNewTestState extends State<AddNewTest> {
                                   color: Color(0xFF00BBA7),
                                 ),
                               ),
-                              hintText: '2-4 hrs',
+                              hintText: '30-60 minutes',
                               filled: true,
-                              fillColor: const Color(0xFFD1D5DC),
+                              fillColor: Colors.grey[200],
                               contentPadding: const EdgeInsets.all(16),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(16),
@@ -194,7 +207,7 @@ class _AddNewTestState extends State<AddNewTest> {
 
               const SizedBox(height: 16),
 
-               Padding(
+              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(
                   'Sample Type',
@@ -210,7 +223,7 @@ class _AddNewTestState extends State<AddNewTest> {
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: const Color(0xFFD1D5DC),
+                    color: Colors.grey[200],
                     borderRadius: BorderRadius.circular(16.0),
                   ),
                   child: DropdownButtonFormField<String>(
@@ -223,8 +236,7 @@ class _AddNewTestState extends State<AddNewTest> {
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(16.0),
-                        borderSide:
-                            const BorderSide(color: Colors.transparent),
+                        borderSide: const BorderSide(color: Colors.transparent),
                       ),
                       contentPadding: const EdgeInsets.all(16),
                       border: InputBorder.none,
@@ -246,7 +258,7 @@ class _AddNewTestState extends State<AddNewTest> {
 
               const SizedBox(height: 16),
 
-               Padding(
+              Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(
                   'Description',
@@ -269,12 +281,11 @@ class _AddNewTestState extends State<AddNewTest> {
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
-                      borderSide:
-                          const BorderSide(color: Color(0xFF00BBA7)),
+                      borderSide: const BorderSide(color: Color(0xFF00BBA7)),
                     ),
                     hintText: 'Provide a brief description of the test',
                     filled: true,
-                    fillColor: const Color(0xFFD1D5DC),
+                    fillColor: Colors.grey[200],
                     contentPadding: const EdgeInsets.all(16),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -286,7 +297,7 @@ class _AddNewTestState extends State<AddNewTest> {
 
               const SizedBox(height: 16),
 
-               Padding(
+              Padding(
                 padding: const EdgeInsets.only(left: 16.0),
                 child: Align(
                   alignment: Alignment.centerLeft,
@@ -309,12 +320,11 @@ class _AddNewTestState extends State<AddNewTest> {
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
-                      borderSide:
-                          const BorderSide(color: Color(0xFF00BBA7)),
+                      borderSide: const BorderSide(color: Color(0xFF00BBA7)),
                     ),
                     hintText: 'e.g., Fast for 8 hours before the test',
                     filled: true,
-                    fillColor: const Color(0xFFD1D5DC),
+                    fillColor: Colors.grey[200],
                     contentPadding: const EdgeInsets.all(16),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -326,7 +336,7 @@ class _AddNewTestState extends State<AddNewTest> {
 
               const SizedBox(height: 24),
 
-               Container(
+              Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
@@ -342,42 +352,40 @@ class _AddNewTestState extends State<AddNewTest> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-               
-                  onPressed: () async {
-                     print('lab ID issssssssssss: ${widget.labid}');
-                     print('Location ID issssssssssss: ${widget.locationId}');
-  if (formKey.currentState!.validate()) {
-    
-    await TestsServices().addNewTest(
-      LabTest(
-        id: '' ,
-         name: testNameController.text,
-        category: categoryController.text,
-        price: double.parse(priceController.text),
-        durationMinutes: durationController.text,
-        sampleType: sampleTypeController.text,
-        description: descriptionController.text,
-        preparation: preparationController.text,
-      ),
-      widget.labid,
-      widget.locationId, 
-    );
-    
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Test added successfully!')),
-    );
-   
-  }
-  Navigator.pop(  context);
-},
-  child: const Text(
+                  onPressed: () async {
+                    print('lab ID issssssssssss: ${widget.labid}');
+                    print('Location ID issssssssssss: ${widget.locationId}');
+                    if (formKey.currentState!.validate()) {
+                      await TestsServices().addNewTest(
+                        LabTest(
+                          id: '',
+                          name: testNameController.text,
+                          category: categoryController.text,
+                          price: double.parse(priceController.text),
+                          durationMinutes: durationController.text,
+                          sampleType: sampleTypeController.text,
+                          description: descriptionController.text,
+                          preparation: preparationController.text,
+                        ),
+                        widget.labid,
+                        widget.locationId,
+                      );
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Test added successfully!'),
+                        ),
+                      );
+                    }
+                    Navigator.pop(context);
+                  },
+                  child: const Text(
                     'Add Test',
                     style: TextStyle(
                       fontSize: 18,

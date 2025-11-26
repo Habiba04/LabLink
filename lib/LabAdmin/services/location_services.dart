@@ -32,15 +32,39 @@ class LocationServices {
   }
 
   Stream<List<LabLocation>> getLocations(String labId) {
-    return _firestore
-        .collection('lab')
-        .doc(labId)
-        .collection('locations')
-        .snapshots()
-        .map((shots) {
-          return shots.docs.map((doc) {
-            return LabLocation.fromMap(doc.id, doc.data());
-          }).toList();
+    final labRef = _firestore.collection('lab').doc(labId);
+    final locationsRef = labRef.collection('locations');
+
+    return locationsRef.snapshots().asyncMap((shots) async {
+      // 1. Convert synchronous stream mapping to asynchronous mapping
+      List<LabLocation> locationsWithCount = [];
+
+      for (var doc in shots.docs) {
+        final data = doc.data();
+        final locationId = doc.id;
+
+        // 2. Fetch the size (count) of the 'tests' subcollection for this location
+        final testCountSnapshot = await locationsRef
+            .doc(locationId)
+            .collection('tests')
+            .count() // Use .count() for efficiency in newer Firebase SDKs
+            .get();
+        
+        final int testCount = testCountSnapshot.count ?? 0;
+        final List<dynamic> testsPlaceholder = List.generate(testCount, (_) => null);
+
+        locationsWithCount.add(
+          LabLocation.fromMap(
+            doc.id,
+            data,
+            // 4. Pass the placeholder list to the tests parameter
+            tests: testsPlaceholder.cast(), 
+          ),
+        );
+      }
+      return locationsWithCount;
+
+    
         });
   }
 

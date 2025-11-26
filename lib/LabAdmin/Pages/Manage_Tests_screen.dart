@@ -21,8 +21,12 @@ class _ManageTestsState extends State<ManageTests> {
 
   void showEditDialog(LabTest test) {
     TextEditingController nameCtrl = TextEditingController(text: test.name);
-    TextEditingController descCtrl = TextEditingController(text: test.description);
-    TextEditingController priceCtrl = TextEditingController(text: test.price.toString());
+    TextEditingController descCtrl = TextEditingController(
+      text: test.description,
+    );
+    TextEditingController priceCtrl = TextEditingController(
+      text: test.price.toString(),
+    );
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -30,20 +34,38 @@ class _ManageTestsState extends State<ManageTests> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(controller: nameCtrl, decoration: InputDecoration(labelText: 'Test Name')),
-            TextField(controller: descCtrl, decoration: InputDecoration(labelText: 'Description')),
-            TextField(controller: priceCtrl, decoration: InputDecoration(labelText: 'price'), keyboardType: TextInputType.number),
+            TextField(
+              controller: nameCtrl,
+              decoration: InputDecoration(labelText: 'Test Name'),
+            ),
+            TextField(
+              controller: descCtrl,
+              decoration: InputDecoration(labelText: 'Description'),
+            ),
+            TextField(
+              controller: priceCtrl,
+              decoration: InputDecoration(labelText: 'price'),
+              keyboardType: TextInputType.number,
+            ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text('cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('cancel'),
+          ),
           ElevatedButton(
             child: Text('Save'),
             onPressed: () {
               test.name = nameCtrl.text;
               test.description = descCtrl.text;
               test.price = double.tryParse(priceCtrl.text) ?? test.price;
-              Testservice.updatetest(test, widget.labid, widget.locationid, test.id);
+              Testservice.updatetest(
+                test,
+                widget.labid,
+                widget.locationid,
+                test.id,
+              );
               Navigator.pop(context);
               setState(() {});
             },
@@ -127,7 +149,10 @@ class _ManageTestsState extends State<ManageTests> {
         title: Text('Delete Test  '),
         content: Text('Are you shure you want to delete this test?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: Text('إلغاء')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('إلغاء'),
+          ),
           ElevatedButton(
             child: Text('Delete'),
             onPressed: () {
@@ -144,6 +169,7 @@ class _ManageTestsState extends State<ManageTests> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -156,7 +182,7 @@ class _ManageTestsState extends State<ManageTests> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: SizedBox(
-                height: 36,
+                height: 60,
                 child: TextField(
                   controller: searchController,
                   onChanged: (value) {
@@ -167,22 +193,44 @@ class _ManageTestsState extends State<ManageTests> {
                     hintStyle: const TextStyle(color: Colors.grey),
                     prefixIcon: const Icon(Icons.search, color: Colors.grey),
                     suffixIcon: IconButton(
-                      icon: const Icon(Icons.filter_list, color: Color(0xFF00BBA7)),
+                      icon: const Icon(
+                        Icons.filter_list,
+                        color: Color(0xFF00BBA7),
+                      ),
                       onPressed: _openFilterDialog,
                     ),
-                    border: InputBorder.none,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(color: Colors.grey),
+                    ),
+                    focusedBorder: const OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(12)),
+                      borderSide: BorderSide(color: Colors.black45, width: 1.5),
+                    ),
                     contentPadding: const EdgeInsets.only(top: 16),
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 16),
 
             GestureDetector(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (contex) {
-                  return AddNewTest(locationId: widget.locationid, labid: widget.labid);
-                }));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (contex) {
+                      return AddNewTest(
+                        locationId: widget.locationid,
+                        labid: widget.labid,
+                      );
+                    },
+                  ),
+                );
               },
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -217,9 +265,13 @@ class _ManageTestsState extends State<ManageTests> {
 
                 final tests = snapshot.data ?? [];
 
-                final filteredTests = tests.where((t) =>
-                    t.name.toLowerCase().contains(searchQuery!.toLowerCase())
-                ).toList();
+                final filteredTests = tests
+                    .where(
+                      (t) => t.name.toLowerCase().contains(
+                        searchQuery!.toLowerCase(),
+                      ),
+                    )
+                    .toList();
 
                 return ListView.builder(
                   shrinkWrap: true,
@@ -231,8 +283,11 @@ class _ManageTestsState extends State<ManageTests> {
                     final test = filteredTests[index];
                     return Card(
                       elevation: 3,
-                      color: Colors.grey[200],
-                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      color: Colors.white,
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -252,7 +307,10 @@ class _ManageTestsState extends State<ManageTests> {
                             const SizedBox(height: 6),
 
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
                               decoration: BoxDecoration(
                                 color: Colors.blue.shade100,
                                 borderRadius: BorderRadius.circular(8),
@@ -293,7 +351,7 @@ class _ManageTestsState extends State<ManageTests> {
                                   children: [
                                     const Icon(Icons.access_time, size: 18),
                                     const SizedBox(width: 4),
-                                    Text(test.durationMinutes),
+                                    Text('${test.durationMinutes} min'),
                                     IconButton(
                                       onPressed: () {
                                         showEditDialog(test);
