@@ -53,8 +53,12 @@ class _OrdersScreenState extends State<OrdersScreen> {
           'patientId': patientId ?? '', // Crucial for status updates
           'name': patientData?['name'] ?? 'Unknown Patient',
           'age': patientData?['age'] ?? '',
+          'address': patientData?['address'] ?? '',
+          'phone': patientData?['phone'] ?? '',
           'date': data['date'] ?? '',
           'time': data['time'] ?? '',
+          'prescription': data['prescription'],
+          'totalAmount': data['totalAmount'],
           'collection': data['serviceType'] == 'Home Collection'
               ? 'Home Collection'
               : 'Visit Lab',
@@ -62,11 +66,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
           'prescription': data['prescription'] ?? "",
           'tests': (data['tests'] != null && data['tests'].isNotEmpty)
               ? List<Map<String, dynamic>>.from(
-                  data['tests'].map(
-                    (t) => {
-                      'name': t['name'] ?? '',
-                    },
-                  ),
+                  data['tests'].map((t) => {'name': t['name'] ?? ''}),
                 )
               : [],
         };

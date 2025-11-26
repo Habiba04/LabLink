@@ -10,7 +10,7 @@ class OrderDetailsScreen extends StatefulWidget {
 
 class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   late TextEditingController price = TextEditingController(
-    text: "${widget.order['price']}",
+    text: "${widget.order['totalAmount']}",
   );
   String status = 'Pending';
 
@@ -23,7 +23,8 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    bool isEditable = widget.order['manual'] && status == 'Pending';
+    bool isEditable =
+        widget.order['prescription'] == null && status == 'Pending';
     print("isEditable:  $isEditable");
     return Scaffold(
       appBar: AppBar(
