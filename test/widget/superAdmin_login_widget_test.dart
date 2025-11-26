@@ -9,7 +9,6 @@ import 'package:lablink/SuperAdmin/Pages/super-admin-home.dart';
 import 'package:lablink/SuperAdmin/Providers/dashboard_provider.dart';
 import 'package:provider/provider.dart';
 
-
 class FakeDashboardProvider extends ChangeNotifier {
   bool isLoading = false;
   int totalLabs = 10;
@@ -21,8 +20,6 @@ class FakeDashboardProvider extends ChangeNotifier {
   ];
   void listenDashboard() {}
 }
-
-
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -76,28 +73,35 @@ void main() {
 
       // Build our widget tree with provider
       await tester.pumpWidget(
-  MultiProvider(
-    providers: [
-      ChangeNotifierProvider(
-        create: (_) => FakeDashboardProvider(), // a fake provider with dummy data
-      ),
-    ],
-    child: MaterialApp(
-      home: SuperAdminLoginScreen(auth: mockAuth),
-      builder: (context, child) {
-        return MultiProvider(
+        MultiProvider(
           providers: [
-            ChangeNotifierProvider.value(
-              value: Provider.of<DashboardProvider>(context, listen: false),
-            )
+            ChangeNotifierProvider(
+              create: (_) =>
+                  FakeDashboardProvider(), // a fake provider with dummy data
+            ),
+            ChangeNotifierProvider(
+              create: (_) =>
+                  DashboardProvider(firestore: FakeFirebaseFirestore()), // a fake provider with dummy data
+            ),
           ],
-          child: child!,
-        );
-      },
-    ),
-  ),
-);
-
+          child: MaterialApp(
+            home: SuperAdminLoginScreen(auth: mockAuth),
+            builder: (context, child) {
+              return MultiProvider(
+                providers: [
+                  ChangeNotifierProvider.value(
+                    value: Provider.of<DashboardProvider>(
+                      context,
+                      listen: false,
+                    ),
+                  ),
+                ],
+                child: child!,
+              );
+            },
+          ),
+        ),
+      );
 
       // Enter valid email & password
       await tester.enterText(
@@ -108,7 +112,7 @@ void main() {
 
       // Tap the login button
       await tester.tap(find.byKey(const Key('loginButton')));
-      await tester.pumpAndSettle(); // Wait for navigation
+      await tester.pump(); // Wait for navigation
 
       // Expect to find the SuperAdminHomeScreen
       expect(find.byType(SuperAdminHomeScreen), findsOneWidget);
