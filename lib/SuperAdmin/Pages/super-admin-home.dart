@@ -75,12 +75,13 @@ class _SuperAdminHomeScreenState extends State<SuperAdminHomeScreen> {
                         ],
                       ),
                       TextButton(
+                        key: Key('logoutButton'),
                         onPressed: () async {
                           await FirebaseAuth.instance.signOut();
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const SuperAdminLoginScreen(),
+                              builder: (_) => SuperAdminLoginScreen(),
                             ),
                           );
                         },

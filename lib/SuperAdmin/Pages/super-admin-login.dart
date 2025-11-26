@@ -3,7 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lablink/SuperAdmin/Pages/super-admin-home.dart';
 
 class SuperAdminLoginScreen extends StatefulWidget {
-  const SuperAdminLoginScreen({super.key});
+  final FirebaseAuth auth;
+  SuperAdminLoginScreen({super.key, FirebaseAuth? auth})
+    : auth = auth ?? FirebaseAuth.instance;
 
   @override
   State<SuperAdminLoginScreen> createState() => _SuperAdminLoginScreenState();
@@ -20,11 +22,10 @@ class _SuperAdminLoginScreenState extends State<SuperAdminLoginScreen> {
     setState(() => _loading = true);
 
     try {
-      UserCredential credential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-            email: _emailController.text.trim(),
-            password: _passwordController.text.trim(),
-          );
+      UserCredential credential = await widget.auth.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
 
       if (credential.user!.email?.trim().toLowerCase() ==
           superAdminEmail.trim().toLowerCase()) {
@@ -147,6 +148,7 @@ class _SuperAdminLoginScreenState extends State<SuperAdminLoginScreen> {
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: TextField(
+                          key: const Key('emailField'),
                           controller: _emailController,
                           style: const TextStyle(color: Colors.white),
                           decoration: const InputDecoration(
@@ -165,6 +167,7 @@ class _SuperAdminLoginScreenState extends State<SuperAdminLoginScreen> {
 
                       // PASSWORD FIELD
                       Container(
+                        key: const Key('passwordField'),
                         height: 60,
                         alignment: Alignment.centerLeft,
                         padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -196,6 +199,7 @@ class _SuperAdminLoginScreenState extends State<SuperAdminLoginScreen> {
                         width: double.infinity,
                         height: 50,
                         child: ElevatedButton(
+                          key: const Key('loginButton'),
                           onPressed: _loading ? null : loginSuperAdmin,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,

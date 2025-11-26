@@ -2,6 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class DashboardProvider extends ChangeNotifier {
+  final FirebaseFirestore firestore;
+
+  DashboardProvider({required this.firestore});
+  
   int totalLabs = 0;
   int activeUsers = 0;
   int testsToday = 0;
@@ -11,7 +15,6 @@ class DashboardProvider extends ChangeNotifier {
 
   bool isLoading = true; // new loading flag
 
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   void listenDashboard() async {
     isLoading = true;

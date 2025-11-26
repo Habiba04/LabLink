@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mockito/mockito.dart';
 import 'package:lablink/Patient/Services/BookingService.dart';
 
-// 1. Mock the FirebaseAuth to control currentUser
 class MockFirebaseAuth extends Mock implements FirebaseAuth {
   final User? mockUser;
   final bool? signedIn;
@@ -13,6 +12,7 @@ class MockFirebaseAuth extends Mock implements FirebaseAuth {
   @override
   User? get currentUser => mockUser;
 }
+
 class MockUser extends Mock implements User {
   final String uid;
   final String? email;
@@ -26,29 +26,36 @@ void setupFirebaseAuthMocks() {
 
 void main() {
   setupFirebaseAuthMocks();
-  // Mock implementations for required map data
+
   final mockLabData = {'id': 'lab123', 'name': 'TestLab'};
-  final mockLocationData = {'id': 'loc123', 'name': 'BranchX', 'address': '123 Test St'};
+  final mockLocationData = {
+    'id': 'loc123',
+    'name': 'BranchX',
+    'address': '123 Test St',
+  };
   final mockTests = [
     {'id': 'testA', 'name': 'Blood Test', 'price': 100.0},
     {'id': 'testB', 'name': 'Urine Test', 'price': 250.0},
   ];
 
   group('BookingService Unit Tests', () {
-    test('calculateTotal should return correct total with no home collection', () {
-      final mockAuth = MockFirebaseAuth();
-      final service = BookingService(
-        auth: mockAuth,
-        labData: mockLabData,
-        locationData: mockLocationData,
-        selectedTests: mockTests,
-        selectedService: "Visit Lab",
-      );
-      
-      final total = service.calculateTotal();
-      // Expected: 100.0 + 250.0 = 350.0
-      expect(total, 350.0);
-    });
+    test(
+      'calculateTotal should return correct total with no home collection',
+      () {
+        final mockAuth = MockFirebaseAuth();
+        final service = BookingService(
+          auth: mockAuth,
+          labData: mockLabData,
+          locationData: mockLocationData,
+          selectedTests: mockTests,
+          selectedService: "Visit Lab",
+        );
+
+        final total = service.calculateTotal();
+
+        expect(total, 350.0);
+      },
+    );
 
     test('calculateTotal should include home collection charge', () {
       final mockAuth = MockFirebaseAuth();
@@ -60,29 +67,33 @@ void main() {
         selectedService: "Home Collection",
       );
       final total = service.calculateTotal();
-      // Expected: 350.0 + 50.0 = 400.0
+
       expect(total, 400.0);
     });
 
-    test('getCurrentUserId should throw exception if user is not signed in', () {
-      final mockAuth = MockFirebaseAuth(signedIn: false);
-      final service = BookingService(
-        auth: mockAuth,
-        labData: mockLabData,
-        locationData: mockLocationData,
-        selectedTests: mockTests,
-        selectedService: "Visit Lab",
-      );
-      
-      // In a test environment without an active user, _auth.currentUser is null,
-      // so we test the custom exception.
-      expect(
-        () => service.getCurrentUserId(),
-        throwsA(
-          isA<FirebaseAuthException>()
-              .having((e) => e.code, 'code', 'user-not-signed-in'),
-        ),
-      );
-    });
+    test(
+      'getCurrentUserId should throw exception if user is not signed in',
+      () {
+        final mockAuth = MockFirebaseAuth(signedIn: false);
+        final service = BookingService(
+          auth: mockAuth,
+          labData: mockLabData,
+          locationData: mockLocationData,
+          selectedTests: mockTests,
+          selectedService: "Visit Lab",
+        );
+
+        expect(
+          () => service.getCurrentUserId(),
+          throwsA(
+            isA<FirebaseAuthException>().having(
+              (e) => e.code,
+              'code',
+              'user-not-signed-in',
+            ),
+          ),
+        );
+      },
+    );
   });
 }
