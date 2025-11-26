@@ -53,6 +53,7 @@ class FirestoreHelpers {
       final status = (data['status'] ?? '').toString();
       final patientId = (data['patientId'] ?? '').toString();
       final patientName = patientNames[patientId] ?? 'Unknown';
+      final prescriptionPath = data['prescription']?.toString();
 
       DateTime? created;
       if (data['createdAt'] is Timestamp) {
@@ -96,6 +97,7 @@ class FirestoreHelpers {
           createdAt: created,
           status: status,
           testsList: testsList,
+          prescriptionPath: prescriptionPath,
         ),
       );
     }

@@ -4,6 +4,7 @@ class SimpleOrder {
   final DateTime? createdAt;
   final String status;
   final List<String> testsList;
+  final String? prescriptionPath;
 
   SimpleOrder({
     required this.id,
@@ -11,5 +12,6 @@ class SimpleOrder {
     required this.createdAt,
     required this.status,
     required this.testsList,
+    this.prescriptionPath,
   });
 }

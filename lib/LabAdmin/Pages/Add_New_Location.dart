@@ -33,11 +33,18 @@ class _AddNewLocationState extends State<AddNewLocation> {
     super.dispose();
   }
 
+  String _formatTime24hr(TimeOfDay time) {
+    final hour = time.hour.toString().padLeft(2, '0');
+    final minute = time.minute.toString().padLeft(2, '0');
+    return '$hour:$minute';
+  }
+
   @override
   Widget build(BuildContext context) {
     final String? labid = FirebaseAuth.instance.currentUser!.uid;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Form(
           key: formkey,
@@ -50,7 +57,7 @@ class _AddNewLocationState extends State<AddNewLocation> {
                 title: 'Add New Location',
                 subtitle: 'Set up a new laboratory branch',
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 16),
               buildLabel('Location Name', Icon(Icons.location_city_outlined)),
               Padding(
                 padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 16.0),
@@ -66,7 +73,7 @@ class _AddNewLocationState extends State<AddNewLocation> {
                     ),
                     hintText: 'e.g., Main Branch, North Branch',
                     filled: true,
-                    fillColor: const Color(0xFFD1D5DC),
+                    fillColor: Colors.grey[200],
                     contentPadding: EdgeInsets.all(16),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -94,7 +101,7 @@ class _AddNewLocationState extends State<AddNewLocation> {
                       color: Colors.black87,
                     ),
                     filled: true,
-                    fillColor: const Color(0xFFD1D5DC),
+                    fillColor: Colors.grey[200],
                     contentPadding: EdgeInsets.all(16),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -119,7 +126,7 @@ class _AddNewLocationState extends State<AddNewLocation> {
                     ),
                     hintText: '+1 (555) 123-4567',
                     filled: true,
-                    fillColor: const Color(0xFFD1D5DC),
+                    fillColor: Colors.grey[200],
                     contentPadding: EdgeInsets.all(16),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(16),
@@ -137,7 +144,7 @@ class _AddNewLocationState extends State<AddNewLocation> {
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         decoration: BoxDecoration(
-                          color: Color(0xFFD1D5DC),
+                          color: Colors.grey[200],
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: DropdownButtonFormField<String>(
@@ -191,7 +198,7 @@ class _AddNewLocationState extends State<AddNewLocation> {
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 10),
                         decoration: BoxDecoration(
-                          color: Color(0xFFD1D5DC),
+                          color: Colors.grey[200],
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: DropdownButtonFormField<String>(
@@ -258,7 +265,7 @@ class _AddNewLocationState extends State<AddNewLocation> {
                         decoration: InputDecoration(
                           hintText: '08:00 AM',
                           filled: true,
-                          fillColor: const Color(0xFFD1D5DC),
+                          fillColor: Colors.grey[200],
                           contentPadding: const EdgeInsets.all(16),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16),
@@ -268,10 +275,10 @@ class _AddNewLocationState extends State<AddNewLocation> {
                         onTap: () async {
                           final TimeOfDay? picked = await showTimePicker(
                             context: context,
-                            initialTime: TimeOfDay(hour: 8, minute: 0),
+                            initialTime: const TimeOfDay(hour: 8, minute: 0),
                           );
                           if (picked != null) {
-                            openAtController.text = picked.format(context);
+                            openAtController.text = _formatTime24hr(picked);
                           }
                         },
                       ),
@@ -287,7 +294,7 @@ class _AddNewLocationState extends State<AddNewLocation> {
                         decoration: InputDecoration(
                           hintText: '06:00 PM',
                           filled: true,
-                          fillColor: const Color(0xFFD1D5DC),
+                          fillColor: Colors.grey[200],
                           contentPadding: const EdgeInsets.all(16),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16),
@@ -297,10 +304,10 @@ class _AddNewLocationState extends State<AddNewLocation> {
                         onTap: () async {
                           final TimeOfDay? picked = await showTimePicker(
                             context: context,
-                            initialTime: TimeOfDay(hour: 18, minute: 0),
+                            initialTime: const TimeOfDay(hour: 18, minute: 0),
                           );
                           if (picked != null) {
-                            closeAtController.text = picked.format(context);
+                            closeAtController.text = _formatTime24hr(picked);
                           }
                         },
                       ),

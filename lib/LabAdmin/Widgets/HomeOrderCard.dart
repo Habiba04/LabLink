@@ -8,7 +8,9 @@ class OrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayStatus = order.status.toLowerCase() == 'pending' ? 'New' : order.status;
+    final displayStatus = order.status.toLowerCase() == 'pending'
+        ? 'New'
+        : order.status;
     final bg = _statusBg(displayStatus);
     final txt = _statusTextColor(displayStatus);
 
@@ -36,17 +38,28 @@ class OrderCard extends StatelessWidget {
               children: [
                 Text(
                   order.patientName,
-                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 15,
+                  ),
                 ),
+
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: bg,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     displayStatus,
-                    style: TextStyle(color: txt, fontSize: 12, fontWeight: FontWeight.w600),
+                    style: TextStyle(
+                      color: txt,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],
@@ -55,8 +68,27 @@ class OrderCard extends StatelessWidget {
 
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (order.prescriptionPath != null)
+                  Text(
+                    "Prescription Attached",
+                    style: TextStyle(color: Colors.black54, fontSize: 13),
+                  ),
+              ],
+            ),
+
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: order.testsList
-                  .map((test) => Text(test, style: const TextStyle(color: Colors.black54, fontSize: 13)))
+                  .map(
+                    (test) => Text(
+                      test,
+                      style: const TextStyle(
+                        color: Colors.black54,
+                        fontSize: 13,
+                      ),
+                    ),
+                  )
                   .toList(),
             ),
 
@@ -65,7 +97,10 @@ class OrderCard extends StatelessWidget {
               children: [
                 const Icon(Icons.access_time, size: 14, color: Colors.grey),
                 const SizedBox(width: 4),
-                Text(timeAgo(order.createdAt), style: const TextStyle(color: Colors.grey, fontSize: 12)),
+                Text(
+                  timeAgo(order.createdAt),
+                  style: const TextStyle(color: Colors.grey, fontSize: 12),
+                ),
               ],
             ),
           ],

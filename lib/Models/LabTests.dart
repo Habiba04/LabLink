@@ -19,7 +19,6 @@ class LabTest {
     required this.preparation,
   });
 
-  
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -33,7 +32,7 @@ class LabTest {
     };
   }
 
-   factory LabTest.fromMap(Map<String, dynamic> map) {
+  factory LabTest.fromMap(Map<String, dynamic> map) {
     return LabTest(
       id: map['id'] ?? '',
       name: map['name'] ?? '',
@@ -46,4 +45,3 @@ class LabTest {
     );
   }
 }
- 

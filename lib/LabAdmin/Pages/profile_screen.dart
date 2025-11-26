@@ -275,7 +275,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Padding(
                             padding: EdgeInsets.all(width * 0.06),
                             child: Text(
-                              'Available Branchs',
+                              'Available Branches',
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: width * 0.04,

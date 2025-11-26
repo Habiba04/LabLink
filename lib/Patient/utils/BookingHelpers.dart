@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-
 BoxDecoration getBoxDecoration() {
   return BoxDecoration(
     color: Colors.white,
@@ -34,14 +33,25 @@ Widget buildSectionTitle(IconData icon, String title) {
 }
 
 List<String> generateAvailableTimes(
-    String openAt, String closeAt, DateTime selectedDate) {
+  String openAt,
+  String closeAt,
+  DateTime selectedDate,
+) {
   final openHour = int.parse(openAt.split(':')[0]);
   final closeHour = int.parse(closeAt.split(':')[0]);
 
   DateTime startTime = DateTime(
-      selectedDate.year, selectedDate.month, selectedDate.day, openHour);
+    selectedDate.year,
+    selectedDate.month,
+    selectedDate.day,
+    openHour,
+  );
   DateTime endTime = DateTime(
-      selectedDate.year, selectedDate.month, selectedDate.day, closeHour);
+    selectedDate.year,
+    selectedDate.month,
+    selectedDate.day,
+    closeHour,
+  );
 
   final List<String> times = [];
   final timeFormat = DateFormat('h:mm a');
@@ -56,6 +66,6 @@ List<String> generateAvailableTimes(
 }
 
 bool checkIsWorkingDay(DateTime date, List<String> workingDays) {
-  final dayName = DateFormat('E').format(date).substring(0, 3).toLowerCase();
+  final dayName = DateFormat('E').format(date);
   return workingDays.contains(dayName);
 }

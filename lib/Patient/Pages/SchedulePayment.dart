@@ -68,7 +68,7 @@ class _SchedulePaymentScreenState extends State<SchedulePaymentScreen> {
       closeAt = data['closeAt'];
       workingDays = List<String>.from(
         data['workingDays'] ?? [],
-      ).map((d) => d.trim().substring(0, 3).toLowerCase()).toList();
+      ).map((d) => d.trim().substring(0, 3)).toList();
     });
 
     await _listenToDisabledSlots();
@@ -115,9 +115,13 @@ class _SchedulePaymentScreenState extends State<SchedulePaymentScreen> {
     _listenToDisabledSlots();
   }
 
-  void _handleMonthChanged() {
+  void _handleMonthChanged(int direction) {
     setState(() {
-      currentMonth = DateTime(currentMonth.year, currentMonth.month - 1, 1);
+      currentMonth = DateTime(
+        currentMonth.year,
+        currentMonth.month + direction,
+        1,
+      );
       if (selectedDate.month != currentMonth.month) {
         selectedDate = currentMonth;
       }

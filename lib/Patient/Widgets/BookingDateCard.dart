@@ -6,7 +6,7 @@ class BookingDateCard extends StatelessWidget {
   final DateTime currentMonth;
   final List<String> workingDays;
   final void Function(DateTime newDate) onDateSelected;
-  final VoidCallback onMonthChanged;
+  final void Function(int direction) onMonthChanged;
   final bool Function(DateTime date) isWorkingDay;
   final Widget Function(IconData icon, String title) sectionTitleBuilder;
   final BoxDecoration Function() boxDecorationBuilder;
@@ -49,7 +49,7 @@ class BookingDateCard extends StatelessWidget {
             children: [
               IconButton(
                 icon: const Icon(Icons.chevron_left),
-                onPressed: () => onMonthChanged(),
+                onPressed: () => onMonthChanged(-1),
               ),
               Text(
                 monthFormat.format(currentMonth),
@@ -60,7 +60,7 @@ class BookingDateCard extends StatelessWidget {
               ),
               IconButton(
                 icon: const Icon(Icons.chevron_right),
-                onPressed: () => onMonthChanged(),
+                onPressed: () => onMonthChanged(1),
               ),
             ],
           ),
@@ -99,7 +99,8 @@ class BookingDateCard extends StatelessWidget {
               }
 
               final day = daysInMonth[index - _leadingEmptyDaysCount()];
-              final isSelected = day.day == selectedDate.day &&
+              final isSelected =
+                  day.day == selectedDate.day &&
                   day.month == selectedDate.month &&
                   day.year == selectedDate.year;
 
@@ -109,9 +110,7 @@ class BookingDateCard extends StatelessWidget {
               final isWork = isWorkingDay(day);
 
               return GestureDetector(
-                onTap: (!isWork || isPast)
-                    ? null
-                    : () => onDateSelected(day),
+                onTap: (!isWork || isPast) ? null : () => onDateSelected(day),
                 child: Container(
                   decoration: BoxDecoration(
                     color: isSelected
@@ -126,9 +125,11 @@ class BookingDateCard extends StatelessWidget {
                       color: (isPast || !isWork)
                           ? Colors.grey.shade400
                           : isSelected
-                              ? Colors.white
-                              : Colors.grey.shade800,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          ? Colors.white
+                          : Colors.grey.shade800,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                     ),
                   ),
                 ),

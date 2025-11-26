@@ -19,6 +19,7 @@ class DashboardData {
     required this.todaysBookings,
     required this.activePatients,
     required this.recentOrders,
+    
   });
 
   factory DashboardData.empty() => DashboardData(
