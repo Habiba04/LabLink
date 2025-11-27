@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lablink/Home/home.dart';
@@ -15,7 +16,7 @@ void main() async {
   runApp(
   MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => DashboardProvider()),
+        ChangeNotifierProvider(create: (_) => DashboardProvider(firestore: FirebaseFirestore.instance)),
         ChangeNotifierProvider(create: (_) => AppointmentNotifier()),
       ],
     child: MyApp())

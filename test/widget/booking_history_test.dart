@@ -11,9 +11,7 @@ import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 final mockUser = MockUser(uid: 'test-user-uid', email: 'test@example.com');
 final mockAuth = MockFirebaseAuth(mockUser: mockUser);
 
-// 1. Mock AppointmentNotifier
 class MockAppointmentNotifier extends Mock implements AppointmentNotifier {
-  // Override the getter to avoid Null check operator error in Provider
   @override
   String? get error =>
       super.noSuchMethod(Invocation.getter(#error), returnValue: null);
@@ -34,7 +32,6 @@ void main() {
     mockNotifier = MockAppointmentNotifier();
   });
 
-  // Helper function to wrap the screen with Provider
   Widget createWidgetUnderTest() {
     return MaterialApp(
       home: ChangeNotifierProvider<AppointmentNotifier>.value(
@@ -61,7 +58,7 @@ void main() {
     when(mockNotifier.error).thenReturn(null);
 
     await tester.pumpWidget(createWidgetUnderTest());
-    await tester.pumpAndSettle(); // Settle the frames
+    await tester.pumpAndSettle();
 
     expect(find.text("You have no booking history."), findsOneWidget);
   });
