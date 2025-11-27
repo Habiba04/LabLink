@@ -165,17 +165,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       height: width * 0.1,
                       icon: Icons.location_on_outlined,
                       bgColor: Color(0xFFDBEAFE),
-                      title: currentUser!.address,
+                      title: currentUser!.address == " "
+                          ? 'Saved Address'
+                          : currentUser!.address,
+
                       iconColor: Color(0xFF155DFC),
                     ),
-                    ProfileListtile(
-                      width: width * 0.1,
-                      height: width * 0.1,
-                      icon: Icons.notifications_none,
-                      bgColor: Color(0xFFF3E8FF),
-                      title: 'Notifications',
-                      iconColor: Color(0xFF9810FA),
-                    ),
+
                     GestureDetector(
                       onTap: () {
                         Navigator.push(

@@ -48,7 +48,11 @@ class ProfileListtile extends StatelessWidget {
             Expanded(
               child: Text(
                 title,
-                style: TextStyle(color: Colors.black, fontSize: 16),
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
