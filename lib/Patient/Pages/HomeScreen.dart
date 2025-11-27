@@ -213,7 +213,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      "Good Morning",
+                      " Hi",
                       style: TextStyle(color: Colors.white70, fontSize: 18),
                     ),
                     const SizedBox(height: 6),
@@ -358,7 +358,7 @@ class LabCard extends StatelessWidget {
                 Row(
                   children: [
                     const Icon(Icons.star, color: Colors.amber, size: 20),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: 2),
                     Text(
                       "${lab.rating} (${lab.reviewCount})",
                       style: TextStyle(
@@ -366,13 +366,13 @@ class LabCard extends StatelessWidget {
                         color: Colors.grey.shade700,
                       ),
                     ),
-                    const SizedBox(width: 15),
+                    const SizedBox(width: 2),
                     const Icon(
                       Icons.location_on,
                       color: Colors.black54,
                       size: 20,
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: 0),
                     Text(
                       "${lab.distanceKm} km",
                       style: TextStyle(
@@ -380,7 +380,7 @@ class LabCard extends StatelessWidget {
                         color: Colors.grey.shade700,
                       ),
                     ),
-                    const SizedBox(width: 15),
+                    const SizedBox(width: 4),
                     const Icon(Icons.schedule, color: Colors.black54, size: 20),
                     const SizedBox(width: 4),
                     Text(

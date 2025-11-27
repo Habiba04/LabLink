@@ -359,8 +359,7 @@ class _AddNewTestState extends State<AddNewTest> {
                   ),
 
                   onPressed: () async {
-                    print('lab ID issssssssssss: ${widget.labid}');
-                    print('Location ID issssssssssss: ${widget.locationId}');
+                 
                     if (formKey.currentState!.validate()) {
                       await TestsServices().addNewTest(
                         LabTest(
@@ -377,13 +376,13 @@ class _AddNewTestState extends State<AddNewTest> {
                         widget.locationId,
                       );
 
+                    Navigator.maybePop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Test added successfully!'),
                         ),
                       );
                     }
-                    Navigator.pop(context);
                   },
                   child: const Text(
                     'Add Test',

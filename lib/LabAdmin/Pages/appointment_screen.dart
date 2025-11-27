@@ -237,7 +237,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                   filter == "All"
                       ? "No appointments found."
                       : "No $filter appointments.",
-                  style: const TextStyle(color: Colors.black54, fontSize: 16),
+                  style: const TextStyle(color: Colors.black54, fontSize: 12),
                 ),
               );
             }

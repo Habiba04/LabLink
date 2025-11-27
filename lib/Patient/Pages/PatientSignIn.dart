@@ -104,7 +104,7 @@ class _PatientSigninState extends State<PatientSignin> {
     }
   }
 
-  // ✅ GOOGLE SIGN-IN
+ 
   Future<void> signInWithGoogle() async {
     setState(() => loading = true);
 
@@ -114,7 +114,7 @@ class _PatientSigninState extends State<PatientSignin> {
 
       if (googleUser == null) {
         setState(() => loading = false);
-        return; // The user canceled the sign-in
+        return; 
       }
 
       final googleAuth = await googleUser.authentication;
@@ -169,7 +169,7 @@ class _PatientSigninState extends State<PatientSignin> {
     }
   }
 
-  // ✅ ✅ BUILD METHOD — MUST BE OUTSIDE ALL FUNCTIONS
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -205,7 +205,7 @@ class _PatientSigninState extends State<PatientSignin> {
 
               const Text('Email', style: TextStyle(fontSize: 16)),
 
-              // ✅ FORM
+              
               Form(
                 key: _formKey,
                 child: Column(
@@ -324,6 +324,10 @@ class _PatientSigninState extends State<PatientSignin> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      Image.asset(
+                        'assets/images/gg.png',
+                        
+                      ),
                       const Text(
                         "Google",
                         style: TextStyle(fontSize: 17, color: Colors.black),
@@ -380,10 +384,10 @@ class _PatientSigninState extends State<PatientSignin> {
               );
             },
             heroTag: "Lab Administrator",
-            backgroundColor: const Color(0xFF00BBA7), // your main green color
+            backgroundColor: const Color(0xFF00BBA7),  
             shape: const CircleBorder(),
             child: const FaIcon(
-              FontAwesomeIcons.vial, // vial icon from FontAwesome
+              FontAwesomeIcons.vial,  
               color: Colors.white,
               size: 24,
             ),
