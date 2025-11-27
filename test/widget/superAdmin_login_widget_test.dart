@@ -3,21 +3,31 @@ import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lablink/SuperAdmin/Pages/super-admin-login.dart';
 import 'package:lablink/SuperAdmin/Pages/super-admin-home.dart';
 import 'package:lablink/SuperAdmin/Providers/dashboard_provider.dart';
 import 'package:provider/provider.dart';
 
-class FakeDashboardProvider extends ChangeNotifier {
+class FakeDashboardProvider extends ChangeNotifier
+    implements DashboardProvider {
+  @override
+  FirebaseFirestore get firestore => FakeFirebaseFirestore();
+
+  @override
   bool isLoading = false;
+  @override
   int totalLabs = 10;
+  @override
   int activeUsers = 5;
+  @override
   int testsToday = 2;
+  @override
   double revenueMonth = 100.0;
+  @override
   List<Map<String, dynamic>> topLabs = [
     {'name': 'Lab1', 'tests': 5, 'rating': 4.5, 'revenue': 50.0},
   ];
+  @override
   void listenDashboard() {}
 }
 
@@ -63,43 +73,20 @@ void main() {
       WidgetTester tester,
     ) async {
       // Mock user
-      final mockUser = MockUser(
-        uid: 'abc123',
-        email: 'superadmin@lablink-admin.com',
-      );
+      final mockUser = MockUser(email: 'superadmin@lablink-admin.com');
 
       // Mock FirebaseAuth
-      final mockAuth = MockFirebaseAuth(mockUser: mockUser, signedIn: false);
+      final mockAuth = MockFirebaseAuth(mockUser: mockUser);
 
       // Build our widget tree with provider
       await tester.pumpWidget(
         MultiProvider(
           providers: [
-            ChangeNotifierProvider(
-              create: (_) =>
-                  FakeDashboardProvider(), // a fake provider with dummy data
-            ),
-            ChangeNotifierProvider(
-              create: (_) =>
-                  DashboardProvider(firestore: FakeFirebaseFirestore()), // a fake provider with dummy data
+            ChangeNotifierProvider<DashboardProvider>(
+              create: (_) => FakeDashboardProvider(),
             ),
           ],
-          child: MaterialApp(
-            home: SuperAdminLoginScreen(auth: mockAuth),
-            builder: (context, child) {
-              return MultiProvider(
-                providers: [
-                  ChangeNotifierProvider.value(
-                    value: Provider.of<DashboardProvider>(
-                      context,
-                      listen: false,
-                    ),
-                  ),
-                ],
-                child: child!,
-              );
-            },
-          ),
+          child: MaterialApp(home: SuperAdminLoginScreen(auth: mockAuth)),
         ),
       );
 
@@ -112,7 +99,7 @@ void main() {
 
       // Tap the login button
       await tester.tap(find.byKey(const Key('loginButton')));
-      await tester.pump(); // Wait for navigation
+      await tester.pumpAndSettle(); // Wait for navigation
 
       // Expect to find the SuperAdminHomeScreen
       expect(find.byType(SuperAdminHomeScreen), findsOneWidget);
