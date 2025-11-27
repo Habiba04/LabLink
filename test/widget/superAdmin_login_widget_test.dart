@@ -72,13 +72,10 @@ void main() {
     testWidgets('After successful login, navigates to SuperAdminHomeScreen', (
       WidgetTester tester,
     ) async {
-      // Mock user
       final mockUser = MockUser(email: 'superadmin@lablink-admin.com');
 
-      // Mock FirebaseAuth
       final mockAuth = MockFirebaseAuth(mockUser: mockUser);
 
-      // Build our widget tree with provider
       await tester.pumpWidget(
         MultiProvider(
           providers: [
@@ -90,18 +87,15 @@ void main() {
         ),
       );
 
-      // Enter valid email & password
       await tester.enterText(
         find.byKey(const Key('emailField')),
         'superadmin@lablink-admin.com',
       );
       await tester.enterText(find.byKey(const Key('passwordField')), '123456');
 
-      // Tap the login button
       await tester.tap(find.byKey(const Key('loginButton')));
-      await tester.pumpAndSettle(); // Wait for navigation
+      await tester.pumpAndSettle();
 
-      // Expect to find the SuperAdminHomeScreen
       expect(find.byType(SuperAdminHomeScreen), findsOneWidget);
     });
   });

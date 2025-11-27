@@ -31,7 +31,7 @@ class _SuperAdminLoginScreenState extends State<SuperAdminLoginScreen> {
           superAdminEmail.trim().toLowerCase()) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const SuperAdminHomeScreen()),
+          MaterialPageRoute(builder: (_) => SuperAdminHomeScreen()),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

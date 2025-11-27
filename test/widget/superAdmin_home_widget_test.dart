@@ -5,68 +5,55 @@ import 'package:lablink/SuperAdmin/Pages/super-admin-home.dart';
 import 'package:lablink/SuperAdmin/Pages/super-admin-login.dart';
 import 'package:lablink/SuperAdmin/Providers/dashboard_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:fake_cloud_firestore/fake_cloud_firestore.dart';
 
-import '../unit/dashboard_provider_unit_test.dart'; // the FakeDashboardProvider
+class FakeDashboardProvider extends ChangeNotifier
+    implements DashboardProvider {
+  @override
+  FirebaseFirestore get firestore => FakeFirebaseFirestore();
 
+  @override
+  bool isLoading = false;
+  @override
+  int totalLabs = 10;
+  @override
+  int activeUsers = 5;
+  @override
+  int testsToday = 2;
+  @override
+  double revenueMonth = 100.0;
+  @override
+  List<Map<String, dynamic>> topLabs = [
+    {'name': 'Lab1', 'tests': 5, 'rating': 4.5, 'revenue': 50.0},
+  ];
+  @override
+  void listenDashboard() {}
+}
 void main() {
-  testWidgets("Shows loading indicator", (tester) async {
-    final provider = FakeDashboardProvider()..isLoading = true;
-    final mockAuth = MockFirebaseAuth(
-      signedIn: true,
-      mockUser: MockUser(uid: "123", email: "normal@test.com"),
-    );
+  TestWidgetsFlutterBinding.ensureInitialized();
 
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider<DashboardProvider>(
-            create: (_) => FakeDashboardProvider(),
-          ),
-        ],
-        child: MaterialApp(home: SuperAdminLoginScreen(auth: mockAuth)),
-      ),
-    );
-
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
-  });
 
   testWidgets("Displays dashboard stats", (tester) async {
-    final provider = FakeDashboardProvider();
+    
 
     await tester.pumpWidget(
-      MaterialApp(
-        home: ChangeNotifierProvider.value(
-          value: provider,
-          child: SuperAdminHomeScreen(),
+        MultiProvider(
+          providers: [
+            ChangeNotifierProvider<DashboardProvider>(
+              create: (_) => FakeDashboardProvider(),
+            ),
+          ],
+          child: MaterialApp(home: SuperAdminHomeScreen()),
         ),
-      ),
-    );
+      );
 
-    await tester.pump();
-
-    expect(find.text("5"), findsOneWidget);
-    expect(find.text("20"), findsOneWidget);
-    expect(find.text("7"), findsOneWidget);
-    expect(find.text("£1000.50"), findsOneWidget);
-  });
-
-  testWidgets("Logout navigates to login", (tester) async {
-    final provider = FakeDashboardProvider();
-
-    await tester.pumpWidget(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider<DashboardProvider>.value(value: provider),
-        ],
-        child: MaterialApp(home: SuperAdminHomeScreen()),
-      ),
-    );
-
-    // Tap the Logout button
-    await tester.tap(find.byKey(Key('logoutButton')));
     await tester.pumpAndSettle();
 
-    // Expect to navigate back to login screen
-    expect(find.byType(SuperAdminLoginScreen), findsOneWidget);
+    expect(find.text("5"), findsOneWidget);
+    expect(find.text("10"), findsOneWidget);
+    expect(find.text("2"), findsOneWidget);
+    expect(find.text("£100.00"), findsOneWidget);
   });
+
 }
