@@ -19,7 +19,7 @@ class _SuperAdminHomeScreenState extends State<SuperAdminHomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = Provider.of<DashboardProvider>(context, listen: false);
       provider.listenDashboard();
-    }); // Fetch dashboard data on load
+    });
   }
 
   @override
@@ -34,7 +34,6 @@ class _SuperAdminHomeScreenState extends State<SuperAdminHomeScreen> {
           return SingleChildScrollView(
             child: Column(
               children: [
-                // Header gradient (same as before)
                 Container(
                   padding: const EdgeInsets.fromLTRB(24, 60, 24, 40),
                   width: double.infinity,
@@ -106,7 +105,6 @@ class _SuperAdminHomeScreenState extends State<SuperAdminHomeScreen> {
 
                 const SizedBox(height: 20),
 
-                // Metric cards
                 Wrap(
                   alignment: WrapAlignment.center,
                   spacing: 16,
@@ -141,7 +139,6 @@ class _SuperAdminHomeScreenState extends State<SuperAdminHomeScreen> {
 
                 const SizedBox(height: 30),
 
-                // Top performing labs
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
@@ -168,7 +165,6 @@ class _SuperAdminHomeScreenState extends State<SuperAdminHomeScreen> {
                 ),
                 const SizedBox(height: 20),
 
-                // Manage Laboratories Button
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: SizedBox(

@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lablink/LabAdmin/Pages/Add_New_Location.dart';
- import 'package:lablink/LabAdmin/Pages/Manage_Tests_screen.dart';
+import 'package:lablink/LabAdmin/Pages/Manage_Tests_screen.dart';
 import 'package:lablink/LabAdmin/Widgets/top_widget.dart';
 import 'package:lablink/LabAdmin/services/location_services.dart';
 
@@ -141,9 +141,7 @@ class _LabLocations_screenState extends State<LabLocations_screen> {
                                 const SizedBox(width: 5),
                                 Expanded(
                                   child: Text(
-                                    location.workingDays.join(
-                                      ', ',
-                                    ),  
+                                    location.workingDays.join(', '),
                                     style: const TextStyle(
                                       fontSize: 14,
                                       color: Colors.grey,
@@ -166,7 +164,7 @@ class _LabLocations_screenState extends State<LabLocations_screen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Column(
-                                  children:  [
+                                  children: [
                                     Text(
                                       '${location.tests.length} tests',
                                       style: TextStyle(
@@ -192,7 +190,7 @@ class _LabLocations_screenState extends State<LabLocations_screen> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (_) => ManageTests(
-                                              locationid: location.id  ,
+                                              locationid: location.id,
                                               labid: labid,
                                             ),
                                           ),
@@ -227,12 +225,11 @@ class _LabLocations_screenState extends State<LabLocations_screen> {
                                     const SizedBox(width: 10),
                                     InkWell(
                                       onTap: () async {
-                                        await LocationServices()
-                                            .deletLocation(
-                                              location.id ,
-                                              labid,
-                                            );
-                                                                            },
+                                        await LocationServices().deletLocation(
+                                          location.id,
+                                          labid,
+                                        );
+                                      },
                                       child: Container(
                                         width: 38,
                                         height: 31,

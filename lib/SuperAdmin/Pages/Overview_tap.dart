@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../Database/firebaseDB.dart';
+import '../../Database/firebase_DB.dart';
 import '../../Models/Lab.dart';
 
 class OverviewPage extends StatefulWidget {

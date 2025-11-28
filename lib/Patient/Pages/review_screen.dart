@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lablink/Database/firebaseDB.dart';
+import 'package:lablink/Database/firebase_DB.dart';
 import 'package:lablink/Models/Review.dart';
 
 class ReviewScreen extends StatefulWidget {
@@ -54,7 +54,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
     setState(() {
       _rating = 0;
     });
-    await fetchReviews(); // refresh list
+    await fetchReviews();
   }
 
   @override

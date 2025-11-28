@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lablink/Database/firebaseDB.dart';
+import 'package:lablink/Database/firebase_DB.dart';
 import 'package:lablink/shared_files/common_widgets/edit_profile_text_field.dart';
 
 class EditProfileScreen extends StatefulWidget {

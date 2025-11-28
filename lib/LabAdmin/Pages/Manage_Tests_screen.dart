@@ -142,32 +142,35 @@ class _ManageTestsState extends State<ManageTests> {
     );
   }
 
-void showDeleteDialog(LabTest test) {
-  showDialog(
-    context: context,
-    builder: (_) => AlertDialog(
-      title: Text('Delete Test'),
-      content: Text('Are you sure you want to delete this test?'),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.pop(context); 
-          },
-          child: Text('Cancel'),
-        ),
-        ElevatedButton(
-          child: Text('Delete'),
-          onPressed: () async {
-            
-            await TestsServices().delettest(test.id, widget.labid, widget.locationid);
-            Navigator.pop(context); 
-            setState(() {}); 
-          },
-        ),
-      ],
-    ),
-  );
-}
+  void showDeleteDialog(LabTest test) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text('Delete Test'),
+        content: Text('Are you sure you want to delete this test?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            child: Text('Delete'),
+            onPressed: () async {
+              await TestsServices().delettest(
+                test.id,
+                widget.labid,
+                widget.locationid,
+              );
+              Navigator.pop(context);
+              setState(() {});
+            },
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

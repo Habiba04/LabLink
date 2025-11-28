@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lablink/Database/firebaseDB.dart';
+import 'package:lablink/Database/firebase_DB.dart';
 import 'package:lablink/Models/Lab.dart';
 
 class AnalyticsReportScreen extends StatefulWidget {
@@ -84,7 +84,6 @@ class _AnalyticsReportScreenState extends State<AnalyticsReportScreen> {
           : SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
-                // crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     width: width * 0.9,
@@ -187,7 +186,7 @@ class _AnalyticsReportScreenState extends State<AnalyticsReportScreen> {
                                     Icon(
                                       Icons.star_border,
                                       color: Color(0xFFF0B100),
-                                      size: width * 0.04,
+                                      size: width * 0.07,
                                     ),
                                     SizedBox(width: width * 0.02),
                                     Text(
@@ -237,7 +236,7 @@ class _AnalyticsReportScreenState extends State<AnalyticsReportScreen> {
                                     Icon(
                                       Icons.people_alt_outlined,
                                       color: Colors.blue,
-                                      size: width * 0.04,
+                                      size: width * 0.07,
                                     ),
                                     SizedBox(width: width * 0.02),
                                     Text(
@@ -369,7 +368,7 @@ class _AnalyticsReportScreenState extends State<AnalyticsReportScreen> {
                                 color: Color(0xFF00C950),
                               ),
                               Text(
-                                "Revenue Breakdown",
+                                " Revenue Breakdown",
                                 style: TextStyle(
                                   fontSize: width * 0.04,
                                   color: Colors.black,

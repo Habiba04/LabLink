@@ -13,7 +13,7 @@ class LabMainScreen extends StatefulWidget {
 }
 
 class _LabMainScreenState extends State<LabMainScreen> {
-  int _selectedIndex = 0; // Default to History tab
+  int _selectedIndex = 0;
 
   late List<Widget> _screens;
 

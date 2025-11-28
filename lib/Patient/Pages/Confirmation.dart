@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lablink/Models/DetailVariant.dart';
 import 'package:lottie/lottie.dart';
-import '../widgets/ConfirmationDetailRow.dart';
+import '../widgets/Confirmation_Detail_Row.dart';
 
 class ConfirmationScreen extends StatelessWidget {
   final String bookingId;

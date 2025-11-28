@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lablink/Database/firebaseDB.dart';
+import 'package:lablink/Database/firebase_DB.dart';
 import 'package:lablink/Models/Lab.dart';
 import 'package:lablink/SuperAdmin/Pages/add_lab.dart';
 import 'package:lablink/SuperAdmin/Pages/Details_lab.dart';
@@ -21,10 +21,9 @@ class _ManageLabsState extends State<ManageLabs> {
     if (searchQuery.isEmpty) {
       return labs;
     }
-    // Convert search query to lowercase for case-insensitive filtering
+
     final lowerCaseQuery = searchQuery.toLowerCase();
 
-    // Filter the labs list: check if the lab's name contains the search query
     return labs.where((lab) {
       return lab.name.toLowerCase().contains(lowerCaseQuery);
     }).toList();
@@ -64,11 +63,10 @@ class _ManageLabsState extends State<ManageLabs> {
       body: Column(
         children: [
           Container(
-
-            padding: const EdgeInsets.only(top: 18,  ),
+            padding: const EdgeInsets.only(top: 18),
             width: double.infinity,
-            height: height * 0.13 +20 ,
-            // padding: const EdgeInsets.all(20),
+            height: height * 0.13 + 20,
+
             decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(width * 0.06),
@@ -162,7 +160,7 @@ class _ManageLabsState extends State<ManageLabs> {
             child: Container(
               width: width * 0.93,
               height: height * 0.051,
-              // padding: const EdgeInsets.all(20),
+
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(width * 0.04),
                 gradient: LinearGradient(
@@ -193,9 +191,7 @@ class _ManageLabsState extends State<ManageLabs> {
           SizedBox(height: width * 0.04),
           Expanded(
             child: displayLabs.isEmpty && searchQuery.isNotEmpty
-                ? Center(
-                    child: Text("No labs found matching '${searchQuery}'"),
-                  )
+                ? Center(child: Text("No labs found matching '${searchQuery}'"))
                 : ListView.builder(
                     itemCount: displayLabs.length,
                     itemBuilder: (context, index) {
@@ -337,15 +333,14 @@ class _ManageLabsState extends State<ManageLabs> {
                                         Container(
                                           height: 40,
                                           decoration: BoxDecoration(
-                                            // Use a border property with the desired color (Color(0xFF9810FA))
                                             border: Border.all(
                                               color: Color(0xFF9810FA),
-                                              width:
-                                                  1.0, // Optional: Adjust the border thickness
+                                              width: 1.0,
                                             ),
-                                            // Optional: Make the border rounded if desired
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
+
+                                            borderRadius: BorderRadius.circular(
+                                              8.0,
+                                            ),
                                           ),
                                           child: IconButton(
                                             onPressed: () {
@@ -355,19 +350,18 @@ class _ManageLabsState extends State<ManageLabs> {
                                                   builder: (context) =>
                                                       DetailsScreen(
                                                         labId: labItem.id,
-                                                        tests: labItem
-                                                            .testsCount,
-                                                        activeusers: labItem
-                                                            .usersCount,
+                                                        tests:
+                                                            labItem.testsCount,
+                                                        activeusers:
+                                                            labItem.usersCount,
                                                         Monthlyrevenue: labItem
                                                             .lastMonthRevenue,
-                                                        review:
-                                                            labItem.rating,
+                                                        review: labItem.rating,
                                                       ),
                                                 ),
                                               );
                                             },
-      
+
                                             icon: Icon(
                                               Icons.remove_red_eye_outlined,
                                               color: Color(0xFF9810FA),
@@ -378,15 +372,14 @@ class _ManageLabsState extends State<ManageLabs> {
                                         Container(
                                           height: 40,
                                           decoration: BoxDecoration(
-                                            // Use a border property with the desired color (Color(0xFF9810FA))
                                             border: Border.all(
                                               color: Colors.red,
-                                              width:
-                                                  1.0, // Optional: Adjust the border thickness
+                                              width: 1.0,
                                             ),
-                                            // Optional: Make the border rounded if desired
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
+
+                                            borderRadius: BorderRadius.circular(
+                                              8.0,
+                                            ),
                                           ),
                                           child: IconButton(
                                             onPressed: () {
@@ -405,7 +398,7 @@ class _ManageLabsState extends State<ManageLabs> {
                                                         onPressed: () {
                                                           Navigator.pop(
                                                             context,
-                                                          ); // cancel
+                                                          );
                                                         },
                                                         child: const Text(
                                                           "Cancel",
@@ -415,12 +408,11 @@ class _ManageLabsState extends State<ManageLabs> {
                                                         onPressed: () async {
                                                           await FirebaseDatabase()
                                                               .deleteLab(
-                                                                labs[index]
-                                                                    .id,
+                                                                labs[index].id,
                                                               );
                                                           Navigator.pop(
                                                             context,
-                                                          ); // close dialog
+                                                          );
                                                           ScaffoldMessenger.of(
                                                             context,
                                                           ).showSnackBar(

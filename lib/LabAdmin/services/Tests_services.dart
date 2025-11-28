@@ -17,9 +17,9 @@ class TestsServices {
           .doc(locationId)
           .collection('tests');
 
-          final newDocRef = testsCollectionRef.doc();
-          final newTestId = newDocRef.id;
-          labtest.id = newTestId;
+      final newDocRef = testsCollectionRef.doc();
+      final newTestId = newDocRef.id;
+      labtest.id = newTestId;
 
       await newDocRef.set(labtest.toMap());
       print('Test added successfully!');

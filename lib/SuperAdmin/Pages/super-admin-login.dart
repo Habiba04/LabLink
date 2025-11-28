@@ -53,11 +53,7 @@ class _SuperAdminLoginScreenState extends State<SuperAdminLoginScreen> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFFAD46FF), // Top-left
-              Color(0xFF4F39F6), // Center
-              Color(0xFF155DFC), // Bottom-right
-            ],
+            colors: [Color(0xFFAD46FF), Color(0xFF4F39F6), Color(0xFF155DFC)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             stops: [0.0, 0.4, 1.0],
@@ -76,7 +72,6 @@ class _SuperAdminLoginScreenState extends State<SuperAdminLoginScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // BACK BUTTON
                       GestureDetector(
                         onTap: () => Navigator.pop(context),
                         child: const Icon(
@@ -88,7 +83,6 @@ class _SuperAdminLoginScreenState extends State<SuperAdminLoginScreen> {
 
                       const SizedBox(height: 120),
 
-                      // ICON + TEXT
                       Center(
                         child: Column(
                           children: [
@@ -137,7 +131,6 @@ class _SuperAdminLoginScreenState extends State<SuperAdminLoginScreen> {
 
                       const SizedBox(height: 40),
 
-                      // EMAIL FIELD
                       Container(
                         height: 60,
                         alignment: Alignment.centerLeft,
@@ -165,7 +158,6 @@ class _SuperAdminLoginScreenState extends State<SuperAdminLoginScreen> {
 
                       const SizedBox(height: 16),
 
-                      // PASSWORD FIELD
                       Container(
                         key: const Key('passwordField'),
                         height: 60,
@@ -194,7 +186,6 @@ class _SuperAdminLoginScreenState extends State<SuperAdminLoginScreen> {
 
                       const SizedBox(height: 40),
 
-                      // LOGIN BUTTON
                       SizedBox(
                         width: double.infinity,
                         height: 50,

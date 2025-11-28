@@ -4,7 +4,6 @@ import 'package:lablink/LabAdmin/Widgets/top_widget.dart';
 import 'package:lablink/LabAdmin/services/Tests_services.dart';
 import 'package:lablink/Models/LabTests.dart';
 
-// ignore: must_be_immutable
 class AddNewTest extends StatefulWidget {
   String locationId;
   String labid;
@@ -359,7 +358,6 @@ class _AddNewTestState extends State<AddNewTest> {
                   ),
 
                   onPressed: () async {
-                 
                     if (formKey.currentState!.validate()) {
                       await TestsServices().addNewTest(
                         LabTest(
@@ -376,7 +374,7 @@ class _AddNewTestState extends State<AddNewTest> {
                         widget.locationId,
                       );
 
-                    Navigator.maybePop(context);
+                      Navigator.maybePop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Test added successfully!'),

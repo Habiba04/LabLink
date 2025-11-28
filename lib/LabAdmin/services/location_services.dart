@@ -36,36 +36,30 @@ class LocationServices {
     final locationsRef = labRef.collection('locations');
 
     return locationsRef.snapshots().asyncMap((shots) async {
-      // 1. Convert synchronous stream mapping to asynchronous mapping
       List<LabLocation> locationsWithCount = [];
 
       for (var doc in shots.docs) {
         final data = doc.data();
         final locationId = doc.id;
 
-        // 2. Fetch the size (count) of the 'tests' subcollection for this location
         final testCountSnapshot = await locationsRef
             .doc(locationId)
             .collection('tests')
-            .count() // Use .count() for efficiency in newer Firebase SDKs
+            .count()
             .get();
-        
+
         final int testCount = testCountSnapshot.count ?? 0;
-        final List<dynamic> testsPlaceholder = List.generate(testCount, (_) => null);
+        final List<dynamic> testsPlaceholder = List.generate(
+          testCount,
+          (_) => null,
+        );
 
         locationsWithCount.add(
-          LabLocation.fromMap(
-            doc.id,
-            data,
-            // 4. Pass the placeholder list to the tests parameter
-            tests: testsPlaceholder.cast(), 
-          ),
+          LabLocation.fromMap(doc.id, data, tests: testsPlaceholder.cast()),
         );
       }
       return locationsWithCount;
-
-    
-        });
+    });
   }
 
   List<String> generateWorkingDays(String startDay, String endDay) {
@@ -84,12 +78,10 @@ class LocationServices {
 
     if (startIndex == -1 || endIndex == -1) return [];
 
-    // لو المدى عادي (السبت → الثلاثاء)
     if (startIndex <= endIndex) {
       return week.sublist(startIndex, endIndex + 1);
     }
 
-    // لو المدى عدى على نهاية الأسبوع (الخميس → الاثنين)
     return [...week.sublist(startIndex), ...week.sublist(0, endIndex + 1)];
   }
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lablink/LabAdmin/Pages/Lab_admin_main_screen.dart';
-import 'package:lablink/Patient/Pages/ForgotPassword.dart';
+import 'package:lablink/Patient/Pages/Forgot_Password.dart';
 
 class LabLoginScreen extends StatefulWidget {
   const LabLoginScreen({super.key});
@@ -22,7 +22,6 @@ class _LabLoginScreenState extends State<LabLoginScreen> {
     final email = _emailController.text.trim().toLowerCase();
     final password = _passwordController.text.trim();
 
-    // Only allow lab emails
     if (!email.endsWith('@lablink.com')) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -88,7 +87,6 @@ class _LabLoginScreenState extends State<LabLoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo
               ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: Image.asset(
@@ -100,7 +98,6 @@ class _LabLoginScreenState extends State<LabLoginScreen> {
               ),
               const SizedBox(height: 28),
 
-              // Title & subtitle
               const Text(
                 "Lab Dashboard",
                 style: TextStyle(fontSize: 22, color: Color(0xFF003B3C)),
@@ -112,7 +109,6 @@ class _LabLoginScreenState extends State<LabLoginScreen> {
               ),
               const SizedBox(height: 60),
 
-              // ===== Custom white card (flat + soft shadow) =====
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
@@ -138,7 +134,6 @@ class _LabLoginScreenState extends State<LabLoginScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // Email label
                         const Padding(
                           padding: EdgeInsets.only(bottom: 8.0, left: 2),
                           child: Text(
@@ -151,7 +146,6 @@ class _LabLoginScreenState extends State<LabLoginScreen> {
                           ),
                         ),
 
-                        // Email field (no outer border, soft bg)
                         TextFormField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
@@ -182,7 +176,6 @@ class _LabLoginScreenState extends State<LabLoginScreen> {
 
                         const SizedBox(height: 16),
 
-                        // Password label
                         const Padding(
                           padding: EdgeInsets.only(bottom: 8.0, left: 2),
                           child: Text(
@@ -195,7 +188,6 @@ class _LabLoginScreenState extends State<LabLoginScreen> {
                           ),
                         ),
 
-                        // Password field
                         TextFormField(
                           controller: _passwordController,
                           obscureText: true,
@@ -226,7 +218,6 @@ class _LabLoginScreenState extends State<LabLoginScreen> {
 
                         const SizedBox(height: 10),
 
-                        // Forgot password
                         Align(
                           alignment: Alignment.centerRight,
                           child: TextButton(
@@ -247,7 +238,6 @@ class _LabLoginScreenState extends State<LabLoginScreen> {
 
                         const SizedBox(height: 8),
 
-                        // Gradient login button
                         SizedBox(
                           height: 50,
                           child: ElevatedButton(

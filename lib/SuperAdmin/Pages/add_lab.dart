@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lablink/Database/firebaseDB.dart';
+import 'package:lablink/Database/firebase_DB.dart';
 import 'package:lablink/Models/Lab.dart';
 
 class AddLab extends StatefulWidget {
@@ -31,7 +31,7 @@ class _AddLabState extends State<AddLab> {
               Container(
                 width: double.infinity,
                 height: height * 0.13,
-                // padding: const EdgeInsets.all(20),
+
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(width * 0.06),
@@ -96,7 +96,7 @@ class _AddLabState extends State<AddLab> {
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-          
+
                       children: [
                         Row(
                           children: [
@@ -125,7 +125,7 @@ class _AddLabState extends State<AddLab> {
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Color(0xFFF3F3F5),
-                            //focusColor: Color(0xFFF3F3F5),
+
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
                               borderSide: BorderSide(color: Color(0xFFD1D5DC)),
@@ -174,7 +174,7 @@ class _AddLabState extends State<AddLab> {
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Color(0xFFF3F3F5),
-          
+
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
                               borderSide: BorderSide(color: Color(0xFFD1D5DC)),
@@ -199,7 +199,7 @@ class _AddLabState extends State<AddLab> {
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Color(0xFFF3F3F5),
-          
+
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
                               borderSide: BorderSide(color: Color(0xFFD1D5DC)),
@@ -224,7 +224,7 @@ class _AddLabState extends State<AddLab> {
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Color(0xFFF3F3F5),
-          
+
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
                               borderSide: BorderSide(color: Color(0xFFD1D5DC)),
@@ -257,7 +257,7 @@ class _AddLabState extends State<AddLab> {
                   );
                   String password = passwordController.text.trim();
                   await FirebaseDatabase().addNewLab(newLab, password);
-          
+
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       backgroundColor: Colors.green,
@@ -268,7 +268,7 @@ class _AddLabState extends State<AddLab> {
                 child: Container(
                   width: width * 0.93,
                   height: height * 0.055,
-          
+
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(width * 0.04),
                     gradient: LinearGradient(

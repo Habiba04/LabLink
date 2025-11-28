@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lablink/LabAdmin/Pages/order_details_screen.dart';
-import 'package:lablink/LabAdmin/Widgets/FilterBar.dart';
-import 'package:lablink/LabAdmin/Widgets/OrderCard.dart';
+import 'package:lablink/LabAdmin/Widgets/Filter_Bar.dart';
+import 'package:lablink/LabAdmin/Widgets/Order_Card.dart';
 
 class OrdersScreen extends StatefulWidget {
   const OrdersScreen({super.key});
@@ -14,7 +14,7 @@ class OrdersScreen extends StatefulWidget {
 }
 
 class _OrdersScreenState extends State<OrdersScreen> {
-  String filter = "Pending"; // Pending / Awaiting Results
+  String filter = "Pending";
   String searchQuery = "";
 
   Stream<List<Map<String, dynamic>>> _getOrders() {
@@ -33,10 +33,8 @@ class _OrdersScreenState extends State<OrdersScreen> {
         final data = doc.data();
         final status = (data['status'] ?? '').toString().toLowerCase();
 
-        // ✅ Include only Pending and Awaiting Results
         if (status != 'pending' && status != 'awaiting results') continue;
 
-        // ✅ Fetch patient info
         Map<String, dynamic>? patientData;
         final patientId = data['patientId'];
         if (patientId != null && patientId.toString().isNotEmpty) {
@@ -47,10 +45,9 @@ class _OrdersScreenState extends State<OrdersScreen> {
           if (patientSnap.exists) patientData = patientSnap.data();
         }
 
-        // ✅ Map order data for UI
         final order = {
           'id': doc.id,
-          'patientId': patientId ?? '', // Crucial for status updates
+          'patientId': patientId ?? '',
           'name': patientData?['name'] ?? 'Unknown Patient',
           'age': patientData?['age'] ?? '',
           'address': patientData?['address'] ?? '',
@@ -78,7 +75,6 @@ class _OrdersScreenState extends State<OrdersScreen> {
     });
   }
 
-  // Accept function: Updates status to 'Upcoming' for Lab and Patient
   Future<void> acceptOrder(Map<String, dynamic> order) async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
@@ -98,7 +94,6 @@ class _OrdersScreenState extends State<OrdersScreen> {
         .update({'status': 'Upcoming'});
   }
 
-  // Reject function: Updates status to 'Cancelled' for Lab and Patient
   Future<void> rejectOrder(Map<String, dynamic> order) async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
@@ -128,7 +123,6 @@ class _OrdersScreenState extends State<OrdersScreen> {
             SliverToBoxAdapter(
               child: Column(
                 children: [
-                  // Header
                   Container(
                     width: double.infinity,
                     decoration: const BoxDecoration(
@@ -158,7 +152,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                           ],
                         ),
                         const SizedBox(height: 16),
-                        // Search bar
+
                         TextField(
                           onChanged: (value) => setState(() {
                             searchQuery = value;
@@ -178,7 +172,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  // Filter bar
+
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: FilterBar(

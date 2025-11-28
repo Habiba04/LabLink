@@ -21,7 +21,6 @@ class Patient {
     required this.ssn,
   });
 
-  // من Map (Firestore document data)
   factory Patient.fromMap(Map<String, dynamic> map) {
     return Patient(
       uid: map['uid'] ?? '',

@@ -28,8 +28,7 @@ class ProfileListtile extends StatelessWidget {
         border: Border.all(color: Color(0xFFF3F4F6), width: 1.26),
         borderRadius: borderRadiusWidget,
       ),
-      // height: height,
-      // width: width,
+
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(

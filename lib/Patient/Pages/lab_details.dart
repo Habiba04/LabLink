@@ -5,11 +5,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:lablink/Database/firebaseDB.dart';
-import 'package:lablink/LabAdmin/Pages/PrescriptionViewer.dart';
+import 'package:lablink/Database/firebase_DB.dart';
+import 'package:lablink/LabAdmin/Pages/Prescription_Viewer.dart';
 import 'package:lablink/Models/Lab.dart';
 import 'package:lablink/Models/LabLocation.dart';
-import 'package:lablink/Patient/Pages/ServiceType.dart';
+import 'package:lablink/Patient/Pages/Service_Type.dart';
 import 'package:lablink/Patient/Pages/review_screen.dart';
 import 'package:uuid/uuid.dart';
 
@@ -54,7 +54,6 @@ class _LabDetailsState extends State<LabDetails> {
     }
   }
 
-  // inside _LabDetailsState
   Future<void> uploadPrescription() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) {
@@ -71,7 +70,7 @@ class _LabDetailsState extends State<LabDetails> {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['png', 'jpg', 'jpeg', 'pdf'],
-      withData: true, // Crucial for getting the bytes
+      withData: true,
     );
 
     if (result == null || result.files.first.bytes == null) {
@@ -86,43 +85,29 @@ class _LabDetailsState extends State<LabDetails> {
     final picked = result.files.first;
 
     setState(() {
-      // 1. Store the local file details
       localFileBytes = picked.bytes;
       localFileName = picked.name;
 
-      // 2. Clear any previously uploaded URL (if the user is replacing a file)
       uploadedImagePath = null;
       isUploading = true;
-
-      // 3. Reset selected tests if user chooses prescription instead
-      // (Optional logic based on your UI flow, but good practice to consider)
-      // selectedTests = [];
     });
 
-    // Display a confirmation message
     try {
-      // Create a unique file name to avoid collisions
       const uuid = Uuid();
       final extension = localFileName?.split('.').last ?? 'jpg';
       final uniqueFileName = '${uuid.v4()}.$extension';
 
-      // The storage path must match the security rules: /results/{allPaths=**}
       final storagePath =
           'results/$uid/${widget.labId}/prescriptions/$uniqueFileName';
 
-      // 2. Create Storage Reference and Upload
       final storageRef = FirebaseStorage.instance.ref().child(storagePath);
 
-      final uploadTask = storageRef.putData(
-        localFileBytes!, // Pass MIME type for correct handling
-      );
+      final uploadTask = storageRef.putData(localFileBytes!);
 
       final snapshot = await uploadTask.whenComplete(() {});
 
-      // 3. Get the download URL
       final downloadUrl = await snapshot.ref.getDownloadURL();
 
-      // 4. Update state with the URL
       if (mounted) {
         setState(() {
           uploadedImagePath = downloadUrl;
@@ -432,7 +417,6 @@ class _LabDetailsState extends State<LabDetails> {
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                // VIEW BUTTON
                                 IconButton(
                                   icon: Icon(
                                     Icons.visibility,
@@ -442,21 +426,20 @@ class _LabDetailsState extends State<LabDetails> {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => PrescriptionViewer(
-                                          url:
-                                              uploadedImagePath!, // Must be an image URL
-                                        ),
+                                        builder: (context) =>
+                                            PrescriptionViewer(
+                                              url: uploadedImagePath!,
+                                            ),
                                       ),
                                     );
                                   },
                                 ),
 
-                                // CHANGE BUTTON
                                 IconButton(
                                   icon: Icon(Icons.edit, color: Colors.orange),
                                   onPressed: () {
                                     selectedBranch = locations[locationIndex];
-                                    showImageSourceDialog(); // Pick new file
+                                    showImageSourceDialog();
                                   },
                                 ),
                               ],
@@ -573,7 +556,6 @@ class _LabDetailsState extends State<LabDetails> {
                                               : Icons.add,
                                           size: 25,
                                         ),
-                                        //iconSize: 25,
                                       ),
                                     ],
                                   ),
@@ -604,7 +586,7 @@ class _LabDetailsState extends State<LabDetails> {
                   ? LinearGradient(
                       colors: [Color(0xFF00B8DB), Color(0xFF00BBA7)],
                     )
-                  : null, // ❗ No gradient when disabled
+                  : null,
               color: canBookTest ? null : Colors.grey.shade400,
             ),
             child: ElevatedButton(
@@ -622,7 +604,7 @@ class _LabDetailsState extends State<LabDetails> {
                         ),
                       );
                     }
-                  : null, // ← disables the button
+                  : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: canBookTest
                     ? Colors.transparent
