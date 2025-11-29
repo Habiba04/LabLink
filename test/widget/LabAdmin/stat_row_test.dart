@@ -1,4 +1,4 @@
-// test/lab_admin/widgets/stat_row_test.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lablink/LabAdmin/Widgets/Stat_Row.dart';
@@ -16,11 +16,11 @@ void main() {
 
       final labelText = tester.widget<Text>(find.text('Total Patients'));
       expect(labelText.data, 'Total Patients');
-      expect(labelText.style!.color, Colors.black54); // Check default style
+      expect(labelText.style!.color, Colors.black54); 
 
       final valueText = tester.widget<Text>(find.text('550'));
       expect(valueText.data, '550');
-      expect(valueText.style!.fontWeight, FontWeight.w600); // Check default style
+      expect(valueText.style!.fontWeight, FontWeight.w600); 
     });
   });
 }

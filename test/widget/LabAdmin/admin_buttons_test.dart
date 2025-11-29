@@ -1,4 +1,4 @@
-// test/lab_admin/widgets/admin_button_test.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lablink/LabAdmin/Widgets/Admin_Button.dart';
@@ -21,11 +21,11 @@ void main() {
       expect(find.text('Test Button'), findsOneWidget);
       expect(find.byIcon(Icons.access_alarms), findsOneWidget);
 
-      // Check icon color
+      
       final iconWidget = tester.widget<Icon>(find.byIcon(Icons.access_alarms));
       expect(iconWidget.color, Colors.red);
 
-      // Check text color
+      
       final textWidget = tester.widget<Text>(find.text('Test Button'));
       expect(textWidget.style!.color, Colors.red);
     });

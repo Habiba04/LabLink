@@ -1,4 +1,4 @@
-// test/lab_admin/widgets/top_widget_test.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lablink/LabAdmin/Widgets/top_widget.dart';
@@ -24,7 +24,7 @@ void main() {
       expect(find.text('Test Subtitle'), findsOneWidget);
       expect(find.byIcon(Icons.arrow_back_ios), findsOneWidget);
 
-      // Check for bold title style
+      
       final titleText = tester.widget<Text>(find.text('Test Title'));
       expect(titleText.style!.fontWeight, FontWeight.bold);
     });
@@ -65,7 +65,7 @@ void main() {
       await tester.tap(find.byIcon(Icons.arrow_back_ios));
       await tester.pumpAndSettle();
 
-      // Should be back to the first screen
+      
       expect(find.text('Go'), findsOneWidget);
     });
   });
