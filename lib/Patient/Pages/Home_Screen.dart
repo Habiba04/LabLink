@@ -353,42 +353,44 @@ class LabCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Icon(Icons.star, color: Colors.amber, size: 20),
-                    const SizedBox(width: 2),
-                    Text(
-                      "${lab.rating} (${lab.reviewCount})",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey.shade700,
+                 FittedBox(
+                  child: Row(
+                    children: [
+                      const Icon(Icons.star, color: Colors.amber, size: 20),
+                      const SizedBox(width: 2),
+                      Text(
+                        "${lab.rating} (${lab.reviewCount})",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey.shade700,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    const Icon(
-                      Icons.location_on,
-                      color: Colors.black54,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 2),
-                    Text(
-                      "${lab.distanceKm} km",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey.shade700,
+                      const SizedBox(width: 16),
+                      const Icon(
+                        Icons.location_on,
+                        color: Colors.black54,
+                        size: 20,
                       ),
-                    ),
-                    const SizedBox(width: 16),
-                    const Icon(Icons.schedule, color: Colors.black54, size: 20),
-                    const SizedBox(width: 2),
-                    Text(
-                      lab.closingTime,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey.shade700,
+                      const SizedBox(width: 2),
+                      Text(
+                        "${lab.distanceKm} km",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey.shade700,
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(width: 16),
+                      const Icon(Icons.schedule, color: Colors.black54, size: 20),
+                      const SizedBox(width: 2),
+                      Text(
+                        lab.closingTime,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 15),
                 SizedBox(
