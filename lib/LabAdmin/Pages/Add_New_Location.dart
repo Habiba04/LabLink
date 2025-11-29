@@ -11,6 +11,8 @@ class AddNewLocation extends StatefulWidget {
 
   @override
   State<AddNewLocation> createState() => _AddNewLocationState();
+
+  _formatTime24hr(TimeOfDay time1) {}
 }
 
 class _AddNewLocationState extends State<AddNewLocation> {

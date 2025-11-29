@@ -4,7 +4,10 @@ import 'package:lablink/LabAdmin/Pages/Lab_admin_main_screen.dart';
 import 'package:lablink/Patient/Pages/Forgot_Password.dart';
 
 class LabLoginScreen extends StatefulWidget {
-  const LabLoginScreen({super.key});
+  final FirebaseAuth auth;
+  LabLoginScreen({super.key, FirebaseAuth? auth})
+    : auth = auth ?? FirebaseAuth.instance;
+
 
   @override
   State<LabLoginScreen> createState() => _LabLoginScreenState();

@@ -348,6 +348,7 @@ class _AddNewTestState extends State<AddNewTest> {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
+                  key: Key('addTestButton'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
