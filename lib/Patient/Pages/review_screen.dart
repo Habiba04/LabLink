@@ -22,9 +22,9 @@ class _ReviewScreenState extends State<ReviewScreen> {
       _isLoading = true;
     });
     final reviewsData = await ReviewServices().getLabReviews(widget.labId);
+    reviews = reviewsData;
     setState(() {
-      reviews = reviewsData;
-      print('review data: $reviewsData');
+      print('review data: ${reviews[0].toString()}');
       _isLoading = false;
     });
   }

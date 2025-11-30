@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lablink/Database/firebase_DB.dart';
 import 'package:lablink/LabAdmin/Pages/edit_profile_screen.dart';
 import 'package:lablink/Models/Lab.dart';
-import 'package:lablink/Patient/Pages/PatientSignIn.dart';
+import 'package:lablink/Patient/Pages/Patient_SignIn.dart';
 import 'package:lablink/shared_files/Services/lab_details_services.dart';
 
 class ProfileScreen extends StatefulWidget {

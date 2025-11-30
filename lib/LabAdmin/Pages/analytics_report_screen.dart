@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lablink/Database/firebaseDB.dart';
 import 'package:lablink/shared_files/Services/analysis_services.dart';
 import 'package:lablink/LabAdmin/services/lab_services.dart';
 import 'package:lablink/Models/Lab.dart';

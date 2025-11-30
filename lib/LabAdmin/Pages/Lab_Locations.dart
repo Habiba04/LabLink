@@ -165,7 +165,6 @@ class _LabLocations_screenState extends State<LabLocations_screen> {
                               children: [
                                 Column(
                                   children: [
-                                  children: [
                                     Text(
                                       '${location.tests.length} tests',
                                       style: TextStyle(
