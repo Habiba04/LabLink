@@ -4,7 +4,6 @@ import 'package:lablink/LabAdmin/Widgets/top_widget.dart';
 import 'package:lablink/LabAdmin/services/Tests_services.dart';
 import 'package:lablink/Models/LabTests.dart';
 
-// ignore: must_be_immutable
 class AddNewTest extends StatefulWidget {
   String locationId;
   String labid;
@@ -349,6 +348,7 @@ class _AddNewTestState extends State<AddNewTest> {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
+                  key: Key('addTestButton'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.transparent,
                     shadowColor: Colors.transparent,
@@ -359,8 +359,6 @@ class _AddNewTestState extends State<AddNewTest> {
                   ),
 
                   onPressed: () async {
-                    print('lab ID issssssssssss: ${widget.labid}');
-                    print('Location ID issssssssssss: ${widget.locationId}');
                     if (formKey.currentState!.validate()) {
                       await TestsServices().addNewTest(
                         LabTest(
@@ -377,13 +375,13 @@ class _AddNewTestState extends State<AddNewTest> {
                         widget.locationId,
                       );
 
+                      Navigator.maybePop(context);
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Test added successfully!'),
                         ),
                       );
                     }
-                    Navigator.pop(context);
                   },
                   child: const Text(
                     'Add Test',

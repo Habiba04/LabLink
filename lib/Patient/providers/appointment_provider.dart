@@ -1,5 +1,3 @@
-// File: Patient/providers/appointment_notifier.dart
-
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,7 +14,6 @@ class AppointmentNotifier extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
 
-  // Constructor: Requires BookingService to access the streaming method
   AppointmentNotifier() {
     _subscribeToAppointments();
   }
@@ -26,25 +23,21 @@ class AppointmentNotifier extends ChangeNotifier {
     _error = null;
     notifyListeners();
 
-    // The BookingService.getCurrentUserId() will handle the FirebaseAuth check.
-    // We catch the error here if the user isn't logged in.
     try {
       final uid = FirebaseAuth.instance.currentUser?.uid;
 
-      // Cancel any old subscription before starting a new one
       _appointmentSubscription?.cancel();
 
       Stream<List<Appointment>> streamPatientAppointments() {
-        final userId = uid; // Fetches UID internally
+        final userId = uid;
 
         return FirebaseFirestore.instance
             .collection('patient')
             .doc(userId)
             .collection('appointments')
             .orderBy('createdAt', descending: true)
-            .snapshots() // ⬅️ KEY CHANGE: listen for real-time updates
+            .snapshots()
             .map((snapshot) {
-              // Map the QuerySnapshot to a List<Appointment>
               return snapshot.docs
                   .map((doc) => Appointment.fromFirestore(doc))
                   .toList();
@@ -67,7 +60,7 @@ class AppointmentNotifier extends ChangeNotifier {
         onError: (e) {
           _appointments = [];
           _isLoading = false;
-          // Store a custom error message for UI display
+
           _error = e.toString().contains('user-not-signed-in')
               ? 'user-not-signed-in'
               : 'Error fetching appointments: $e';
@@ -75,7 +68,6 @@ class AppointmentNotifier extends ChangeNotifier {
         },
       );
     } catch (e) {
-      // Catch exceptions from getCurrentUserId (e.g., user-not-signed-in)
       _isLoading = false;
       _error = e.toString().contains('user-not-signed-in')
           ? 'user-not-signed-in'
@@ -86,7 +78,6 @@ class AppointmentNotifier extends ChangeNotifier {
 
   Future<void> refreshAppointments() async {
     _subscribeToAppointments();
-    // No need to await here, as the stream listener will handle the updates.
   }
 
   @override

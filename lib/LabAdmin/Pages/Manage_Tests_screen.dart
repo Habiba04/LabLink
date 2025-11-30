@@ -146,17 +146,23 @@ class _ManageTestsState extends State<ManageTests> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text('Delete Test  '),
+        title: Text('Delete Test'),
         content: Text('Are you sure you want to delete this test?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('إلغاء'),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text('Cancel'),
           ),
           ElevatedButton(
             child: Text('Delete'),
-            onPressed: () {
-              Testservice.delettest(widget.labid, widget.locationid, test.id);
+            onPressed: () async {
+              await TestsServices().delettest(
+                test.id,
+                widget.labid,
+                widget.locationid,
+              );
               Navigator.pop(context);
               setState(() {});
             },

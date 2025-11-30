@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:lablink/LabAdmin/Pages/Lab_Locations.dart';
 
-import 'package:lablink/LabAdmin/Widgets/AdminButton.dart';
-import 'package:lablink/LabAdmin/Widgets/HomeOrderCard.dart';
-import 'package:lablink/LabAdmin/Widgets/StatCard.dart';
-import 'package:lablink/LabAdmin/Widgets/StatRow.dart';
+import 'package:lablink/LabAdmin/Widgets/Admin_Button.dart';
+import 'package:lablink/LabAdmin/Widgets/Home_Order_Card.dart';
+import 'package:lablink/LabAdmin/Widgets/Stat_Card.dart';
+import 'package:lablink/LabAdmin/Widgets/Stat_Row.dart';
 import 'package:lablink/Models/DashboardData.dart';
 
 import 'package:lablink/LabAdmin/Pages/appointment_screen.dart';
@@ -54,7 +54,6 @@ class _LabDashboardScreenState extends State<LabDashboardScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header
                 Container(
                   width: double.infinity,
                   decoration: const BoxDecoration(
@@ -114,7 +113,6 @@ class _LabDashboardScreenState extends State<LabDashboardScreen> {
                 ),
                 const SizedBox(height: 18),
 
-                // Top Stat Cards
                 Center(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -153,7 +151,6 @@ class _LabDashboardScreenState extends State<LabDashboardScreen> {
 
                 const SizedBox(height: 18),
 
-                // Quick Stats
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Container(
@@ -221,7 +218,6 @@ class _LabDashboardScreenState extends State<LabDashboardScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                
 
                 Column(
                   children: dashboard.recentOrders.map((o) {

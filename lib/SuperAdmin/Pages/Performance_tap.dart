@@ -1,7 +1,3 @@
-// ---------------------------------------------------------
-// --- 4. صفحة Performance (محدثة) ---
-// ---------------------------------------------------------
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:lablink/Database/firebaseDB.dart';
@@ -32,7 +28,6 @@ class _PerformanceScreenState extends State<PerformanceScreen> {
         widget.labId,
       );
 
-      // إذا البيانات فارغة، أنشئ شهور افتراضية للأشهر الـ 6 الماضية
       if (data.isEmpty ||
           data['monthlyData'] == null ||
           data['monthlyData'].isEmpty) {

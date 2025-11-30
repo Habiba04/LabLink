@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lablink/LabAdmin/services/location_services.dart' show LocationServices;
+import 'package:lablink/LabAdmin/services/location_services.dart'
+    show LocationServices;
 
 import '../../LabAdmin/services/Tests_services.dart';
 import '../../Models/LabLocation.dart';
@@ -24,7 +25,9 @@ class _LocationsPageState extends State<LocationsPage> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return Center(child: Text("Error loading locations: ${snapshot.error}"));
+            return Center(
+              child: Text("Error loading locations: ${snapshot.error}"),
+            );
           }
           if (!snapshot.hasData || (snapshot.data as List).isEmpty) {
             return const Center(
@@ -33,7 +36,10 @@ class _LocationsPageState extends State<LocationsPage> {
                 children: [
                   Icon(Icons.location_off, size: 50, color: Colors.grey),
                   SizedBox(height: 10),
-                  Text("No locations found", style: TextStyle(color: Colors.grey)),
+                  Text(
+                    "No locations found",
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 ],
               ),
             );
@@ -120,15 +126,10 @@ class _LocationsPageState extends State<LocationsPage> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    Divider(
-                      color: Colors.grey[200],
-                      thickness: 1,
-                      height: 1,
-                    ),
+                    Divider(color: Colors.grey[200], thickness: 1, height: 1),
                     const SizedBox(height: 16),
                     FutureBuilder(
-                      future:
-                          TestsServices().getTestsCount(widget.labId, iid),
+                      future: TestsServices().getTestsCount(widget.labId, iid),
                       builder: (context, testSnapshot) {
                         if (!testSnapshot.hasData) {
                           return Text(
@@ -157,9 +158,6 @@ class _LocationsPageState extends State<LocationsPage> {
           );
         },
       ),
-      
     );
   }
 }
-
- 

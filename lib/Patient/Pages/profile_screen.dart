@@ -1,8 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lablink/Database/firebaseDB.dart';
+import 'package:lablink/Database/firebase_DB.dart';
 import 'package:lablink/Models/Patient.dart';
-import 'package:lablink/Patient/Pages/PatientSignIn.dart';
+import 'package:lablink/Patient/Pages/Patient_SignIn.dart';
 import 'package:lablink/Patient/Pages/edit_profile_screen.dart';
 import 'package:lablink/Patient/Pages/help_and_support.dart';
 import 'package:lablink/Patient/Services/patient_services.dart';
@@ -49,11 +49,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header section
             Container(
               width: double.infinity,
               height: height * 0.15,
-              // padding: const EdgeInsets.all(20),
+
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(width * 0.06),
@@ -85,7 +84,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 16),
+                    SizedBox(width: 5),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,

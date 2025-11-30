@@ -24,7 +24,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     bool isEditable =
-        widget.order['prescription'] == null && status == 'Pending';
+        widget.order['prescription'] != null &&
+        widget.order['prescription'] != '' &&
+        status == 'Pending';
     print("isEditable:  $isEditable");
     return Scaffold(
       appBar: AppBar(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:lablink/Database/firebaseDB.dart';
+import 'package:lablink/Database/firebase_DB.dart';
 import 'package:lablink/Models/Lab.dart';
 import 'package:lablink/SuperAdmin/Services/lab_services.dart';
 
@@ -32,7 +32,7 @@ class _AddLabState extends State<AddLab> {
               Container(
                 width: double.infinity,
                 height: height * 0.13,
-                // padding: const EdgeInsets.all(20),
+
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(width * 0.06),
@@ -126,7 +126,7 @@ class _AddLabState extends State<AddLab> {
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Color(0xFFF3F3F5),
-                            //focusColor: Color(0xFFF3F3F5),
+
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
                               borderSide: BorderSide(color: Color(0xFFD1D5DC)),
@@ -258,7 +258,11 @@ class _AddLabState extends State<AddLab> {
                     lastMonthRevenue: 0,
                   );
                   String password = passwordController.text.trim();
+<<<<<<< HEAD
                   await LabServices().addNewLab(newLab, password);
+=======
+                  await FirebaseDatabase().addNewLab(newLab, password);
+>>>>>>> d2a06e6ef689a3a7613b68cecee080300ff5a245
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

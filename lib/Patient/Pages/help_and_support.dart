@@ -14,7 +14,6 @@ class HelpAndSupport extends StatelessWidget {
     if (await canLaunchUrl(emailUri)) {
       await launchUrl(emailUri, mode: LaunchMode.externalApplication);
     } else {
-      // Open Gmail directly
       const gmailUrl =
           'https://mail.google.com/mail/?view=cm&fs=1&to=LabLink@gmail.com&su=LabLink%20App%20Support%20Request';
       if (await canLaunchUrl(Uri.parse(gmailUrl))) {
@@ -53,7 +52,6 @@ class HelpAndSupport extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),

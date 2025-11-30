@@ -55,7 +55,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
     setState(() {
       _rating = 0;
     });
-    await fetchReviews(); // refresh list
+    await fetchReviews();
   }
 
   @override

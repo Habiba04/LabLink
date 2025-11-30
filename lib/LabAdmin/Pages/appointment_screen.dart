@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lablink/LabAdmin/Widgets/appointmentCard.dart';
-import 'package:lablink/LabAdmin/Widgets/FilterBar.dart';
+import 'package:lablink/LabAdmin/Widgets/appointment_Card.dart';
+import 'package:lablink/LabAdmin/Widgets/Filter_Bar.dart';
 
 class AppointmentsScreen extends StatefulWidget {
   const AppointmentsScreen({super.key});
@@ -40,7 +40,6 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
           if (patientSnap.exists) patientData = patientSnap.data();
         }
 
-        // Retrieve branch info directly from embedded locationData
         String branchAddress = 'Unknown Address';
         String branchName = 'Unknown Branch Name';
         final locationData = data['locationData'] as Map<String, dynamic>?;
@@ -59,9 +58,7 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
           'tests': (data['tests'] != null && data['tests'].isNotEmpty)
               ? List<Map<String, dynamic>>.from(
                   data['tests'].map(
-                    (t) => {
-                      'name': t['name'] ?? 'Unnamed Test',
-                    },
+                    (t) => {'name': t['name'] ?? 'Unnamed Test'},
                   ),
                 )
               : [
@@ -80,7 +77,6 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
         results.add(appointment);
       }
 
-      // Filter out "Pending" and "Awaiting Results"
       return results.where((a) {
         final status = (a['status'] ?? '').toString().toLowerCase();
         return status != 'pending' && status != 'awaiting results';
@@ -100,7 +96,6 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return;
 
-    // Update lab appointment status
     await FirebaseFirestore.instance
         .collection('lab')
         .doc(uid)
@@ -108,7 +103,6 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
         .doc(order['id'])
         .update({'status': status});
 
-    // Update patient appointment status
     await FirebaseFirestore.instance
         .collection('patient')
         .doc(order['patientId'])
@@ -219,7 +213,6 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
 
             final allAppointments = snapshot.data!;
 
-            // Make filter case-insensitive
             final filtered = filter.toLowerCase() == "all"
                 ? allAppointments
                 : allAppointments
@@ -230,14 +223,13 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                       )
                       .toList();
 
-            // Show a proper message if no appointments after filtering
             if (filtered.isEmpty) {
               return Center(
                 child: Text(
                   filter == "All"
                       ? "No appointments found."
                       : "No $filter appointments.",
-                  style: const TextStyle(color: Colors.black54, fontSize: 16),
+                  style: const TextStyle(color: Colors.black54, fontSize: 12),
                 ),
               );
             }

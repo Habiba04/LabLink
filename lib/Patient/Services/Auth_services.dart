@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:lablink/Patient/Pages/HomeScreen.dart';
-import 'package:lablink/Patient/Pages/PatientSignUp.dart';
+import 'package:lablink/Patient/Pages/Home_Screen.dart';
+import 'package:lablink/Patient/Pages/Main_Screen.dart';
+import 'package:lablink/Patient/Pages/Patient_SignUp.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
