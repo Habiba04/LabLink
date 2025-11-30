@@ -4,6 +4,7 @@ import 'package:lablink/Database/firebaseDB.dart';
 import 'package:lablink/LabAdmin/Pages/edit_profile_screen.dart';
 import 'package:lablink/Models/Lab.dart';
 import 'package:lablink/Patient/Pages/PatientSignIn.dart';
+import 'package:lablink/shared_files/Services/lab_details_services.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -20,8 +21,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _fetchLabData() async {
     setState(() => _isLoading = true);
-    print('lab id: ${labId}');
-    final _labData = await FirebaseDatabase().getLabDetails(labId);
+    print('lab id: $labId');
+    final _labData = await LabDetailsServices().getLabDetails(labId);
 
     if (!mounted) return;
 

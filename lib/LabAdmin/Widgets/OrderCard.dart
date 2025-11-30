@@ -351,7 +351,7 @@ class _OrderCardState extends State<OrderCard> {
               ],
             ),
           );
-        }).toList(),
+        }),
 
         // 2. Add the prescription view button once, if available
         if (prescription.isNotEmpty)

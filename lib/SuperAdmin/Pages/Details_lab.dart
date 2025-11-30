@@ -62,7 +62,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final int _selectedIndex = _tabs.indexOf(_selectedTab);
+    final int selectedIndex = _tabs.indexOf(_selectedTab);
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       body: Column(
@@ -86,7 +86,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : IndexedStack(
-                    index: _selectedIndex,
+                    index: selectedIndex,
                     children: [
                       OverviewPage(
                         lab: lab,

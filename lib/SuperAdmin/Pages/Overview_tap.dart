@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import '../../Database/firebaseDB.dart';
+import 'package:lablink/shared_files/Services/lab_details_services.dart';
 import '../../Models/Lab.dart';
 
 class OverviewPage extends StatefulWidget {
@@ -35,7 +34,7 @@ class _OverviewPageState extends State<OverviewPage> {
   fetchLabDetails() async {
     if (widget.lab == null) return;
     try {
-      dataLabDetails = await FirebaseDatabase().getLabDetails(widget.lab!.id);
+      dataLabDetails = await LabDetailsServices().getLabDetails(widget.lab!.id);
       setState(() {});
     } catch (e) {
       print('Error fetching lab details: $e');
@@ -110,12 +109,12 @@ class _OverviewPageState extends State<OverviewPage> {
                 const SizedBox(height: 20),
                 _buildContactRow(
                   Icons.email_outlined,
-                  "${widget.lab?.email ?? 'N/A'}",
+                  widget.lab?.email ?? 'N/A',
                 ),
                 const SizedBox(height: 15),
                 _buildContactRow(
                   Icons.phone_outlined,
-                  "${widget.lab?.phone ?? 'N/A'}",
+                  widget.lab?.phone ?? 'N/A',
                 ),
                 const SizedBox(height: 15),
                 _buildContactRow(

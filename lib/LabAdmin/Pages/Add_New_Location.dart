@@ -41,7 +41,7 @@ class _AddNewLocationState extends State<AddNewLocation> {
 
   @override
   Widget build(BuildContext context) {
-    final String? labid = FirebaseAuth.instance.currentUser!.uid;
+    final String labid = FirebaseAuth.instance.currentUser!.uid;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -148,7 +148,7 @@ class _AddNewLocationState extends State<AddNewLocation> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: DropdownButtonFormField<String>(
-                          value: startdayController.text.isEmpty
+                          initialValue: startdayController.text.isEmpty
                               ? null
                               : startdayController.text,
                           decoration: InputDecoration(
@@ -202,7 +202,7 @@ class _AddNewLocationState extends State<AddNewLocation> {
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: DropdownButtonFormField<String>(
-                          value: enddayController.text.isEmpty
+                          initialValue: enddayController.text.isEmpty
                               ? null
                               : enddayController.text,
                           decoration: InputDecoration(

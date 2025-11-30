@@ -11,6 +11,7 @@ import 'package:lablink/Models/Lab.dart';
 import 'package:lablink/Models/LabLocation.dart';
 import 'package:lablink/Patient/Pages/ServiceType.dart';
 import 'package:lablink/Patient/Pages/review_screen.dart';
+import 'package:lablink/shared_files/Services/lab_details_services.dart';
 import 'package:uuid/uuid.dart';
 
 class LabDetails extends StatefulWidget {
@@ -44,7 +45,7 @@ class _LabDetailsState extends State<LabDetails> {
 
   Future<void> fetchLabDetails() async {
     try {
-      final data = await FirebaseDatabase().getLabDetails(widget.labId);
+      final data = await LabDetailsServices().getLabDetails(widget.labId);
       print("Fetched data: $data");
       setState(() {
         labData = data;

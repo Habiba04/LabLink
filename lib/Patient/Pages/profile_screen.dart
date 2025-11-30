@@ -5,6 +5,7 @@ import 'package:lablink/Models/Patient.dart';
 import 'package:lablink/Patient/Pages/PatientSignIn.dart';
 import 'package:lablink/Patient/Pages/edit_profile_screen.dart';
 import 'package:lablink/Patient/Pages/help_and_support.dart';
+import 'package:lablink/Patient/Services/patient_services.dart';
 import 'package:lablink/Patient/Widgets/profile_listTile.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -25,7 +26,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void loadUserData() async {
-    final userData = await FirebaseDatabase().getCurrentUserData();
+    final userData = await PatientServices().getCurrentUserData();
     if (userData != null) {
       setState(() {
         currentUser = userData;

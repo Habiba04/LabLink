@@ -167,7 +167,7 @@ class _LabLocations_screenState extends State<LabLocations_screen> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Column(
-                                  children:  [
+                                  children: [
                                     Text(
                                       '${location.tests.length} tests',
                                       style: TextStyle(
@@ -228,13 +228,10 @@ class _LabLocations_screenState extends State<LabLocations_screen> {
                                     const SizedBox(width: 10),
                                     InkWell(
                                       onTap: () async {
-                                        if (location.id != null) {
-                                          await LocationServices()
-                                              .deletLocation(
-                                                location.id!,
-                                                labid,
-                                              );
-                                        }
+                                        await LocationServices().deletLocation(
+                                          location.id!,
+                                          labid,
+                                        );
                                       },
                                       child: Container(
                                         width: 38,

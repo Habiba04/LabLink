@@ -319,7 +319,7 @@ class AppointmentCard extends StatelessWidget {
               ],
             ),
           );
-        }).toList(),
+        }),
 
         // 2. Add the prescription view button once, if available
         if (prescription.isNotEmpty)

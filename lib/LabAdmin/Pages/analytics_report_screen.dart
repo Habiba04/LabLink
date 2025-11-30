@@ -1,7 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lablink/Database/firebaseDB.dart';
+import 'package:lablink/shared_files/Services/analysis_services.dart';
+import 'package:lablink/LabAdmin/services/lab_services.dart';
 import 'package:lablink/Models/Lab.dart';
+import 'package:lablink/shared_files/Services/lab_details_services.dart';
 
 class AnalyticsReportScreen extends StatefulWidget {
   const AnalyticsReportScreen({super.key});
@@ -19,8 +22,8 @@ class _AnalyticsReportScreenState extends State<AnalyticsReportScreen> {
 
   Future<void> _fetchLabData() async {
     setState(() => _isLoading = true);
-    final _labData = await FirebaseDatabase().getLabDetails(labId);
-    final results = await FirebaseDatabase().getMonthlyLabAnalytics(labId);
+    final _labData = await LabDetailsServices().getLabDetails(labId);
+    final results = await AnalysisServices().getMonthlyLabAnalytics(labId);
     final _monthlyData = results['monthlyData'] as Map<String, dynamic>;
     final _labVisitsRevenue = results['labVisitsRevenue'] as double;
     final _homeVisitsRevenue = results['homeVisitsRevenue'] as double;

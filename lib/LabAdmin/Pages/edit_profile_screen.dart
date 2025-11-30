@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lablink/Database/firebaseDB.dart';
+import 'package:lablink/LabAdmin/services/lab_services.dart';
+import 'package:lablink/shared_files/Services/lab_details_services.dart';
 import 'package:lablink/shared_files/common_widgets/edit_profile_text_field.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -27,7 +29,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> loadCurrentLabData() async {
-    final labData = await FirebaseDatabase().getLabDetails(labId);
+    final labData = await LabDetailsServices().getLabDetails(labId);
 
     setState(() {
       _nameController.text = labData!.name;
@@ -42,7 +44,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     setState(() => _isLoading = true);
 
-    await FirebaseDatabase().updateLabData(
+    await LabsServices().updateLabData(
       name: _nameController.text,
       phone: _phoneController.text,
       email: _emailController.text,

@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
-import 'package:lablink/Models/Appointment.dart';
 // Note: Assuming 'Appointment' model is defined and has fromFirestore()
 
 class BookingService {

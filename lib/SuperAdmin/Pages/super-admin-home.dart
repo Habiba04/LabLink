@@ -132,7 +132,7 @@ class _SuperAdminHomeScreenState extends State<SuperAdminHomeScreen> {
                     ),
                     buildStatCard(
                       Icons.currency_pound,
-                      "\£${provider.revenueMonth.toStringAsFixed(2)}",
+                      "£${provider.revenueMonth.toStringAsFixed(2)}",
                       "Revenue (Month)",
                       Colors.deepOrange,
                     ),

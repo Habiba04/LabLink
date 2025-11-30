@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:lablink/Database/firebaseDB.dart';
 import 'package:lablink/Models/Review.dart';
+import 'package:lablink/Patient/Services/reviews_services.dart';
+import 'package:lablink/shared_files/Services/review_services.dart';
 
 class ReviewScreen extends StatefulWidget {
   final String labId;
@@ -20,7 +21,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
     setState(() {
       _isLoading = true;
     });
-    final reviewsData = await FirebaseDatabase().getLabReviews(widget.labId);
+    final reviewsData = await ReviewServices().getLabReviews(widget.labId);
     setState(() {
       reviews = reviewsData;
       print('review data: $reviewsData');
@@ -49,7 +50,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
       createdAt: DateTime.now(),
     );
 
-    await FirebaseDatabase().addReview(labId: widget.labId, review: newReview);
+    await ReviewsServices().addReview(labId: widget.labId, review: newReview);
     _controller.clear();
     setState(() {
       _rating = 0;
@@ -184,7 +185,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                           child: ElevatedButton(
                             onPressed: () async {
                               addReview();
-                              await FirebaseDatabase().updateLabRating(
+                              await ReviewsServices().updateLabRating(
                                 widget.labId,
                               );
                             },

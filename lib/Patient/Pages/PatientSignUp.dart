@@ -89,12 +89,12 @@ class _PatientSignupState extends State<PatientSignup> {
           .signInWithCredential(credential);
       final User? user = userCredential.user;
       if (user != null) {
-        final userDocRef = await FirebaseFirestore.instance
+        final userDocRef = FirebaseFirestore.instance
             .collection('patient')
             .doc(user.uid);
 
         final userDoc = await userDocRef.get();
-        if (!userDoc.exists)  {
+        if (!userDoc.exists) {
           await userDocRef.set({
             'name': user.displayName,
             'email': user.email,
@@ -107,18 +107,18 @@ class _PatientSignupState extends State<PatientSignup> {
             'address': '',
           });
         }
-          if (!mounted) return;
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MainScreen(
-                labData: {},
-                locationData: {},
-                selectedTests: [],
-                selectedService: '',
-              ),
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MainScreen(
+              labData: {},
+              locationData: {},
+              selectedTests: [],
+              selectedService: '',
             ),
-          );
+          ),
+        );
       }
     } catch (e) {
       ScaffoldMessenger.of(

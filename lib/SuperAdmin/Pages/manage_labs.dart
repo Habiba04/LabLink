@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lablink/Database/firebaseDB.dart';
 import 'package:lablink/Models/Lab.dart';
 import 'package:lablink/SuperAdmin/Pages/add_lab.dart';
 import 'package:lablink/SuperAdmin/Pages/Details_lab.dart';
 import 'package:lablink/SuperAdmin/Pages/super-admin-home.dart';
+import 'package:lablink/SuperAdmin/Services/lab_services.dart';
 
 class ManageLabs extends StatefulWidget {
   const ManageLabs({super.key});
@@ -21,10 +21,9 @@ class _ManageLabsState extends State<ManageLabs> {
     if (searchQuery.isEmpty) {
       return labs;
     }
-    // Convert search query to lowercase for case-insensitive filtering
+
     final lowerCaseQuery = searchQuery.toLowerCase();
 
-    // Filter the labs list: check if the lab's name contains the search query
     return labs.where((lab) {
       return lab.name.toLowerCase().contains(lowerCaseQuery);
     }).toList();
@@ -33,7 +32,7 @@ class _ManageLabsState extends State<ManageLabs> {
   Future<void> fetchLabs() async {
     try {
       setState(() => _isLoading = true);
-      final data = await FirebaseDatabase().getAllLabs();
+      final data = await LabServices().getAllLabs();
       print("Fetched data: $data");
       if (!mounted) return;
       setState(() {
@@ -192,9 +191,7 @@ class _ManageLabsState extends State<ManageLabs> {
             SizedBox(height: width * 0.04),
             Expanded(
               child: displayLabs.isEmpty && searchQuery.isNotEmpty
-                  ? Center(
-                      child: Text("No labs found matching '${searchQuery}'"),
-                    )
+                  ? Center(child: Text("No labs found matching '$searchQuery'"))
                   : ListView.builder(
                       itemCount: displayLabs.length,
                       itemBuilder: (context, index) {
@@ -412,7 +409,7 @@ class _ManageLabsState extends State<ManageLabs> {
                                                         ),
                                                         TextButton(
                                                           onPressed: () async {
-                                                            await FirebaseDatabase()
+                                                            await LabServices()
                                                                 .deleteLab(
                                                                   labs[index]
                                                                       .id,

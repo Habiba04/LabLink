@@ -1,8 +1,6 @@
-import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lablink/SuperAdmin/Pages/super-admin-home.dart';
-import 'package:lablink/SuperAdmin/Pages/super-admin-login.dart';
 import 'package:lablink/SuperAdmin/Providers/dashboard_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -30,23 +28,21 @@ class FakeDashboardProvider extends ChangeNotifier
   @override
   void listenDashboard() {}
 }
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-
   testWidgets("Displays dashboard stats", (tester) async {
-    
-
     await tester.pumpWidget(
-        MultiProvider(
-          providers: [
-            ChangeNotifierProvider<DashboardProvider>(
-              create: (_) => FakeDashboardProvider(),
-            ),
-          ],
-          child: MaterialApp(home: SuperAdminHomeScreen()),
-        ),
-      );
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<DashboardProvider>(
+            create: (_) => FakeDashboardProvider(),
+          ),
+        ],
+        child: MaterialApp(home: SuperAdminHomeScreen()),
+      ),
+    );
 
     await tester.pumpAndSettle();
 
@@ -55,5 +51,4 @@ void main() {
     expect(find.text("2"), findsOneWidget);
     expect(find.text("£100.00"), findsOneWidget);
   });
-
 }

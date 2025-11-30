@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lablink/Database/firebaseDB.dart';
+import 'package:lablink/Patient/Services/patient_services.dart';
 import 'package:lablink/shared_files/common_widgets/edit_profile_text_field.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -31,7 +32,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   Future<void> _loadCurrentUserData() async {
-    final patient = await FirebaseDatabase().getCurrentUserData();
+    final patient = await PatientServices().getCurrentUserData();
 
     setState(() {
       _nameController.text = patient!.name;
@@ -56,7 +57,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     setState(() => _isLoading = true);
 
-    await FirebaseDatabase().updateUserData(
+    await PatientServices().updateUserData(
       name: _nameController.text,
       phone: _phoneController.text,
       address: _addressController.text,
@@ -118,7 +119,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                     const SizedBox(height: 12),
                     DropdownButtonFormField<String>(
-                      value: _selectedGender == '' ? null : _selectedGender,
+                      initialValue: _selectedGender == ''
+                          ? null
+                          : _selectedGender,
                       decoration: InputDecoration(
                         labelText: 'Gender',
                         prefixIcon: const Icon(Icons.wc, color: Colors.grey),

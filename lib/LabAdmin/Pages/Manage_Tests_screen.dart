@@ -147,7 +147,7 @@ class _ManageTestsState extends State<ManageTests> {
       context: context,
       builder: (_) => AlertDialog(
         title: Text('Delete Test  '),
-        content: Text('Are you shure you want to delete this test?'),
+        content: Text('Are you sure you want to delete this test?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
