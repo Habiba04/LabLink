@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:lablink/Database/firebase_DB.dart';
+import 'package:lablink/shared_files/Services/analysis_services.dart';
 
 class PerformanceScreen extends StatefulWidget {
   final String labId;
@@ -11,7 +11,7 @@ class PerformanceScreen extends StatefulWidget {
 }
 
 class _PerformanceScreenState extends State<PerformanceScreen> {
-  final FirebaseDatabase db = FirebaseDatabase();
+  //final FirebaseDatabase db = FirebaseDatabase();
   Map<String, dynamic>? monthlyData;
   bool isLoading = true;
 
@@ -23,7 +23,9 @@ class _PerformanceScreenState extends State<PerformanceScreen> {
 
   Future<void> fetchMonthlyAnalytics() async {
     try {
-      final data = await db.getMonthlyLabAnalytics(widget.labId);
+      final data = await AnalysisServices().getMonthlyLabAnalytics(
+        widget.labId,
+      );
 
       if (data.isEmpty ||
           data['monthlyData'] == null ||
@@ -104,7 +106,7 @@ class _PerformanceScreenState extends State<PerformanceScreen> {
                                 buildDivider(),
                               ],
                             );
-                          }).toList(),
+                          }),
                         ],
                       ),
                     ),

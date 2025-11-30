@@ -1,9 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:lablink/Database/firebase_DB.dart';
 import 'package:lablink/Models/Lab.dart';
 import 'package:lablink/Models/Review.dart';
+import 'package:lablink/shared_files/Services/lab_details_services.dart';
+import 'package:lablink/shared_files/Services/review_services.dart';
 
 class ReviewScreen extends StatefulWidget {
   const ReviewScreen({super.key});
@@ -20,8 +21,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
   final double _rating = 0.0;
   Future<void> _loadData() async {
     setState(() => _isLoading = true);
-    final _labData = await FirebaseDatabase().getLabDetails(labId);
-    final reviews_ = await FirebaseDatabase().getLabReviews(labId);
+    final _labData = await LabDetailsServices().getLabDetails(labId);
+    final reviews_ = await ReviewServices().getLabReviews(labId);
     setState(() {
       labData = _labData;
       reviews = reviews_;

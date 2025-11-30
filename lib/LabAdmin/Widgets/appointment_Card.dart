@@ -300,7 +300,7 @@ class AppointmentCard extends StatelessWidget {
               ],
             ),
           );
-        }).toList(),
+        }),
 
         if (prescription.isNotEmpty)
           Padding(

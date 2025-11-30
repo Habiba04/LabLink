@@ -337,7 +337,7 @@ class _OrderCardState extends State<OrderCard> {
               ],
             ),
           );
-        }).toList(),
+        }),
 
         if (prescription.isNotEmpty)
           Padding(

@@ -226,7 +226,7 @@ class _LabLocations_screenState extends State<LabLocations_screen> {
                                     InkWell(
                                       onTap: () async {
                                         await LocationServices().deletLocation(
-                                          location.id,
+                                          location.id!,
                                           labid,
                                         );
                                       },

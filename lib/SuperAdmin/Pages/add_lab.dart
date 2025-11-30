@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lablink/Database/firebase_DB.dart';
 import 'package:lablink/Models/Lab.dart';
+import 'package:lablink/SuperAdmin/Services/lab_services.dart';
 
 class AddLab extends StatefulWidget {
   const AddLab({super.key});
@@ -31,7 +31,6 @@ class _AddLabState extends State<AddLab> {
               Container(
                 width: double.infinity,
                 height: height * 0.13,
-
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(width * 0.06),
@@ -125,7 +124,7 @@ class _AddLabState extends State<AddLab> {
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Color(0xFFF3F3F5),
-
+                            //focusColor: Color(0xFFF3F3F5),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
                               borderSide: BorderSide(color: Color(0xFFD1D5DC)),
@@ -196,10 +195,10 @@ class _AddLabState extends State<AddLab> {
                         SizedBox(height: 10),
                         TextField(
                           controller: passwordController,
+                          obscureText: true,
                           decoration: InputDecoration(
                             filled: true,
                             fillColor: Color(0xFFF3F3F5),
-
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(14),
                               borderSide: BorderSide(color: Color(0xFFD1D5DC)),
@@ -256,7 +255,7 @@ class _AddLabState extends State<AddLab> {
                     lastMonthRevenue: 0,
                   );
                   String password = passwordController.text.trim();
-                  await FirebaseDatabase().addNewLab(newLab, password);
+                  await LabServices().addNewLab(newLab, password);
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(

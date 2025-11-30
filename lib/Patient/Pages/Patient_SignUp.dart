@@ -88,7 +88,7 @@ class _PatientSignupState extends State<PatientSignup> {
           .signInWithCredential(credential);
       final User? user = userCredential.user;
       if (user != null) {
-        final userDocRef = await FirebaseFirestore.instance
+        final userDocRef = FirebaseFirestore.instance
             .collection('patient')
             .doc(user.uid);
 

@@ -81,7 +81,7 @@ class _AddNewTestState extends State<AddNewTest> {
                     validator: (value) => value == null || value.isEmpty
                         ? 'Please select a category'
                         : null,
-                    value: categoryController.text.isEmpty
+                    initialValue: categoryController.text.isEmpty
                         ? null
                         : categoryController.text,
                     decoration: InputDecoration(
@@ -229,7 +229,7 @@ class _AddNewTestState extends State<AddNewTest> {
                     validator: (value) => value == null || value.isEmpty
                         ? 'Please select sample type'
                         : null,
-                    value: sampleTypeController.text.isEmpty
+                    initialValue: sampleTypeController.text.isEmpty
                         ? null
                         : sampleTypeController.text,
                     decoration: InputDecoration(

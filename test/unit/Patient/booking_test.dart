@@ -14,7 +14,9 @@ class MockFirebaseAuth extends Mock implements FirebaseAuth {
 }
 
 class MockUser extends Mock implements User {
+  @override
   final String uid;
+  @override
   final String? email;
 
   MockUser({required this.uid, this.email});

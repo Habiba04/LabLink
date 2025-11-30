@@ -5,7 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:lablink/Patient/Pages/Booking_History.dart';
 import 'package:lablink/Patient/providers/appointment_provider.dart';
 import 'package:lablink/Models/Appointment.dart';
+<<<<<<< HEAD:test/widget/booking_history_test.dart
+=======
 
+>>>>>>> d2a06e6ef689a3a7613b68cecee080300ff5a245:test/widget/Patient/booking_history_test.dart
 import 'package:firebase_auth_mocks/firebase_auth_mocks.dart';
 
 final mockUser = MockUser(uid: 'test-user-uid', email: 'test@example.com');
