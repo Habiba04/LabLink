@@ -10,6 +10,7 @@ LabLink is a unified healthcare app that connects multiple laboratories in one p
 - [User Roles](#user-roles)  
 - [Technologies Used](#technologies-used)  
 - [Installation](#installation)  
+- [APK](#apk-download)  
 - [Usage](#usage)  
 - [Contributing](#contributing)  
 
@@ -61,6 +62,9 @@ LabLink allows patients to book medical tests online while enabling labs and adm
 4. Run the app
    ```bash
    flutter run
+
+## APK
+You can download the most recent version of the application from here [**Github Releases Page**](https://github.com/Habiba04/LabLink/releases/tag/Version)
 
 ## Usage
 1. Open the LabLink app.  
