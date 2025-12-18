@@ -5,7 +5,8 @@
 LabLink is a unified healthcare app that connects multiple laboratories in one platform. Patients can easily reach more labs, communicate with them, and securely access their medical reports in one place, making healthcare more accessible, efficient, and patient-friendly.
 
 ## Table of Contents
-- [Project Description](#project-description)  
+- [Project Description](#project-description)
+- [Documentation](#documentation)
 - [Features](#features)  
 - [User Roles](#user-roles)  
 - [Technologies Used](#technologies-used)  
@@ -16,6 +17,10 @@ LabLink is a unified healthcare app that connects multiple laboratories in one p
 
 ## Project Description
 LabLink allows patients to book medical tests online while enabling labs and administrators to efficiently manage their operations. It provides distinct experiences for **patients**, **lab admins**, and a **super admin**.
+
+## Documentation
+Detailed technical documentation regarding the system architecture, database schema, and related diagrams can be found here:  
+**[View Full Documentation](attachments/LabLink-FinalDocumentation.pdf)**
 
 ### Features
 - **Patients** can:  
