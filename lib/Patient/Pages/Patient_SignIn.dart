@@ -316,6 +316,7 @@ class _PatientSigninState extends State<PatientSignin> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      Image.asset("assets/images/google_icon.png", ),
                       const Text(
                         "Google",
                         style: TextStyle(fontSize: 17, color: Colors.black),
