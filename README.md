@@ -10,7 +10,7 @@ LabLink is a unified healthcare app that connects multiple laboratories in one p
 - [User Roles](#user-roles)  
 - [Technologies Used](#technologies-used)  
 - [Installation](#installation)  
-- [APK](#apk-download)  
+- [APK](#apk)  
 - [Usage](#usage)  
 - [Contributing](#contributing)  
 
